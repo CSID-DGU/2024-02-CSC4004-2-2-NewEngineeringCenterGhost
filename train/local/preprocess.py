@@ -7,7 +7,7 @@ from sklearn.model_selection import train_test_split
 tokenizer = KoBERTTokenizer.from_pretrained('skt/kobert-base-v1')
 
 data_path = './train/local/data/data.jsonl'
-save_path = './train/local/data/npy'
+save_path = './train/colab/data/'
 
 data = pd.read_json(data_path, lines=True)
 
