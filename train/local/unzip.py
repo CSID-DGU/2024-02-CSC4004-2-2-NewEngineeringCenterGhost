@@ -11,6 +11,7 @@ length = len(file_list)
 print(f'file count: {length}')
 
 jsonl = open(result_path, 'a', encoding='utf-8')
+lens = []
 for i, f in enumerate(file_list):
     print(f'{i+1}/{length}')
     zip_file = zipfile.ZipFile(zip_path + f)
@@ -21,34 +22,26 @@ for i, f in enumerate(file_list):
     for j, _f in enumerate(os.listdir(unzip_path)):
         print(f'\r{j+1}/{_len}', end='')
         _json = json.load(open(unzip_path + _f, 'r', encoding='utf-8'))
-        if 'sourceDataInfo' not in _json.keys():
-            print(_f)
-            continue
-        if 'labeledDataInfo' not in _json.keys():
-            print(_f)
-            continue
-        if 'newsTitle' not in _json['sourceDataInfo'].keys():
-            print(_f)
-            continue
-        if 'newsSubTitle' not in _json['sourceDataInfo'].keys():
-            print(_f)
-            continue
-        if 'newsContent' not in _json['sourceDataInfo'].keys():
-            print(_f)
-            continue
-        if 'clickbaitClass' not in _json['labeledDataInfo'].keys():
-            print(_f)
-            continue
+        sentences = _json['labeledDataInfo']['processSentenceInfo'] if _json['sourceDataInfo']['partNum'] == 'P2' else _json['sourceDataInfo']['sentenceInfo']
+
         p = dict()
-        p['sentence'] = _json['sourceDataInfo']['newsTitle'] + ' '
+        p['sentence'] = (_json['sourceDataInfo']['newsTitle'] + ' ') if _json['sourceDataInfo']['partNum'] == 'P2' else (_json['labeledDataInfo']['newTitle'] + ' ')
+
         if len(_json['sourceDataInfo']['newsSubTitle']) > 0:
             p['sentence'] += _json['sourceDataInfo']['newsSubTitle'] + ' '
-        p['sentence'] += _json['sourceDataInfo']['newsContent']
+        for k in sentences:
+            p['sentence'] += k['sentenceContent'] + ' '
+
         p['label'] = _json['labeledDataInfo']['clickbaitClass']
         
         jsonl.write(json.dumps(p, ensure_ascii=False) + '\n')
+        lens.append(len(p['sentence']))
 
         os.remove(unzip_path + _f)
     print()
+jsonl.close()
 
-print('\nDone')
+print(f'average length: {sum(lens) / len(lens)}')
+print(f'median length: {sorted(lens)[len(lens) // 2]}')
+print(f'max length: {max(lens)}')
+print(f'min length: {min(lens)}')

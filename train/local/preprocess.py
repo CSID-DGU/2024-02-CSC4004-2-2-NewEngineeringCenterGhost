@@ -10,6 +10,7 @@ data_path = './train/local/data/data.jsonl'
 save_path = './train/local/data/npy'
 
 data = pd.read_json(data_path, lines=True)
+
 X = np.arange(len(data))
 y = data['label'].values
 
@@ -18,16 +19,16 @@ dy = {}
 dX['train'], dX['test'], dy['train'], dy['test'] = train_test_split(X, y, test_size=0.2, stratify=y)
 dX['test'], dX['val'], dy['test'], dy['val'] = train_test_split(dX['test'], dy['test'], test_size=0.5, stratify=dy['test'])
 
-for split in ['train', 'val', 'test']:
-    # 8192개씩 나눠서 저장
-    for i in range(len(dX[split])//8192 + 1):
-        start = i*8192
-        end = min((i+1)*8192, len(dX[split]))
-        if start == end:
-            break
-        X = data['sentence'].iloc[dX[split][start:end]].values
-        y = dy[split][start:end]
-        X = [tokenizer.encode(x, max_length=128, pad_to_max_length=True) for x in X]
+for k in ['train', 'val', 'test']:
+    #데이터를 8192개씩 나눠서 저장
+    print(f'{k} data save')
+    for i, j in enumerate(range(0, len(dX[k]), 8192)):
+        print(f'{i+1}/{len(range(0, len(dX[k]), 8192))}')
+        X = data['sentence'].values[dX[k][j:j+8192]]
+        y = np.array(dy[k][j:j+8192], dtype=np.bool)
+        X = [tokenizer.encode(x, max_length=4096, padding='max_length', truncation=True) for x in X]
         X = np.array(X)
-        np.save(os.path.join(save_path, f'{split}_{i}.npy'), X)
-        np.save(os.path.join(save_path, f'{split}_{i}_label.npy'), y)
+        np.save(f'{save_path}/{k}/X_{i}.npy', X)
+        np.save(f'{save_path}/{k}/y_{i}.npy', y)
+
+print('done')
