@@ -41,7 +41,8 @@ for i, f in enumerate(file_list):
     print()
 jsonl.close()
 
+lens = sorted(lens)
 print(f'average length: {sum(lens) / len(lens)}')
-print(f'median length: {sorted(lens)[len(lens) // 2]}')
-print(f'max length: {max(lens)}')
-print(f'min length: {min(lens)}')
+print(f'median length: {lens[len(lens) // 2]}')
+print(f'max length: {lens[-1]}')
+print(f'min length: {lens[0]}')
