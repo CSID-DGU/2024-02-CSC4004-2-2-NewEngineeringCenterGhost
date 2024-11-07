@@ -6,17 +6,21 @@ from gensim.models import FastText
 from konlpy.tag import Mecab
 from datasets import load_dataset
 from module.HGCtrlr import decomposeHangulText
+import nltk
+nltk.download('punkt')
 
 m = Mecab()
 
-# HAERAE-HUB/KOREAN-WEBTEXT 데이터셋 전처리
+# HAERAE-HUB/KOREAN-SyntheticText-1.5B 데이터셋 전처리
 sentences = []
-print("\nLoading HAERAE-HUB/KOREAN-WEBTEXT...")
-dataset = load_dataset("HAERAE-HUB/KOREAN-WEBTEXT")
-total_samples = len(dataset["train"])
-for i, data in enumerate(dataset["train"]):
+print("\nLoading HAERAE-HUB/KOREAN-SyntheticText-1.5B...")
+dataset = load_dataset("HAERAE-HUB/KOREAN-SyntheticText-1.5B")
+sample_size = 100000
+dataset = dataset["train"].shuffle().select(range(sample_size))
+
+for i, data in enumerate(dataset):
     text: str = data["text"]
-    temp_sentences = list(filter(lambda x: len(x) > 0, text.split(". ")))
+    temp_sentences = nltk.sent_tokenize(text)
     if len(temp_sentences) == 0:
         continue
     if temp_sentences[-1][-1] == ".":
@@ -27,7 +31,7 @@ for i, data in enumerate(dataset["train"]):
         sentence = [decomposeHangulText(word) for word in sentence]
         sentences.append(sentence)
 
-    print(f"\rProcessing... ({i+1:8d}/{total_samples:8d})", end="")
+    print(f"\rProcessing... ({i+1:7d}/{sample_size:7d})", end="")
 print()
 dataset = None
 
