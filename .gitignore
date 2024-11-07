@@ -6,4 +6,3 @@
 /.env
 
 # 모델 저장 파일
-/longformer-from-kobert
