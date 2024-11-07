@@ -2,9 +2,9 @@ import os
 import zipfile
 import json
 
-zip_path = './train/local/data/zip/'
-unzip_path = './train/local/data/unzip/'
-result_path = './train/local/data/data.jsonl'
+zip_path = './train/data/zip/'
+unzip_path = './train/data/unzip/'
+result_path = './train/data/data.jsonl'
 
 file_list = os.listdir(zip_path)
 length = len(file_list)
