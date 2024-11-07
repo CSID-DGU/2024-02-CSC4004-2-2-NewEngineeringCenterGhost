@@ -15,7 +15,7 @@ m = Mecab()
 sentences = []
 print("\nLoading HAERAE-HUB/KOREAN-SyntheticText-1.5B...")
 dataset = load_dataset("HAERAE-HUB/KOREAN-SyntheticText-1.5B")
-sample_size = 100000
+sample_size = 500000
 dataset = dataset["train"].shuffle().select(range(sample_size))
 
 for i, data in enumerate(dataset):
