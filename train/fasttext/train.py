@@ -2,6 +2,8 @@ import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
+import random
+import multiprocessing
 from gensim.models import FastText
 from konlpy.tag import Mecab
 from datasets import load_dataset
@@ -15,14 +17,15 @@ m = Mecab()
 sentences = []
 print("\nLoading HAERAE-HUB/KOREAN-SyntheticText-1.5B...")
 dataset = load_dataset("HAERAE-HUB/KOREAN-SyntheticText-1.5B")
-sample_size = 500000
-dataset = dataset["train"].shuffle().select(range(sample_size))
+dataset = dataset["train"].shuffle().select(range(100000))
 
 for i, data in enumerate(dataset):
     text: str = data["text"]
-    temp_sentences = nltk.sent_tokenize(text)
-    if len(temp_sentences) == 0:
+    temp_sentences = (nltk.sent_tokenize(text))
+    if len(temp_sentences) < 5:
         continue
+
+    temp_sentences = random.sample(temp_sentences, 5)
     if temp_sentences[-1][-1] == ".":
         temp_sentences[-1] = temp_sentences[-1][:-1]
 
@@ -31,7 +34,7 @@ for i, data in enumerate(dataset):
         sentence = [decomposeHangulText(word) for word in sentence]
         sentences.append(sentence)
 
-    print(f"\rProcessing... ({i+1:7d}/{sample_size:7d})", end="")
+    print(f"\rProcessing... ({i+1:7d}/{len(dataset)})", end="")
 print()
 dataset = None
 
@@ -39,7 +42,7 @@ dataset = None
 print(f"\nTotal sentences: {len(sentences)}")
 
 # FastText 모델 학습
-model = FastText(sentences, vector_size=256, max_vocab_size=30000, min_count=1, workers=8, epochs=10)
+model = FastText(sentences, vector_size=256, max_vocab_size=30000, workers=multiprocessing.cpu_count())
 model.save("train/fasttext/model/fasttext")
 print("Model saved")
 
