@@ -1,18 +1,6 @@
-kobert-tokenizer @ git+https://github.com/SKTBrain/KoBERT.git@5c46b1c68e4755b54879431bd302db621f4d2f47#subdirectory=kobert_hf
 numpy==2.1.2
 pandas==2.2.3
 scikit-learn==1.5.2
-transformers==4.46.1
-tensorboardX
-test-tube==0.7.5
-nlp
-rouge_score
 
 --extra-index-url https://download.pytorch.org/whl/cu121
-pytorch==2.5.1
---extra-index-url https://download.pytorch.org/whl/cu121
-pytorchvision==2.5.1
---extra-index-url https://download.pytorch.org/whl/cu121
-torchaudio==2.5.1
-
-pytorch-lightning @ git+http://github.com/ibeltagy/pytorch-lightning.git@v0.8.5_fixes#egg=pytorch-lightning
+torch==2.5.1
