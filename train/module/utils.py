@@ -29,3 +29,10 @@ class BigDataset(Dataset):
         x = np.load(path + "_x.npy")
         y = np.load(path + "_y.npy")
         return SeqDataset(x, y, self.max_len)
+
+def process_bar(i, total, loss, metrics):
+    c = '='
+    bar_length = 40
+    progress = int(bar_length * i / total)
+    bar = c * progress + '-' * (bar_length - progress)
+    print(f'\r|{bar}| {i}/{total} Loss: {loss:.4f} Metrics: {metrics:.4f}', end='')
