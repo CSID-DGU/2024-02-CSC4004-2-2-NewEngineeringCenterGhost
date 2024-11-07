@@ -11,10 +11,10 @@ class SeqDataset(Dataset):
         return len(self.x)
     
     def __getitem__(self, idx):
-        pad = np.zeros((self.max_len), dtype=np.bool_)
+        padding_mask = np.zeros((self.max_len), dtype=np.bool_)
         _len = len(self.x[idx])
-        pad[_len:] = True
-        return (np.pad(self.x[idx], ((0, self.max_len - _len), (0, 0)), mode='constant'), self.y[idx], pad)
+        padding_mask[_len:] = True
+        return (np.pad(self.x[idx], ((0, self.max_len - _len), (0, 0)), mode='constant'), padding_mask, self.y[idx])
 
 class BigDataset(Dataset):
     def __init__(self, paths, max_len):
