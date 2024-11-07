@@ -22,12 +22,12 @@ dataset = dataset["train"]
 for i, data in enumerate(dataset):
     text: str = data["text"]
     temp_sentences = (nltk.sent_tokenize(text))
-    if len(temp_sentences) < 5:
+    _len = len(temp_sentences)
+    if _len == 0:
         continue
-
-    temp_sentences = random.sample(temp_sentences, 5)
-    if temp_sentences[-1][-1] == ".":
-        temp_sentences[-1] = temp_sentences[-1][:-1]
+    
+    if _len > 10:
+        temp_sentences = random.sample(temp_sentences, 10)
 
     for temp_sentence in temp_sentences:
         sentence = m.morphs(temp_sentence + ".")
