@@ -2,9 +2,13 @@ import os
 import zipfile
 import json
 
+# zip 폴더에는 AI_HUB에서 다운로드한 zip 파일들이 들어있어야 합니다.
 zip_path = './train/data/zip/'
 unzip_path = './train/data/unzip/'
 result_path = './train/data/data.jsonl'
+
+if not os.path.exists(unzip_path):
+    os.makedirs(unzip_path)
 
 file_list = os.listdir(zip_path)
 length = len(file_list)
