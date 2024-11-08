@@ -15,10 +15,9 @@ if not os.path.exists("train/data/dataset"):
 # 데이터 전처리 (8192개씩 묶어서 npz 파일로 저장)
 print("\nPreprocessing data...")
 for i in range(0, len(dataset), 8192):
-    print(f"\rProcessing... {i+8192:6d}/{len(dataset)}", end="")
-
     X = dict()
     for j, x in enumerate(dataset['sentence'][i:i+8192]):
+        print(f"\rProcessing... {i+j+1:6d}/{len(dataset)}", end="")
         x = m.morphs(x)
         x = np.array([model.wv[decomposeHangulText(word)] for word in x], dtype=np.float16)
         X[str(j)] = x
