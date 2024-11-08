@@ -23,7 +23,7 @@ for i in range(0, len(dataset), 8192):
         X[str(j)] = x
     np.savez_compressed(f"train/data/dataset/dataset_{i//8192:04d}_X.npz", **X)
     
-    y = np.array(dataset['label'][i:i+8192], dtype=np.float16)
+    y = ~dataset['label'][i:i+8192].values.astype(np.bool_)
     np.save(f"train/data/dataset/dataset_{i//8192:04d}_y.npy", y)
 
 print("\nDone!")
