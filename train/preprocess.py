@@ -8,6 +8,7 @@ from module.HGCtrlr import decomposeHangulText
 m = Mecab()
 model = FastText.load("train/fasttext/model/fasttext")
 dataset = pd.read_json("train/data/data.jsonl", lines=True) # sentence, label
+dataset = dataset.sample(frac=1).reset_index(drop=True) # shuffle
 
 if not os.path.exists("train/data/dataset"):
     os.makedirs("train/data/dataset")
