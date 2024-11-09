@@ -6,7 +6,7 @@ import numpy as np
 class SeqDataset(Dataset):
     def __init__(self, x, y, max_len):
         self.x = x
-        self.y: np.ndarray = y
+        self.y: np.ndarray = y.astype(np.float16)
         self.max_len: int = max_len
 
     def __len__(self):
@@ -45,25 +45,31 @@ class DatasetLoader():
 
 class Metrics():
     def __init__(self):
+        self.reset()
+    
+    def reset(self):
         self.tp = 0
         self.fp = 0
         self.tn = 0
         self.fn = 0
-        self.prec = 0
-        self.recall = 0
-        self.f1 = 0
-        self.acc = 0
+        self.prec = []
+        self.recall = []
+        self.f1 = []
+        self.acc = []
 
     def update(self, pred, target):
-        self.tp = (pred & target).sum().item()
-        self.fp = (pred & ~target).sum().item()
-        self.tn = (~pred & ~target).sum().item()
-        self.fn = (~pred & target).sum().item()
+        self.tp = ((pred == 1) & (target == 1)).sum().item()
+        self.fp = ((pred == 1) & (target == 0)).sum().item()
+        self.tn = ((pred == 0) & (target == 0)).sum().item()
+        self.fn = ((pred == 0) & (target == 1)).sum().item()
 
-        self.prec = self.tp / (self.tp + self.fp + 1e-8)
-        self.recall = self.tp / (self.tp + self.fn + 1e-8)
-        self.f1 = 2 * self.prec * self.recall / (self.prec + self.recall + 1e-8)
-        self.acc = (self.tp + self.tn) / (self.tp + self.fp + self.tn + self.fn)
+        self.prec.append(self.tp / (self.tp + self.fp + 1e-8))
+        self.recall.append(self.tp / (self.tp + self.fn + 1e-8))
+        self.f1.append(2 * self.prec[-1] * self.recall[-1] / (self.prec[-1] + self.recall[-1] + 1e-8))
+        self.acc.append((self.tp + self.tn) / (self.tp + self.fp + self.tn + self.fn))
+    
+    def get(self, key):
+        return np.mean(getattr(self, key))
 
 def printBar(i, total, prefix='\r', postfix=''):
     c = '='
@@ -71,7 +77,7 @@ def printBar(i, total, prefix='\r', postfix=''):
     progress = int(bar_length * i / total)
     bar = c * progress + '-' * (bar_length - progress)
     format_length = len(str(total))
-    print(f'{prefix}|{bar}| {i:{format_length}d}/{total} | {postfix}', end='')
+    print(f'{prefix}[{bar}] {i:{format_length}d}/{total} | {postfix}', end='')
 
 if __name__ == "__main__":
     datasetLoader = DatasetLoader(max_len=3584)
