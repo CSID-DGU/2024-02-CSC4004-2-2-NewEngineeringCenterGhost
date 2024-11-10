@@ -1,5 +1,6 @@
 import os
 from torch.utils.data import Dataset
+from sklearn.model_selection import train_test_split
 import torch.functional as F
 import numpy as np
 
@@ -19,16 +20,11 @@ class SeqDataset(Dataset):
         return (np.pad(self.x[idx], ((0, self.max_len - _len), (0, 0)), mode='constant'), padding_mask, self.y[idx])
 
 class DatasetLoader():
-    def __init__(self, max_len):
-        self.dataset_dir = "train/data/dataset"
-        self.prefix = "dataset_"
+    def __init__(self, max_len, X, y):
         self.max_len = max_len
-        self.len = len(os.listdir(self.dataset_dir)) // 2
-        self.X = []
-        self.y = []
-        for i in range(self.len):
-            self.X.append(f'{self.dataset_dir}/{self.prefix}{i:02d}_X.npz')
-            self.y.append(f'{self.dataset_dir}/{self.prefix}{i:02d}_y.npy')
+        self.X = X
+        self.y = y
+        self.len = len(X)
 
     def shuffle(self):
         idx = np.random.permutation(self.len)
@@ -42,6 +38,21 @@ class DatasetLoader():
         _X = list(np.load(self.X[idx]).values())
         _y = np.load(self.y[idx])
         return SeqDataset(_X, _y, self.max_len)
+
+def split_dataset(train_size=0.8, max_len=3584):
+    dataset_dir = "train/data/dataset"
+    prefix = "dataset_"
+    _len = len(os.listdir(dataset_dir)) // 2
+    X = []
+    y = []
+    for i in range(_len):
+        X.append(f'{dataset_dir}/{prefix}{i:02d}_X.npz')
+        y.append(f'{dataset_dir}/{prefix}{i:02d}_y.npy')
+    
+    X_train, X_val, y_train, y_val = train_test_split(X, y, train_size=train_size)
+    X_val, X_test, y_val, y_test = train_test_split(X_val, y_val, train_size=0.5)
+    return DatasetLoader(max_len, X_train, y_train), DatasetLoader(max_len, X_val, y_val), DatasetLoader(max_len, X_test, y_test)
+
 
 class Metrics():
     def __init__(self):
@@ -76,8 +87,7 @@ def printBar(i, total, prefix='\r', postfix=''):
     bar_length = 20
     progress = int(bar_length * i / total)
     bar = c * progress + '-' * (bar_length - progress)
-    format_length = len(str(total))
-    print(f'{prefix}[{bar}] {i:{format_length}d}/{total} | {postfix}', end='')
+    print(f'{prefix:>11}[{bar}] {i:4d}/{total:4d} | {postfix}', end='')
 
 if __name__ == "__main__":
     datasetLoader = DatasetLoader(max_len=3584)

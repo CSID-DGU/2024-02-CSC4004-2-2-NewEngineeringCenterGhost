@@ -52,6 +52,7 @@ class Model(nn.Module):
         x = self.encoder(x, src_key_padding_mask=padding_mask).transpose(0, 1)
         x = self.pooling(x, padding_mask)
         return self.out(x)
+
         
 
 if __name__ == "__main__":
