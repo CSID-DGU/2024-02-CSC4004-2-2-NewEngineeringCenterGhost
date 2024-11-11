@@ -3,6 +3,7 @@
 
 # 모델 저장 경로
 /train/fasttext/model
+**/*.pth
 
 # 파이썬 캐시 파일
 **/__pycache__
