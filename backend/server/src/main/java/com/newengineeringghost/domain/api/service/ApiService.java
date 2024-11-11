@@ -33,7 +33,7 @@ public class ApiService {
     response : 확률값
      */
     public String quickMeasurement(String url) throws IOException {
-        ProcessBuilder processBuilder = new ProcessBuilder("python3", "test.py", url);
+        ProcessBuilder processBuilder = new ProcessBuilder("python3", "/Users/jaehwan/Desktop/JaeHwan/WorkSpace/python/test/helloworld.py", url);
         Process process = processBuilder.start();
 
         /*
@@ -52,7 +52,7 @@ public class ApiService {
             System.out.println(line);
         }
 
-        // Todo : python 파일 실행결과 받아와서 Response data dto에 저장한 후, probability만 return
+        // Todo : python 파일 실행결과 받아와서 probability만 return
 
 //        // 오류 메세지 출력
 //        InputStream errorStream = process.getErrorStream();
@@ -226,11 +226,20 @@ public class ApiService {
     추출된 데이터가 유효하다면, 해당 데이터를 '낚시성 정보 판별 기능'을 통해 분석하고,
     결과로 나온 확률값을 사용자에게 전송
 
+    링크를 parsing하여 domain별로 분류?
+    news인지
+    기사인지
+    blog인지
+    instagram인지
+
     request :
     response :
      */
+    public void classification() {
 
-    // mongodb
+    }
+
+    // mongodb 연동 test
     public ResponseDto getData(String link) {
         ResponseData responseData = responseDataRepository.findResponseDataByLink(link);
 
@@ -244,6 +253,7 @@ public class ApiService {
         return responseDto;
     }
 
+    // mongodb 연동 test
     public String postData(ResponseDto responseDto) {
 
         ResponseData responseData = new ResponseData(
