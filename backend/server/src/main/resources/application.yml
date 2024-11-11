@@ -1,4 +1,7 @@
 spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
   data:
     mongodb:
-      uri:mongodb+srv://testuser:<db_password>@cluster0.e7uyg.mongodb.net/<database이름>?retryWrites=true&w=majority
+      uri: mongodb+srv://<user>:<db_password>@cluster0.e7uyg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0

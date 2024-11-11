@@ -1,11 +1,9 @@
 package com.newengineeringghost.domain.api.controller;
 
+import com.newengineeringghost.domain.api.dto.ResponseDto;
 import com.newengineeringghost.domain.api.service.ApiService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -35,4 +33,8 @@ public class ApiController {
         return apiService.customMeasurement(url);
     }
 
+    @GetMapping("/get")
+    public ResponseDto postMeasurement(@RequestParam String link) {
+        return apiService.getData(link);
+    }
 }

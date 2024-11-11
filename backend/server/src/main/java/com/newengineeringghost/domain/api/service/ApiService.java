@@ -1,8 +1,12 @@
 package com.newengineeringghost.domain.api.service;
 
+import com.newengineeringghost.domain.api.dto.ResponseDto;
+import com.newengineeringghost.domain.api.entity.ResponseData;
+import com.newengineeringghost.domain.api.repository.ResponseDataRepository;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -12,6 +16,11 @@ import java.io.InputStreamReader;
 
 @Service
 public class ApiService {
+
+    private ResponseDataRepository responseDataRepository;
+
+    @Autowired
+    public void setResponseDataRepository(ResponseDataRepository responseDataRepository) {this.responseDataRepository = responseDataRepository;}
 
     /*
     Todo: 빠른 측정
@@ -220,5 +229,19 @@ public class ApiService {
     request :
     response :
      */
+
+    // mongodb
+    public ResponseDto getData(String link) {
+        ResponseData responseData = responseDataRepository.findResponseDataByLink(link);
+
+        ResponseDto responseDto = new ResponseDto(
+                responseData.getLink(),
+                responseData.getProbability(),
+                responseData.getSentencePosition(),
+                responseData.getSentenceLength(),
+                responseData.getExplanation());
+
+        return responseDto;
+    }
 
 }
