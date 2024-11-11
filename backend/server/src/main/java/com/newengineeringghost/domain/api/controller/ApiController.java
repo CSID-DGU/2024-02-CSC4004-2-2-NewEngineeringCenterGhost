@@ -33,8 +33,15 @@ public class ApiController {
         return apiService.customMeasurement(url);
     }
 
+    // mongodb 통신 test
     @GetMapping("/get")
-    public ResponseDto postMeasurement(@RequestParam String link) {
+    public ResponseDto getMeasurement(@RequestParam String link) {
         return apiService.getData(link);
+    }
+
+    // mongodb 통신 test
+    @PostMapping("/post")
+    public String postMeasurement(@RequestBody ResponseDto responseDto) {
+        return apiService.postData(responseDto);
     }
 }

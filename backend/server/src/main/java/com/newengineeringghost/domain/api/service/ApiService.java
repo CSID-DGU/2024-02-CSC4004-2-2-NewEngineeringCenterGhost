@@ -244,4 +244,19 @@ public class ApiService {
         return responseDto;
     }
 
+    public String postData(ResponseDto responseDto) {
+
+        ResponseData responseData = new ResponseData(
+                responseDto.getLink(),
+                responseDto.getProbability(),
+                responseDto.getSentencePosition(),
+                responseDto.getSentenceLength(),
+                responseDto.getExplanation()
+        );
+
+        responseDataRepository.save(responseData);
+
+        return "success";
+    }
+
 }

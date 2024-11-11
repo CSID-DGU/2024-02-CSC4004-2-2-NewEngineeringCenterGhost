@@ -1,6 +1,5 @@
 package com.newengineeringghost.domain.api.entity;
 
-import com.newengineeringghost.domain.api.dto.ResponseDto;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,4 +16,17 @@ public class ResponseData {
     private String sentencePosition;
     private String sentenceLength;
     private String explanation;
+
+    public ResponseData(
+            String link,
+            String probability,
+            String sentencePosition,
+            String sentenceLength,
+            String explanation) {
+        this.link = link;
+        this.probability = probability;
+        this.sentencePosition = sentencePosition;
+        this.sentenceLength = sentenceLength;
+        this.explanation = explanation;
+    }
 }
