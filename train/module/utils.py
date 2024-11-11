@@ -39,7 +39,7 @@ class DatasetLoader():
         _y = np.load(self.y[idx])
         return SeqDataset(_X, _y, self.max_len)
 
-def split_dataset(train_size=0.8, max_len=3584):
+def split_dataset(train_size=0.9, max_len=3584):
     dataset_dir = "train/data/dataset"
     prefix = "dataset_"
     _len = len(os.listdir(dataset_dir)) // 2
