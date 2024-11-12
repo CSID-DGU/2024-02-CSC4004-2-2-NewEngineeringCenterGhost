@@ -12,6 +12,7 @@ import nltk
 nltk.download('punkt')
 
 m = Mecab()
+max_sentence_len = 12
 
 # HAERAE-HUB/KOREAN-SyntheticText-1.5B 데이터셋 전처리
 sentences = []
@@ -26,11 +27,11 @@ for i, data in enumerate(dataset):
     if _len == 0:
         continue
     
-    if _len > 10:
-        temp_sentences = random.sample(temp_sentences, 10)
+    if _len > max_sentence_len:
+        temp_sentences = random.sample(temp_sentences, max_sentence_len)
 
     for temp_sentence in temp_sentences:
-        sentence = m.morphs(temp_sentence + ".")
+        sentence = ['<CLS>'] + m.morphs(temp_sentence) + ['<SEP>']
         sentence = [decomposeHangulText(word) for word in sentence]
         sentences.append(sentence)
 
