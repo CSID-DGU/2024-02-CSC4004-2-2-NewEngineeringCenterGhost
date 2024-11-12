@@ -20,10 +20,12 @@ print("\nLoading HAERAE-HUB/KOREAN-SyntheticText-1.5B...")
 dataset = load_dataset("HAERAE-HUB/KOREAN-SyntheticText-1.5B")
 dataset = dataset["train"]
 
+lens = []
 for i, data in enumerate(dataset):
     text: str = data["text"]
     temp_sentences = (nltk.sent_tokenize(text))
     _len = len(temp_sentences)
+    lens.append(_len)
     if _len == 0:
         continue
     
@@ -41,6 +43,12 @@ dataset = None
 
 # load data/data.jsonl
 print(f"\nTotal sentences: {len(sentences)}")
+
+lens = sorted(lens)
+print(f"Max sentence count in a document: {lens[-1]}")
+print(f"Min sentence count in a document: {lens[0]}")
+print(f"Average sentence count in a document: {sum(lens) / len(lens)}")
+print(f"Median sentence count in a document: {lens[len(lens) // 2]}")
 
 # FastText 모델 학습
 model = FastText(sentences, vector_size=256, max_vocab_size=30000, workers=multiprocessing.cpu_count())
