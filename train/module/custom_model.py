@@ -44,6 +44,7 @@ class Model(nn.Module):
         self.pooling = GlobalAvgPoolingWithMask()
         self.out = nn.Sequential(
             nn.Flatten(),
+            nn.Dropout(0.1),
             nn.Linear(self.d_model, 1),
         )
     

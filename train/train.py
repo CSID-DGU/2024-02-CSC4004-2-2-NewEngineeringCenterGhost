@@ -1,3 +1,6 @@
+import module.preprocessing
+exit()
+
 import torch
 from torch.amp import autocast, GradScaler
 from torch.utils.data import DataLoader, ConcatDataset
