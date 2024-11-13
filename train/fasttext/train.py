@@ -12,7 +12,6 @@ import nltk
 nltk.download('punkt')
 
 m = Mecab()
-max_sentence_len = 12
 
 # HAERAE-HUB/KOREAN-SyntheticText-1.5B 데이터셋 전처리
 sentences = []
@@ -20,35 +19,27 @@ print("\nLoading HAERAE-HUB/KOREAN-SyntheticText-1.5B...")
 dataset = load_dataset("HAERAE-HUB/KOREAN-SyntheticText-1.5B")
 dataset = dataset["train"]
 
-lens = []
+sentences = []
 for i, data in enumerate(dataset):
     text: str = data["text"]
     temp_sentences = (nltk.sent_tokenize(text))
-    _len = len(temp_sentences)
-    lens.append(_len)
-    if _len == 0:
-        continue
-    
-    if _len > max_sentence_len:
-        temp_sentences = random.sample(temp_sentences, max_sentence_len)
-
-    for temp_sentence in temp_sentences:
-        sentence = ['<CLS>'] + m.morphs(temp_sentence) + ['<SEP>']
-        sentence = [decomposeHangulText(word) for word in sentence]
-        sentences.append(sentence)
-
+    sentences.extend(temp_sentences)
     print(f"\rProcessing... ({i+1:7d}/{len(dataset)})", end="")
-print()
 dataset = None
+
+class SentenceDataset:
+    def __init__(self, sentences):
+        self.sentences = sentences
+
+    def __iter__(self):
+        for sentence in self.sentences:
+            sentence = ['CLS'] + m.morphs(sentence) + ['SEP']
+            yield [decomposeHangulText(word) for word in sentence]
 
 # load data/data.jsonl
 print(f"\nTotal sentences: {len(sentences)}")
 
-lens = sorted(lens)
-print(f"Max sentence count in a document: {lens[-1]}")
-print(f"Min sentence count in a document: {lens[0]}")
-print(f"Average sentence count in a document: {sum(lens) / len(lens)}")
-print(f"Median sentence count in a document: {lens[len(lens) // 2]}")
+sentences = SentenceDataset(sentences)
 
 # FastText 모델 학습
 model = FastText(sentences, vector_size=256, max_vocab_size=30000, workers=multiprocessing.cpu_count())

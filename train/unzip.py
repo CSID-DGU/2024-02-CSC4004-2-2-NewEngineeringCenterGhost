@@ -29,12 +29,14 @@ for i, f in enumerate(file_list):
         sentences = _json['labeledDataInfo']['processSentenceInfo'] if _json['sourceDataInfo']['partNum'] == 'P2' else _json['sourceDataInfo']['sentenceInfo']
 
         p = dict()
-        p['sentence'] = (_json['sourceDataInfo']['newsTitle'] + ' ') if _json['sourceDataInfo']['partNum'] == 'P2' else (_json['labeledDataInfo']['newTitle'] + ' ')
+        p['sentence'] = 'CLS '
+        p['sentence'] += (_json['sourceDataInfo']['newsTitle'] + ' ') if _json['sourceDataInfo']['partNum'] == 'P2' else (_json['labeledDataInfo']['newTitle'] + ' ')
+        p['sentence'] += 'SEP '
 
         if len(_json['sourceDataInfo']['newsSubTitle']) > 0:
-            p['sentence'] += _json['sourceDataInfo']['newsSubTitle'] + ' '
+            p['sentence'] += _json['sourceDataInfo']['newsSubTitle'] + 'SEP '
         for k in sentences:
-            p['sentence'] += k['sentenceContent'] + ' '
+            p['sentence'] += k['sentenceContent'] + 'SEP '
 
         p['label'] = _json['labeledDataInfo']['clickbaitClass']
         
