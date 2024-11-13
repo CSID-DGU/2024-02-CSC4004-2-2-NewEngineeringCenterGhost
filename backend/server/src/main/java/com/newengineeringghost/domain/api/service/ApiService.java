@@ -1,11 +1,22 @@
 package com.newengineeringghost.domain.api.service;
 
-import com.newengineeringghost.domain.api.dto.ResponseDto;
+import com.newengineeringghost.domain.api.dto.ResponseDataDto;
+import com.newengineeringghost.domain.api.dto.WebContentsDto;
 import com.newengineeringghost.domain.api.entity.ResponseData;
 import com.newengineeringghost.domain.api.repository.ResponseDataRepository;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +24,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.time.Duration;
+import java.util.List;
 
+@Slf4j
 @Service
 public class ApiService {
 
@@ -21,6 +35,13 @@ public class ApiService {
 
     @Autowired
     public void setResponseDataRepository(ResponseDataRepository responseDataRepository) {this.responseDataRepository = responseDataRepository;}
+
+    private static final Logger logger = LoggerFactory.getLogger(ApiService.class);
+    /*
+    log 사용 예시
+    logger.info("Html Content: {}", document);
+    logger.error("Html Content: {}", document);
+     */
 
     /*
     Todo: 빠른 측정
@@ -33,26 +54,25 @@ public class ApiService {
     response : 확률값
      */
     public String quickMeasurement(String url) throws IOException {
+        // Todo : 해당 url에서 text 추출
+
+        // Todo : text를 매개변수로 하여 Python 파일에 전달 및 실행
+
+        // Todo : 파일 경로 변경 - python 파일들을 resource/static 안에 넣고 동작하는지 확인하기
         ProcessBuilder processBuilder = new ProcessBuilder("python3", "/Users/jaehwan/Desktop/JaeHwan/WorkSpace/python/test/helloworld.py", url);
         Process process = processBuilder.start();
-
-        /*
-        직접 경로 설정
-        ProcessBuilder("C:/python/python311/bin..", (생략))
-        경로 예시 - mac
-        /Users/jaehwan/Desktop/JaeHwan/WorkSpace/python/test/helloworld.py
-         */
 
         // 실행 결과 가져오기
         InputStream inputStream = process.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
+        // Todo : 실행결과 출력에서 실행결과 저장으로 변경
         String line;
         while ((line = reader.readLine()) != null) {
             System.out.println(line);
         }
 
-        // Todo : python 파일 실행결과 받아와서 probability만 return
+        // Todo : python 파일 실행결과 중 probability만 return
 
 //        // 오류 메세지 출력
 //        InputStream errorStream = process.getErrorStream();
@@ -201,8 +221,11 @@ public class ApiService {
 
     /*
     Todo : OCR 위한 이미지 다운로드 기능, 사용자 정의 측정에서 사용
-    python에 매개변수로 image를 넘겨주는 것보다
-    python에서 beautifulsoup을 사용해서 image를 다운로드하는 게 속도 측면에서 낫지 않나?
+    image를 server단에 저장
+    이후에 이미지 파일을 python에 같이 넘기기?
+    이미지 파일을 다운받고, python에 텍스트와 함께 넘기면서 이미지 파일은 삭제
+
+    동적 웹 페이지와 정적 웹 페이지 구분
      */
     public String downlaodImage(String url) throws IOException {
         Document doc = Jsoup.connect(url).get();
@@ -212,7 +235,75 @@ public class ApiService {
         return "";
     }
 
-    public String downloadPage(String url) {
+    public WebDriver getChromeDriver() {
+        ChromeOptions chromeOptions = new ChromeOptions();
+        chromeOptions.addArguments("--remote-allow-origins=*");
+        chromeOptions.addArguments("--headless");
+        chromeOptions.addArguments("--lang=ko");
+        chromeOptions.addArguments("--no-sandbox");
+        chromeOptions.addArguments("--disable-gpu");
+        chromeOptions.addArguments("--disable-dev-shm-usage");
+        chromeOptions.setCapability("ignoreProtectedModeSettins", true);
+
+        WebDriver driver = new ChromeDriver(chromeOptions);
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
+
+        return driver;
+    }
+
+    public WebContentsDto webCrawling(String url) throws IOException {
+        WebDriver driver = getChromeDriver();
+
+        driver.get(url);
+
+        WebElement title = driver.findElement(By.tagName("title"));
+        WebElement content = driver.findElement(By.className("_article_content"));
+
+        driver.quit();
+
+        logger.info("title: {}", title);
+        logger.info("content: {}", content);
+
+        WebContentsDto webContentsDto = new WebContentsDto(title.toString(), content.toString());
+        logger.info("webContentsDto: {}", webContentsDto);
+
+        return webContentsDto;
+    }
+
+//    public WebContentsDto webCrawling(String url) throws IOException {
+//        // 연결은 잘 됨
+//        Document document = Jsoup.connect(url).get();
+//
+//        logger.info("document content: {}", document.toString());
+//
+//        String title = extractTitle(document);
+//        String content = extractContect(document);
+//
+//        logger.info("title: {}", title);
+//        logger.info("content: {}", content);
+//
+//        WebContentsDto webContentsDto = new WebContentsDto(title, content);
+//        logger.info("webContentsDto: {}", webContentsDto);
+//
+//        return webContentsDto;
+//    }
+
+    private String extractTitle(Document document) {
+        Elements titleElement = document.select("title");
+        return titleElement.isEmpty() ? titleElement.text() : "Title not found.";
+    }
+
+    private String extractContect(Document document) {
+        Elements contectElement = document.select(".article_p");
+        return contectElement.isEmpty() ? contectElement.text() : "Content not found.";
+    }
+
+    // Todo : 제목과 본문 추출
+    public String downloadText(String url) throws IOException {
+        Document doc = Jsoup.connect(url).get();
+        Elements text = doc.select("article");
+
+        System.out.println(text);
 
         return "";
     }
@@ -232,18 +323,24 @@ public class ApiService {
     blog인지
     instagram인지
 
+    switch문 사용
+    처음이 news
+    그 다음이 기사
+    그 다음이 인스타
+    나머지를 블로그 처리?
+
     request :
     response :
      */
-    public void classification() {
+    public void classifyLink(String url) {
 
     }
 
     // mongodb 연동 test
-    public ResponseDto getData(String link) {
+    public ResponseDataDto getData(String link) {
         ResponseData responseData = responseDataRepository.findResponseDataByLink(link);
 
-        ResponseDto responseDto = new ResponseDto(
+        ResponseDataDto responseDto = new ResponseDataDto(
                 responseData.getLink(),
                 responseData.getProbability(),
                 responseData.getSentencePosition(),
@@ -254,7 +351,7 @@ public class ApiService {
     }
 
     // mongodb 연동 test
-    public String postData(ResponseDto responseDto) {
+    public String postData(ResponseDataDto responseDto) {
 
         ResponseData responseData = new ResponseData(
                 responseDto.getLink(),

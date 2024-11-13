@@ -29,6 +29,8 @@ dependencies {
 
     implementation('org.springframework.boot:spring-boot-starter-data-mongodb')
     implementation('org.jsoup:jsoup:1.15.3')
+    implementation('org.seleniumhq.selenium:selenium-java')
+    implementation('org.seleniumhq.selenium:selenium-devtools-v130:4.26.0')
 }
 
 test {

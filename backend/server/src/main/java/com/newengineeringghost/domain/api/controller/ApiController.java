@@ -1,6 +1,7 @@
 package com.newengineeringghost.domain.api.controller;
 
-import com.newengineeringghost.domain.api.dto.ResponseDto;
+import com.newengineeringghost.domain.api.dto.ResponseDataDto;
+import com.newengineeringghost.domain.api.dto.WebContentsDto;
 import com.newengineeringghost.domain.api.service.ApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -33,15 +34,21 @@ public class ApiController {
         return apiService.customMeasurement(url);
     }
 
+    // 웹 크롤링 테스트
+    @PostMapping("/test")
+    public WebContentsDto testMeasurement(@RequestParam String url) throws IOException {
+        return apiService.webCrawling(url);
+    }
+
     // mongodb 통신 test
     @GetMapping("/get")
-    public ResponseDto getMeasurement(@RequestParam String link) {
+    public ResponseDataDto getMeasurement(@RequestParam String link) throws IOException {
         return apiService.getData(link);
     }
 
     // mongodb 통신 test
     @PostMapping("/post")
-    public String postMeasurement(@RequestBody ResponseDto responseDto) {
+    public String postMeasurement(@RequestBody ResponseDataDto responseDto) {
         return apiService.postData(responseDto);
     }
 }
