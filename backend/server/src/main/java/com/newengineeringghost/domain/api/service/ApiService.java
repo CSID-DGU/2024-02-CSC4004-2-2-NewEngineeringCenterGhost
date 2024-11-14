@@ -4,7 +4,6 @@ import com.newengineeringghost.domain.api.dto.ResponseDataDto;
 import com.newengineeringghost.domain.api.dto.WebContentsDto;
 import com.newengineeringghost.domain.api.entity.ResponseData;
 import com.newengineeringghost.domain.api.repository.ResponseDataRepository;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -14,18 +13,17 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.time.Duration;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -235,7 +233,10 @@ public class ApiService {
         return "";
     }
 
+    // Selenium 사용을 위해 ChromeDriver 설정
     public WebDriver getChromeDriver() {
+        logger.info("Chrome Driver Start!");
+
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments("--remote-allow-origins=*");
         chromeOptions.addArguments("--headless");
@@ -243,7 +244,6 @@ public class ApiService {
         chromeOptions.addArguments("--no-sandbox");
         chromeOptions.addArguments("--disable-gpu");
         chromeOptions.addArguments("--disable-dev-shm-usage");
-        chromeOptions.setCapability("ignoreProtectedModeSettins", true);
 
         WebDriver driver = new ChromeDriver(chromeOptions);
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
@@ -253,31 +253,84 @@ public class ApiService {
 
     public WebContentsDto webCrawling(String url) throws IOException {
         WebDriver driver = getChromeDriver();
+        logger.info("Chrome Driver Info: {}", driver);
 
-        driver.get(url);
+        if (!ObjectUtils.isEmpty(driver)) {
+            driver.get(url);
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5)); // page 전체가 넘어올 때까지 대기
+            logger.info("Chrome Driver Info: {}", driver);
 
-        WebElement title = driver.findElement(By.tagName("title"));
-        WebElement content = driver.findElement(By.className("_article_content"));
+            WebElement webElement1 = driver.findElement(By.tagName("head"));
+            String title = webElement1.getText();
+            logger.info("title: {}", title);
 
-        driver.quit();
+            WebElement webElement2 = driver.findElement(By.id("root"));
+            String content = webElement2.getText();
 
-        logger.info("title: {}", title);
-        logger.info("content: {}", content);
+            logger.info("title: {}", title);
+            logger.info("content: {}", content);
 
-        WebContentsDto webContentsDto = new WebContentsDto(title.toString(), content.toString());
-        logger.info("webContentsDto: {}", webContentsDto);
+            WebContentsDto webContentsDto = new WebContentsDto(title, content);
+            logger.info("webContentsDto: {}", webContentsDto);
 
-        return webContentsDto;
+            return webContentsDto;
+        } else {
+            String title = "no element";
+            String content = "no element";
+
+            WebContentsDto webContentsDto = new WebContentsDto(title, content);
+            logger.info("webContentsDto: {}", webContentsDto);
+
+            return webContentsDto;
+        }
     }
+
+//    public WebContentsDto webCrawling(String url) throws IOException {
+//        WebDriver driver = getChromeDriver();
+//        logger.info("Chrome Driver Info: {}", driver);
+//
+//        출처: https://diary-developer.tistory.com/18 [일반인의 웹 개발일기:티스토리]
+//
+//        driver.get(url);
+//        // url 연결이 안되는 듯 함
+//        logger.info("Chrome Driver Info: {}", driver);
+//
+//        // Todo : try-catch문 작성
+//        WebElement webElement = driver.findElement(By.tagName("title"));
+//        String title = webElement.getText();
+//        logger.info("title: {}", title);
+////        String content = driver.findElement(By.className("article_p")).getText();
+//        String content = "not yet";
+//
+////        WebElement title = driver.findElement(By.tagName("title"));
+////        WebElement content = driver.findElement(By.className("article_p"));
+//
+//        driver.quit();
+//
+//        logger.info("title: {}", title);
+//        logger.info("content: {}", content);
+//
+//        WebContentsDto webContentsDto = new WebContentsDto(title, content);
+//        logger.info("webContentsDto: {}", webContentsDto);
+//
+//        return webContentsDto;
+//    }
+
+//    public String getTitle(String url) throws IOException {
+//        Document doc = Jsoup.connect(url).get();
+//
+//        Elements content = doc.select("");
+//
+//
+//    }
 
 //    public WebContentsDto webCrawling(String url) throws IOException {
 //        // 연결은 잘 됨
 //        Document document = Jsoup.connect(url).get();
-//
 //        logger.info("document content: {}", document.toString());
 //
 //        String title = extractTitle(document);
-//        String content = extractContect(document);
+//        String content = extractContent(document);
 //
 //        logger.info("title: {}", title);
 //        logger.info("content: {}", content);
@@ -289,13 +342,18 @@ public class ApiService {
 //    }
 
     private String extractTitle(Document document) {
-        Elements titleElement = document.select("title");
+        Elements titleElement = document.select(".NewsEndMain_article_head_title_ztaL4");
         return titleElement.isEmpty() ? titleElement.text() : "Title not found.";
     }
 
-    private String extractContect(Document document) {
-        Elements contectElement = document.select(".article_p");
-        return contectElement.isEmpty() ? contectElement.text() : "Content not found.";
+    private String extractContent(Document document) {
+        Elements contentElement = document.select(".article_p");
+        return contentElement.isEmpty() ? contentElement.text() : "Content not found.";
+    }
+
+    private String extractImage(Document document) {
+        Elements contentElement = document.select(".article_p");
+        return contentElement.isEmpty() ? contentElement.text() : "Content not found.";
     }
 
     // Todo : 제목과 본문 추출
