@@ -1,23 +1,23 @@
 import os
 from torch.utils.data import Dataset
 from sklearn.model_selection import train_test_split
-import torch.functional as F
 import numpy as np
+import torch
 
 class SeqDataset(Dataset):
     def __init__(self, x, y, max_len):
         self.x = x
-        self.y: np.ndarray = y.astype(np.float16)
+        self.y: torch.Tensor = y.type(torch.bfloat16)
         self.max_len: int = max_len
 
     def __len__(self):
         return len(self.x)
     
     def __getitem__(self, idx):
-        padding_mask = np.zeros((self.max_len), dtype=np.bool_)
+        padding_mask = torch.zeros((self.max_len), dtype=torch.bool)
         _len = len(self.x[idx])
         padding_mask[_len:] = True
-        return (np.pad(self.x[idx], ((0, self.max_len - _len), (0, 0)), mode='constant'), padding_mask, self.y[idx])
+        return torch.cat((self.x[idx], torch.zeros((self.max_len - _len, self.x[idx].shape[1]), dtype=torch.bfloat16)), dim=0), padding_mask, self.y[idx]
 
 class DatasetLoader():
     def __init__(self, max_len, X, y):
@@ -35,8 +35,8 @@ class DatasetLoader():
         return self.len
     
     def __getitem__(self, idx):
-        _X = list(np.load(self.X[idx]).values())
-        _y = np.load(self.y[idx])
+        _X = torch.load(self.X[idx], weights_only=False)
+        _y = torch.load(self.y[idx], weights_only=False)
         return SeqDataset(_X, _y, self.max_len)
 
 def split_dataset(train_size=0.9, max_len=3584):
@@ -46,8 +46,8 @@ def split_dataset(train_size=0.9, max_len=3584):
     X = []
     y = []
     for i in range(_len):
-        X.append(f'{dataset_dir}/{prefix}{i:02d}_X.npz')
-        y.append(f'{dataset_dir}/{prefix}{i:02d}_y.npy')
+        X.append(f'{dataset_dir}/{prefix}{i:02d}_X.pt')
+        y.append(f'{dataset_dir}/{prefix}{i:02d}_y.pt')
     
     X_train, X_val, y_train, y_val = train_test_split(X, y, train_size=train_size)
     X_val, X_test, y_val, y_test = train_test_split(X_val, y_val, train_size=0.5)
@@ -90,7 +90,7 @@ def printBar(i, total, prefix='\r', postfix=''):
     print(f'{prefix:>11}[{bar}] {i:4d}/{total:4d} | {postfix}', end='')
 
 if __name__ == "__main__":
-    datasetLoader = DatasetLoader(max_len=3584)
+    datasetLoader, _, _ = split_dataset()
     lens = []
     for d in datasetLoader:
         lens += [len(x) for x in d.x]

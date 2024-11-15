@@ -9,7 +9,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 epochs = 20
 load_size = 4 # Number of datasets to load at once
 batch_size = 8
-update_size = 512 // batch_size
+update_size = 32 // batch_size
 
 train_loader, val_loader, test_loader = split_dataset()
 
@@ -46,7 +46,7 @@ for epoch in range(epochs):
             torch.cuda.synchronize()
             for k, (x, padding_mask, y) in enumerate(loaded):
                 total_batch += 1
-                with autocast('cuda', torch.float16):
+                with autocast('cuda', torch.bfloat16):
                     pred = model(x, padding_mask)
                     loss = criterion(pred, y) / update_size
                 scaler.scale(loss).backward()
