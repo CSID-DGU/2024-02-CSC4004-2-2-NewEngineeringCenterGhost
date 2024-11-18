@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/")
@@ -34,10 +35,16 @@ public class ApiController {
         return apiService.customMeasurement(url);
     }
 
-    // 웹 크롤링 테스트
+    // 웹 스크래핑 테스트
     @PostMapping("/test")
     public WebContentsDto testMeasurement(@RequestParam String url) throws IOException {
-        return apiService.webCrawling(url);
+        return apiService.webScraping(url);
+    }
+
+    // 웹 스크래핑(이미지) 테스트
+    @PostMapping("/test/image")
+    public List<String> testImage(@RequestParam String url) throws IOException {
+        return apiService.webScrapingImage(url);
     }
 
     // mongodb 통신 test

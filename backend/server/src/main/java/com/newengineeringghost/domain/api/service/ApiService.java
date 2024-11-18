@@ -5,9 +5,6 @@ import com.newengineeringghost.domain.api.dto.WebContentsDto;
 import com.newengineeringghost.domain.api.entity.ResponseData;
 import com.newengineeringghost.domain.api.repository.ResponseDataRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -24,6 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -217,22 +216,6 @@ public class ApiService {
         return "";
     }
 
-    /*
-    Todo : OCR 위한 이미지 다운로드 기능, 사용자 정의 측정에서 사용
-    image를 server단에 저장
-    이후에 이미지 파일을 python에 같이 넘기기?
-    이미지 파일을 다운받고, python에 텍스트와 함께 넘기면서 이미지 파일은 삭제
-
-    동적 웹 페이지와 정적 웹 페이지 구분
-     */
-    public String downlaodImage(String url) throws IOException {
-        Document doc = Jsoup.connect(url).get();
-        Elements imgs = doc.select("img");
-
-        System.out.println(imgs);
-        return "";
-    }
-
     // Selenium 사용을 위해 ChromeDriver 설정
     public WebDriver getChromeDriver() {
         logger.info("Chrome Driver Start!");
@@ -251,24 +234,25 @@ public class ApiService {
         return driver;
     }
 
-    public WebContentsDto webCrawling(String url) throws IOException {
+    // 웹 페이지에서 제목&본문 추출
+    public WebContentsDto webScraping(String url) throws IOException {
         WebDriver driver = getChromeDriver();
         logger.info("Chrome Driver Info: {}", driver);
 
         if (!ObjectUtils.isEmpty(driver)) {
             driver.get(url);
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5)); // page 전체가 넘어올 때까지 대기
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5)); // page 전체가 넘어올 때까지 대기(5초)
             logger.info("Chrome Driver Info: {}", driver);
 
-            WebElement webElement1 = driver.findElement(By.tagName("head"));
+            // 제목 추출
+            // 기사는 h2 / 블로그는 h1,h2,h3 중 하나
+            WebElement webElement1 = driver.findElement(By.tagName("h2"));
             String title = webElement1.getText();
-            logger.info("title: {}", title);
 
-            WebElement webElement2 = driver.findElement(By.id("root"));
+            // 본문 내용 추출
+            // 기사는 article / 블로그는 div, p, span
+            WebElement webElement2 = driver.findElement(By.tagName("article"));
             String content = webElement2.getText();
-
-            logger.info("title: {}", title);
-            logger.info("content: {}", content);
 
             WebContentsDto webContentsDto = new WebContentsDto(title, content);
             logger.info("webContentsDto: {}", webContentsDto);
@@ -285,86 +269,50 @@ public class ApiService {
         }
     }
 
-//    public WebContentsDto webCrawling(String url) throws IOException {
-//        WebDriver driver = getChromeDriver();
-//        logger.info("Chrome Driver Info: {}", driver);
-//
-//        출처: https://diary-developer.tistory.com/18 [일반인의 웹 개발일기:티스토리]
-//
-//        driver.get(url);
-//        // url 연결이 안되는 듯 함
-//        logger.info("Chrome Driver Info: {}", driver);
-//
-//        // Todo : try-catch문 작성
-//        WebElement webElement = driver.findElement(By.tagName("title"));
-//        String title = webElement.getText();
-//        logger.info("title: {}", title);
-////        String content = driver.findElement(By.className("article_p")).getText();
-//        String content = "not yet";
-//
-////        WebElement title = driver.findElement(By.tagName("title"));
-////        WebElement content = driver.findElement(By.className("article_p"));
-//
-//        driver.quit();
-//
-//        logger.info("title: {}", title);
-//        logger.info("content: {}", content);
-//
-//        WebContentsDto webContentsDto = new WebContentsDto(title, content);
-//        logger.info("webContentsDto: {}", webContentsDto);
-//
-//        return webContentsDto;
-//    }
+    /*
+    Todo : OCR 위한 이미지 다운로드 기능, 사용자 정의 측정에서 사용
+    image를 server단에 저장
+    이후에 이미지 파일을 python에 같이 넘기기?
+    이미지 파일을 다운받고, python에 텍스트와 함께 넘기면서 이미지 파일은 삭제
 
-//    public String getTitle(String url) throws IOException {
-//        Document doc = Jsoup.connect(url).get();
-//
-//        Elements content = doc.select("");
-//
-//
-//    }
+    동적 웹 페이지와 정적 웹 페이지 구분
+     */
+    // 웹 페이지에서 이미지 추출
+    public List<String> webScrapingImage(String url) throws IOException {
+        WebDriver driver = getChromeDriver();
+        logger.info("Chrome Driver Info: {}", driver);
 
-//    public WebContentsDto webCrawling(String url) throws IOException {
-//        // 연결은 잘 됨
-//        Document document = Jsoup.connect(url).get();
-//        logger.info("document content: {}", document.toString());
-//
-//        String title = extractTitle(document);
-//        String content = extractContent(document);
-//
-//        logger.info("title: {}", title);
-//        logger.info("content: {}", content);
-//
-//        WebContentsDto webContentsDto = new WebContentsDto(title, content);
-//        logger.info("webContentsDto: {}", webContentsDto);
-//
-//        return webContentsDto;
-//    }
+        if (!ObjectUtils.isEmpty(driver)) {
+            driver.get(url);
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5)); // page 전체가 넘어올 때까지 대기(5초)
+            logger.info("Chrome Driver Info: {}", driver);
 
-    private String extractTitle(Document document) {
-        Elements titleElement = document.select(".NewsEndMain_article_head_title_ztaL4");
-        return titleElement.isEmpty() ? titleElement.text() : "Title not found.";
+            // 이미지 추출
+            WebElement articleElement = driver.findElement(By.tagName("article"));
+            List<WebElement> imageElements = articleElement.findElements(By.tagName("img"));
+
+            // 모든 이미지 src를 추출하여 리스트에 저장
+            List<String> imgSrcs = new ArrayList<>();
+            for (WebElement imageElement : imageElements) {
+                String img = imageElement.getAttribute("src");
+                imgSrcs.add(img);
+                logger.info("Image: {}", img);
+            }
+
+            driver.quit();
+
+            // 리스트를 문자열로 반환 (필요에 따라 적절히 수정 가능)
+            return imgSrcs;
+        } else {
+            List<String> imgSrcs = new ArrayList<>();
+            String img = "no element";
+            imgSrcs.add(img);
+            logger.info("Image: {}", imgSrcs);
+
+            return imgSrcs;
+        }
     }
 
-    private String extractContent(Document document) {
-        Elements contentElement = document.select(".article_p");
-        return contentElement.isEmpty() ? contentElement.text() : "Content not found.";
-    }
-
-    private String extractImage(Document document) {
-        Elements contentElement = document.select(".article_p");
-        return contentElement.isEmpty() ? contentElement.text() : "Content not found.";
-    }
-
-    // Todo : 제목과 본문 추출
-    public String downloadText(String url) throws IOException {
-        Document doc = Jsoup.connect(url).get();
-        Elements text = doc.select("article");
-
-        System.out.println(text);
-
-        return "";
-    }
 
     /*
     Todo : 링크 분석 및 데이터 처리
