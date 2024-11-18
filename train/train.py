@@ -51,7 +51,7 @@ def run_epoch(loader: DatasetLoader, train=False) -> tuple: # return loss, f1, a
             for k, (x, padding_mask, y) in enumerate(loaded):
                 total_batch += 1
                 with autocast('cuda', torch.bfloat16):
-                    pred = model(x, padding_mask)
+                    pred, _ = model(x, padding_mask)
                     loss = criterion(pred, y) / update_size
                 if train:
                     scaler.scale(loss).backward()
