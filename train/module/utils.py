@@ -3,6 +3,8 @@ from torch.utils.data import Dataset
 from sklearn.model_selection import train_test_split
 import numpy as np
 import torch
+import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 
 class SeqDataset(Dataset):
     def __init__(self, x, y, max_len):
@@ -81,6 +83,39 @@ class Metrics():
     
     def get(self, key):
         return np.mean(getattr(self, key))
+
+class History():
+    def __init__(self, metrics_name: list):
+        self.metrics_name = metrics_name
+        self.history = {'train': {}, 'val': {}}
+    
+    def update(self, metrics: tuple, mode: str):
+        if mode not in self.history:
+            raise ValueError(f"Invalid mode: {mode}")
+
+        for i, key in enumerate(self.metrics_name):
+            if key not in self.history[mode]:
+                self.history[mode][key] = []
+            self.history[mode][key].append(metrics[i])
+    
+    def __getitem__(self, key: str):
+        mode, key = key.split('_')
+        return self.history[mode][key]
+    
+    def save(self, path: str): # save png
+        fig = plt.figure(figsize=(10, 10))
+        gs = gridspec.GridSpec(2, 2, height_ratios=[1, 1], width_ratios=[1, 1], figure=fig)
+
+        ax = plt.subplot(gs[0, :]), plt.subplot(gs[1, 0]), plt.subplot(gs[1, 1])
+
+        for i, key in enumerate(self.metrics_name):
+            ax[i].plot(self.history['train'][key], label=f'Train {key}')
+            ax[i].plot(self.history['val'][key], label=f'Validation {key}')
+            ax[i].set_title(key)
+            ax[i].legend()
+
+        plt.savefig(path)
+        
 
 def printBar(i, total, prefix='\r', postfix=''):
     c = '='
