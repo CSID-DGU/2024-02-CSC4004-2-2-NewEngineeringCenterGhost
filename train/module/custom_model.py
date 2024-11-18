@@ -52,12 +52,14 @@ if __name__ == "__main__":
     model = Model().to(device)
     print(model)
     print(sum(p.numel() for p in model.parameters() if p.requires_grad))
-    x = torch.randn(32, 128, 256, device=device, dtype=torch.float16)
-    padding_mask = torch.zeros(32, 128, dtype=torch.bool, device=device)
-    padding_mask[0, 64:] = True
+    x = torch.randn(1, 3584, 256, device=device, dtype=torch.float16)
+    padding_mask = torch.zeros(1, 3584, dtype=torch.bool, device=device)
+    padding_mask[:, 64:] = True
     model.set_return_att(True)
     y, ats = model(x, padding_mask)
     print(ats)
+    # print memory usage
+    print(torch.cuda.memory_summary(device=device))
     model.set_return_att(False)
     y, ats = model(x, padding_mask)
     print(ats)
