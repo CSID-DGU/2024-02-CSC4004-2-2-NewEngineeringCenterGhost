@@ -6,6 +6,7 @@ import com.newengineeringghost.domain.api.entity.ResponseData;
 import com.newengineeringghost.domain.api.repository.ResponseDataRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -241,21 +242,35 @@ public class ApiService {
 
         if (!ObjectUtils.isEmpty(driver)) {
             driver.get(url);
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5)); // page 전체가 넘어올 때까지 대기(5초)
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20)); // page 전체가 넘어올 때까지 대기(5초)
             logger.info("Chrome Driver Info: {}", driver);
 
             // 제목 추출
-            // 기사는 h2 / 블로그는 h1,h2,h3 중 하나
-            WebElement webElement1 = driver.findElement(By.tagName("h2"));
-            String title = webElement1.getText();
+            String title = driver.getTitle();
+            logger.info("WebPage Title: {}", title);
 
             // 본문 내용 추출
-            // 기사는 article / 블로그는 div, p, span
-            WebElement webElement2 = driver.findElement(By.tagName("article"));
-            String content = webElement2.getText();
+            String content;
+            try {
+                // 시도 1: <article> 요소 찾기
+                WebElement webElement2 = driver.findElement(By.tagName("article"));
+                content = webElement2.getText();
+                logger.info("WebPage Content from <article>: {}", content);
+            } catch (NoSuchElementException e) {
+                // 시도 2: <article> 요소가 없을 경우 모든 <span> 요소 찾기
+                List<WebElement> spanElements = driver.findElements(By.tagName("span"));
+                StringBuilder contentBuilder = new StringBuilder();
+                for (WebElement span : spanElements) {
+                    contentBuilder.append(span.getText()).append("\n");
+                }
+                content = contentBuilder.toString();
+                logger.info("WebPage Content from all <span>: {}", content);
+            }
 
             WebContentsDto webContentsDto = new WebContentsDto(title, content);
             logger.info("webContentsDto: {}", webContentsDto);
+
+            driver.quit();
 
             return webContentsDto;
         } else {
@@ -268,6 +283,47 @@ public class ApiService {
             return webContentsDto;
         }
     }
+
+
+//    // 웹 페이지에서 제목&본문 추출
+//    public WebContentsDto webScraping(String url) throws IOException {
+//        WebDriver driver = getChromeDriver();
+//        logger.info("Chrome Driver Info: {}", driver);
+//
+//        if (!ObjectUtils.isEmpty(driver)) {
+//            driver.get(url);
+//            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5)); // page 전체가 넘어올 때까지 대기(5초)
+//            logger.info("Chrome Driver Info: {}", driver);
+//
+////            // 제목 추출
+////            // 기사는 h2 / 블로그는 h1,h2,h3 중 하나
+////            WebElement webElement1 = driver.findElement(By.tagName("h2"));
+////            String title = webElement1.getText();
+//            String title = driver.getTitle();
+//            logger.info("WebPage Title: {}", title);
+//
+//            // 본문 내용 추출
+//            // 기사는 article / 블로그는 모든 span 긁어오기
+//            WebElement webElement2 = driver.findElement(By.tagName("article"));
+//            String content = webElement2.getText();
+//            logger.info("WebPage Content: {}", content);
+//
+//            WebContentsDto webContentsDto = new WebContentsDto(title, content);
+//            logger.info("webContentsDto: {}", webContentsDto);
+//
+//            driver.quit();
+//
+//            return webContentsDto;
+//        } else {
+//            String title = "no element";
+//            String content = "no element";
+//
+//            WebContentsDto webContentsDto = new WebContentsDto(title, content);
+//            logger.info("webContentsDto: {}", webContentsDto);
+//
+//            return webContentsDto;
+//        }
+//    }
 
     /*
     Todo : OCR 위한 이미지 다운로드 기능, 사용자 정의 측정에서 사용
@@ -284,7 +340,7 @@ public class ApiService {
 
         if (!ObjectUtils.isEmpty(driver)) {
             driver.get(url);
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5)); // page 전체가 넘어올 때까지 대기(5초)
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(100)); // page 전체가 넘어올 때까지 대기(5초)
             logger.info("Chrome Driver Info: {}", driver);
 
             // 이미지 추출
@@ -311,35 +367,6 @@ public class ApiService {
 
             return imgSrcs;
         }
-    }
-
-
-    /*
-    Todo : 링크 분석 및 데이터 처리
-
-    기능)
-    사용자가 전송한 링크가 확장 프로그램에서 지원하는 사이트인지 확인
-    지원되는 사이트인 경우, BeautifulSoup을 사용해 링크 내 데이터 추출
-    추출된 데이터가 유효하다면, 해당 데이터를 '낚시성 정보 판별 기능'을 통해 분석하고,
-    결과로 나온 확률값을 사용자에게 전송
-
-    링크를 parsing하여 domain별로 분류?
-    news인지
-    기사인지
-    blog인지
-    instagram인지
-
-    switch문 사용
-    처음이 news
-    그 다음이 기사
-    그 다음이 인스타
-    나머지를 블로그 처리?
-
-    request :
-    response :
-     */
-    public void classifyLink(String url) {
-
     }
 
     // mongodb 연동 test
