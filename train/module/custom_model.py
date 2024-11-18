@@ -3,7 +3,7 @@ import torch.nn as nn
 import math
 
 class PositionalEncoding(nn.Module):
-    def __init__(self, d_model, max_len=5000):
+    def __init__(self, d_model, max_len=3584):
         super(PositionalEncoding, self).__init__()
         pe = torch.zeros(max_len, d_model)
         position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
@@ -38,21 +38,21 @@ class Model(nn.Module):
         self.d_model = 256
         self.pos_encoder = PositionalEncoding(self.d_model)
         self.encoder = nn.TransformerEncoder(
-            nn.TransformerEncoderLayer(d_model=self.d_model, nhead=4, dropout=0.12),
-            num_layers=8,
+            nn.TransformerEncoderLayer(d_model=self.d_model, nhead=4, dropout=0.1, batch_first=True, activation='gelu'),
+            num_layers=9,
+            enable_nested_tensor=False
         )
-        self.pooling = GlobalAvgPoolingWithMask()
         self.out = nn.Sequential(
-            nn.Flatten(),
             nn.Linear(self.d_model, 1),
         )
     
     def forward(self, x, padding_mask):
-        x = self.pos_encoder(x).transpose(0, 1)
-        x = self.encoder(x, src_key_padding_mask=padding_mask).transpose(0, 1)
-        x = self.pooling(x, padding_mask)
+        x = self.pos_encoder(x)
+        x = self.encoder(x, src_key_padding_mask=padding_mask)
+        x = x[:, 0]
         return self.out(x)
-        
+
+
 
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

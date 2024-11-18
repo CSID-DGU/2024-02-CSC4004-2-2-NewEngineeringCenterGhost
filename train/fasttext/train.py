@@ -19,27 +19,27 @@ print("\nLoading HAERAE-HUB/KOREAN-SyntheticText-1.5B...")
 dataset = load_dataset("HAERAE-HUB/KOREAN-SyntheticText-1.5B")
 dataset = dataset["train"]
 
+sentences = []
 for i, data in enumerate(dataset):
     text: str = data["text"]
     temp_sentences = (nltk.sent_tokenize(text))
-    _len = len(temp_sentences)
-    if _len == 0:
-        continue
-    
-    if _len > 10:
-        temp_sentences = random.sample(temp_sentences, 10)
-
-    for temp_sentence in temp_sentences:
-        sentence = m.morphs(temp_sentence + ".")
-        sentence = [decomposeHangulText(word) for word in sentence]
-        sentences.append(sentence)
-
+    sentences.extend(temp_sentences)
     print(f"\rProcessing... ({i+1:7d}/{len(dataset)})", end="")
-print()
 dataset = None
+
+class SentenceDataset:
+    def __init__(self, sentences):
+        self.sentences = sentences
+
+    def __iter__(self):
+        for sentence in self.sentences:
+            sentence = ['CLS'] + m.morphs(sentence) + ['SEP']
+            yield [decomposeHangulText(word) for word in sentence]
 
 # load data/data.jsonl
 print(f"\nTotal sentences: {len(sentences)}")
+
+sentences = SentenceDataset(sentences)
 
 # FastText 모델 학습
 model = FastText(sentences, vector_size=256, max_vocab_size=30000, workers=multiprocessing.cpu_count())
