@@ -39,7 +39,7 @@ class Model(nn.Module):
         self.pos_encoder = PositionalEncoding(self.d_model)
         self.encoder = nn.TransformerEncoder(
             nn.TransformerEncoderLayer(d_model=self.d_model, nhead=4, dropout=0.1, batch_first=True, activation='gelu'),
-            num_layers=8,
+            num_layers=9,
             enable_nested_tensor=False
         )
         self.out = nn.Sequential(
