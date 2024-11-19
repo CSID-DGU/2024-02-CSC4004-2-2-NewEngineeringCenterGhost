@@ -29,7 +29,7 @@ class Model(nn.Module):
         self.d_model = 256
         self.pos_encoder = PositionalEncoding(self.d_model)
         self.encoder = TransformerEncoder(
-            TransformerEncoderLayer(d_model=self.d_model, nhead=4, dropout=0.1, batch_first=True, activation='gelu', dim_feedforward=3072),
+            TransformerEncoderLayer(d_model=self.d_model, nhead=4, dropout=0.1, batch_first=True, activation='gelu'),
             num_layers=8,
             enable_nested_tensor=False
         )

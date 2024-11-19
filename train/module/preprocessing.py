@@ -20,9 +20,10 @@ def preprocess(text: str, max_len: int) -> tuple:
     return x, padding_mask
 
 if __name__ == "__main__":
-    text = "안녕하세요"
-    x, padding_mask = preprocess(text, 128)
-    print(x.shape, padding_mask.shape)
-    print(x.dtype, padding_mask.dtype)
-    print(x)
-    print(padding_mask)
+    text = "안녕하세요" * 1000
+    memory = []
+    max_tries = 8
+    for i in range(max_tries):
+        memory.append(preprocess(text, 3584))
+        print(f'\r{i + 1:5d}/{max_tries}', end='')
+    print()
