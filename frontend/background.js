@@ -46,17 +46,19 @@ function startPrecisionMeasurement(info) {
 
   // 서버 통신 없이 결과 표시
   const probability = Math.floor(Math.random() * 100); // 임의의 확률 생성
-  const explanation = "이 데이터는 낚시성 정보를 포함할 가능성이 높습니다.";
+  const explanation = probability >= 50
+      ? "이 데이터는 거짓된 정보를 포함할 가능성이 높습니다."
+      : "이 데이터는 진실일 가능성이 높습니다.";
 
   const banner = document.createElement("div");
   banner.style.position = "fixed";
   banner.style.top = "0";
   banner.style.width = "100%";
-  banner.style.backgroundColor = "rgba(255, 0, 0, 0.8)";
-  banner.style.color = "white";
   banner.style.padding = "10px";
   banner.style.zIndex = "9999";
-  banner.innerText = `낚시성 정보 확률: ${probability}%\n${explanation}`;
+  banner.style.color = "white";
+  banner.style.backgroundColor = probability >= 50 ? "rgba(255, 0, 0, 0.8)" : "rgba(0, 128, 0, 0.8)"; // 빨강 또는 초록
+  banner.innerText = `거짓일 확률: ${probability}%\n${explanation}`;
 
   document.body.appendChild(banner);
 
