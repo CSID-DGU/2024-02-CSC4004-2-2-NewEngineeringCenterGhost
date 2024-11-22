@@ -1,12 +1,8 @@
-
-import time
-
-#start = time.time()
-
 import urllib.request
 import pytesseract
 import cv2
 import sys
+import os
 
 #이미지 주소
 image_path = []
@@ -14,15 +10,11 @@ image_path = []
 for i in range(1, len(sys.argv)):
     image_path.append(sys.argv[i])
 
-"""
-#pillow lib 사용한 ocr
-image_PIL = Image.open(image_path)
+#os lib를 사용한 TempImage 폴더 생성
+temp_path = f'backend/modules/ocr/TempImage'
 
-image_PIL = image_PIL.convert("L")
-image_PIL = image_PIL.point(lambda x: 0 if x < 128 else 255)
-
-text_PIL = pytesseract.image_to_string(image_PIL, lang="kor+eng")
-"""
+if not os.path.exists(temp_path):
+    os.makedirs(temp_path)
 
 #request를 이용한 이미지 받기
 for i in range(len(image_path)):
@@ -37,7 +29,9 @@ for i in range(len(image_path)):
     #print("추출된 텍스트(PIL): ", text_PIL)
     print("추출된 텍스트(cv2): ", text_cv2)
 
-cv2.waitKey(0)
+#os lib를 이용한 TempImage에 생성된 png 파일 삭제
+if os.path.exists(temp_path):
+    for path in os.listdir(temp_path):
+        os.remove('backend/modules/ocr/TempImage/' + path)
 
-#print(time.time() - start)
-#print(1.172527551651001 - 0.7256977558135986)
+cv2.waitKey(0)
