@@ -54,7 +54,7 @@ public class ApiService {
 //        WebContentsDto webContentsDto = new WebContentsDto(title, content);
 
         // Todo : 파일 경로 변경 - python 파일들을 resource/static 안에 넣고 동작하는지 확인하기
-        ProcessBuilder processBuilder = new ProcessBuilder("python3", "/Users/jaehwan/Downloads/backend/module/model", content);
+        ProcessBuilder processBuilder = new ProcessBuilder("python", "/mnt/s/ProjectForFast/2024-02-CSC4004-2-2-NewEngineeringCenterGhost/backend/server/src/main/resources/core/request.py", content);
         Process process = processBuilder.start();
 
         // 실행 결과 가져오기

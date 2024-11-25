@@ -85,7 +85,7 @@ server.listen(5)
 
 while True:
     conn, addr = server.accept()
-    data = conn.recv(8192)
+    data = conn.recv(8192 * 4)
     data = data.decode(encoding='utf-8')
     res = predict(data)
     conn.send(str(res).encode())
