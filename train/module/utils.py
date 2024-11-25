@@ -64,14 +64,14 @@ class History():
 
         plt.savefig(path)
 
-def printBar(i, total, prefix='', postfix=''):
+def print_bar(i, total, prefix='', postfix=''):
     c = '='
     bar_length = 40
     progress = int(bar_length * i / total)
     bar = c * progress + '-' * (bar_length - progress)
     print(f'{prefix:>12}[{bar}] {i:7d}/{total:7d} | {postfix}', end='')
 
-def clearPrint(cursur_up=0):
+def clear_print(cursur_up=0):
     sys.stdout.write('\x1b[2K')
     print('\r', end='')
     for _ in range(cursur_up):
@@ -79,7 +79,7 @@ def clearPrint(cursur_up=0):
         sys.stdout.write('\x1b[2K')
         print('\r', end='')
 
-def getETA(start, now, i, total):
+def get_eta(start, now, i, total):
     elapsed = now - start
-    eta = elapsed / i * (total - i)
+    eta = elapsed / i * total
     return eta, elapsed 

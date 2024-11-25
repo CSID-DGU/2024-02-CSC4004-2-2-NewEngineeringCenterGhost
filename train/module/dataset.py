@@ -39,6 +39,11 @@ def split_dataset(train_size=0.9, max_len=3584):
     df = pd.read_json(dataset_dir, lines=True)
     X = df['content'].values
     y = df['label'].values
-    X_train, X_val, y_train, y_val = train_test_split(X, y, train_size=train_size, stratify=y)
-    X_val, X_test, y_val, y_test = train_test_split(X_val, y_val, train_size=0.5, stratify=y_val)
+    X_train, X_val, y_train, y_val = train_test_split(X, y, train_size=train_size, stratify=y, random_state=42)
+    X_val, X_test, y_val, y_test = train_test_split(X_val, y_val, train_size=0.5, stratify=y_val, random_state=42)
     return SeqDataset(X_train, y_train, max_len), SeqDataset(X_val, y_val, max_len), SeqDataset(X_test, y_test, max_len)
+
+if __name__ == '__main__':
+    train_dataset, val_dataset, test_dataset = split_dataset()
+    print(len(train_dataset), len(val_dataset), len(test_dataset))
+    print(val_dataset[-1])

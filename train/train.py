@@ -42,36 +42,42 @@ def run_epoch(loader: DataLoader, train=False) -> tuple: # return loss, f1, acc
         x = x.to(device)
         padding_mask = padding_mask.to(device)
         y = y.to(device).unsqueeze(-1)
-        with autocast('cuda', torch.bfloat16):
-            pred, _ = model(x, padding_mask)
-            loss = criterion(pred, y)
 
         if train:
-            scaler.scale(loss).backward()
+            with autocast('cuda', torch.bfloat16):
+                pred, _ = model(x, padding_mask)
+                loss = criterion(pred, y) / update_size
+                scaler.scale(loss).backward()
+                
+                if (i + 1) % update_size == 0 or i == total_batch - 1:
+                    scaler.step(optimizer)
+                    scaler.update()
+                    optimizer.zero_grad()
+        else:
+            with torch.no_grad(), autocast('cuda', torch.bfloat16):
+                pred, _ = model(x, padding_mask)
+                loss = criterion(pred, y) / update_size
 
-        total_loss += loss.item()
+        total_loss += loss.item() * update_size
         metrics.update(pred > 0, y)
-        
+        del x, padding_mask, y, pred, loss
+
         f1 = metrics.get('f1')
         acc = metrics.get('acc')
-        eta, elapsed = getETA(t_start, time.time(), i + 1, total_batch)
-        clearPrint()
-        printBar(i + 1, total_batch, 'Training: ' if train else 'Validation: ',
+        eta, elapsed = get_eta(t_start, time.time(), i + 1, total_batch)
+        clear_print()
+        print_bar(i + 1, total_batch, 'Training: ' if train else 'Validation: ',
                  f'{elapsed:8.1f}s/{eta:8.1f}s | loss: {total_loss / (i + 1):.4f} | F1: {f1:.4f} | Acc: {acc:.4f}')
-        
-        if not train:
-            continue
-
-        if (i + 1) % update_size == 0 or i == total_batch - 1:
-            scaler.step(optimizer)
-            scaler.update()
-            optimizer.zero_grad()
     print()
     return total_loss / total_batch, metrics.get('f1'), metrics.get('acc')
 
 best_f1 = -1
 history = History(['loss', 'f1', 'acc'])
 for epoch in range(epochs):
+    if epoch + 1 == 8:
+        optimizer.param_groups[0]['lr'] = 2e-5
+        print('Learning rate decayed!\n')
+
     print(f'Epoch {epoch + 1}/{epochs}')
     history.update(run_epoch(train_loader, train=True), 'train')
     history.update(run_epoch(val_loader), 'val')
@@ -80,18 +86,18 @@ for epoch in range(epochs):
     result = f'Training: loss={history["train_loss"][-1]:.4f}, f1={history["train_f1"][-1]:.4f}, acc={history["train_acc"][-1]:.4f}'
     result += f' | Validation: loss={history["val_loss"][-1]:.4f}, f1={history["val_f1"][-1]:.4f}, acc={history["val_acc"][-1]:.4f}'
 
-    clearPrint(2)
+    clear_print(2)
     print(f'{result}\n')
 
     if history['val_f1'][-1] > best_f1:
         best_f1 = history['val_f1'][-1]
         torch.save(model.state_dict(), 'train/model.pth')
         print('Model saved!\n')
-    gc.collect()
+
 
 print('Testing...')
 model.load_state_dict(torch.load('train/model.pth', weights_only=True))
 test_loss, test_f1, test_acc = run_epoch(test_loader)
-clearPrint(2)
+clear_print(2)
 print('Best model test result:')
 print(f'Test: loss={test_loss:.4f}, f1={test_f1:.4f}, acc={test_acc:.4f}')
