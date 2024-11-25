@@ -61,7 +61,10 @@ def predict(text):
 
     sentences = []
     for ind in compute_attention_rollout(atts):
-        sentences.append("".join(get_sentence(tokens, ind)))
+        sentence = "".join(get_sentence(tokens, ind))
+        if len(sentence) == 0:
+            continue
+        sentences.append(sentence)
     
     sentences = set(sentences)
 
@@ -82,8 +85,8 @@ server.listen(5)
 
 while True:
     conn, addr = server.accept()
-    data = conn.recv(1024)
-    data = data.decode()
+    data = conn.recv(8192)
+    data = data.decode(encoding='utf-8')
     res = predict(data)
     conn.send(str(res).encode())
     conn.close()
