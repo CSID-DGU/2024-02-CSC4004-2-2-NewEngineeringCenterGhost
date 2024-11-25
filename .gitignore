@@ -3,8 +3,15 @@
 
 # 모델 저장 경로
 /train/fasttext/model
+**/*.pth
+**/bin
 
 # 파이썬 캐시 파일
 **/__pycache__
 
+
 **/TempImage
+=======
+# 기타 임시 파일
+**/*.png
+

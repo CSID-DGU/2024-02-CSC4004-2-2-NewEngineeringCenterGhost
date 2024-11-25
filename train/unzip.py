@@ -29,17 +29,20 @@ for i, f in enumerate(file_list):
         sentences = _json['labeledDataInfo']['processSentenceInfo'] if _json['sourceDataInfo']['partNum'] == 'P2' else _json['sourceDataInfo']['sentenceInfo']
 
         p = dict()
-        p['sentence'] = (_json['sourceDataInfo']['newsTitle'] + ' ') if _json['sourceDataInfo']['partNum'] == 'P2' else (_json['labeledDataInfo']['newTitle'] + ' ')
+        p['content'] = 'CLS '
+        p['content'] += (_json['sourceDataInfo']['newsTitle'] + ' ') if _json['sourceDataInfo']['partNum'] == 'P2' else (_json['labeledDataInfo']['newTitle'] + ' ')
+        p['content'] += ' SEP '
 
-        if len(_json['sourceDataInfo']['newsSubTitle']) > 0:
-            p['sentence'] += _json['sourceDataInfo']['newsSubTitle'] + ' '
+        if _json['sourceDataInfo']['newsSubTitle'] != 'null' and len(_json['sourceDataInfo']['newsSubTitle']) > 0:
+            p['content'] += _json['sourceDataInfo']['newsSubTitle'] + ' SEP '
         for k in sentences:
-            p['sentence'] += k['sentenceContent'] + ' '
+            p['content'] += k['sentenceContent'] + ' SEP '
 
-        p['label'] = _json['labeledDataInfo']['clickbaitClass']
+        p['content'] = p['content'].replace('“', '"').replace('”', '"').replace('‘', "'").replace('’', "'").replace('\\"', '"')
+        p['label'] = not bool(_json['labeledDataInfo']['clickbaitClass'])
         
         jsonl.write(json.dumps(p, ensure_ascii=False) + '\n')
-        lens.append(len(p['sentence']))
+        lens.append(len(p['content']))
 
         os.remove(unzip_path + _f)
     print()
