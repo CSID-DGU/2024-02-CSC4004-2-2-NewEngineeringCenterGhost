@@ -1,10 +1,9 @@
 import openai
 import sys
 
-parameter = []
+parameter = ""
 
-for i in range(1, len(sys.argv)):
-    parameter.append(sys.argv[i])
+parameter = sys.argv[1]
 
 OPENAI_API_KEY = ""
 
