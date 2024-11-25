@@ -1,60 +1,8 @@
-import os
-from torch.utils.data import Dataset
-from sklearn.model_selection import train_test_split
 import numpy as np
-import torch
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
-
-class SeqDataset(Dataset):
-    def __init__(self, x, y, max_len):
-        self.x = x
-        self.y: torch.Tensor = y.type(torch.bfloat16)
-        self.max_len: int = max_len
-
-    def __len__(self):
-        return len(self.x)
-    
-    def __getitem__(self, idx):
-        padding_mask = torch.zeros((self.max_len), dtype=torch.bool)
-        _len = len(self.x[idx])
-        padding_mask[_len:] = True
-        return torch.cat((self.x[idx], torch.zeros((self.max_len - _len, self.x[idx].shape[1]), dtype=torch.bfloat16)), dim=0), padding_mask, self.y[idx]
-
-class DatasetLoader():
-    def __init__(self, max_len, X, y):
-        self.max_len = max_len
-        self.X = X
-        self.y = y
-        self.len = len(X)
-
-    def shuffle(self):
-        idx = np.random.permutation(self.len)
-        self.X = [self.X[i] for i in idx]
-        self.y = [self.y[i] for i in idx]
-
-    def __len__(self):
-        return self.len
-    
-    def __getitem__(self, idx):
-        _X = torch.load(self.X[idx], weights_only=False)
-        _y = torch.load(self.y[idx], weights_only=False)
-        return SeqDataset(_X, _y, self.max_len)
-
-def split_dataset(train_size=0.9, max_len=3584):
-    dataset_dir = "train/data/dataset"
-    prefix = "dataset_"
-    _len = len(os.listdir(dataset_dir)) // 2
-    X = []
-    y = []
-    for i in range(_len):
-        X.append(f'{dataset_dir}/{prefix}{i:02d}_X.pt')
-        y.append(f'{dataset_dir}/{prefix}{i:02d}_y.pt')
-    
-    X_train, X_val, y_train, y_val = train_test_split(X, y, train_size=train_size)
-    X_val, X_test, y_val, y_test = train_test_split(X_val, y_val, train_size=0.5)
-    return DatasetLoader(max_len, X_train, y_train), DatasetLoader(max_len, X_val, y_val), DatasetLoader(max_len, X_test, y_test)
-
+import os
+import sys
 
 class Metrics():
     def __init__(self):
@@ -115,22 +63,23 @@ class History():
             ax[i].legend()
 
         plt.savefig(path)
-        
 
-def printBar(i, total, prefix='\r', postfix=''):
+def print_bar(i, total, prefix='', postfix=''):
     c = '='
-    bar_length = 20
+    bar_length = 40
     progress = int(bar_length * i / total)
     bar = c * progress + '-' * (bar_length - progress)
-    print(f'{prefix:>11}[{bar}] {i:4d}/{total:4d} | {postfix}', end='')
+    print(f'{prefix:>12}[{bar}] {i:7d}/{total:7d} | {postfix}', end='')
 
-if __name__ == "__main__":
-    datasetLoader, _, _ = split_dataset()
-    lens = []
-    for d in datasetLoader:
-        lens += [len(x) for x in d.x]
-    
-    print(f"Max length: {max(lens)}")
-    print(f"Min length: {min(lens)}")
-    print(f"Mean length: {np.mean(lens)}")
-    print(f"Median length: {np.median(lens)}")
+def clear_print(cursur_up=0):
+    sys.stdout.write('\x1b[2K')
+    print('\r', end='')
+    for _ in range(cursur_up):
+        sys.stdout.write('\x1b[1A')
+        sys.stdout.write('\x1b[2K')
+        print('\r', end='')
+
+def get_eta(start, now, i, total):
+    elapsed = now - start
+    eta = elapsed / i * total
+    return eta, elapsed 
