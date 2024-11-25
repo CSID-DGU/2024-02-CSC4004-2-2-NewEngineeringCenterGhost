@@ -7,6 +7,7 @@ from konlpy.tag import Mecab
 import numpy as np
 from module.custom_model import Model
 from module.HGCtrlr import decomposeHangulText
+import kss
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 m = Mecab()
@@ -53,6 +54,10 @@ def get_sentence(tokens, ind):
     return tokens[begin+1:end]
 
 def predict(text):
+    if not text.startswith("CLS"):
+        text = [x.replace('\n', ' ').replace('  ', ' ').strip() for x in kss.split_sentences(text)]
+        text = "CLS " + " SEP ".join(text) + " SEP"
+    
     tokens = m.morphs(text)
     x = np.array([fasttext.wv[decomposeHangulText(word)] for word in tokens], dtype=np.float32)
     _len = len(x)
@@ -66,7 +71,7 @@ def predict(text):
             continue
         sentences.append(sentence)
     
-    sentences = set(sentences)
+    sentences = list(set(sentences))
 
     return torch.sigmoid(y).item(), sentences
 
