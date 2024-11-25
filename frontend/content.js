@@ -1,31 +1,49 @@
-// content.js
 function showProbability(event) {
-    const link = event.target;
-    const probability = Math.floor(Math.random() * 100); // 0-100 사이의 확률 생성
+  const element = event.target; // 마우스 오버된 대상 요소
+  const probability = Math.floor(Math.random() * 100); // 0-100 사이의 확률 생성
 
-    const tooltip = document.createElement('div');
-    tooltip.style.position = 'absolute';
-    tooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-    tooltip.style.color = 'white';
-    tooltip.style.padding = '5px';
-    tooltip.style.borderRadius = '5px';
-    tooltip.innerText = `거짓일 확률: ${probability}%`;
+  // 툴팁 생성
+  const tooltip = document.createElement('div');
+  tooltip.style.position = 'absolute';
+  tooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+  tooltip.style.color = 'white';
+  tooltip.style.padding = '5px';
+  tooltip.style.borderRadius = '5px';
+  tooltip.style.fontSize = '12px';
+  tooltip.style.zIndex = '10000';
+  tooltip.innerText = `낚시성 확률: ${probability}%`;
 
-    document.body.appendChild(tooltip);
+  document.body.appendChild(tooltip);
 
-    const rect = link.getBoundingClientRect();
-    tooltip.style.left = `${rect.left + window.scrollX}px`;
-    tooltip.style.top = `${rect.top + window.scrollY - tooltip.offsetHeight}px`;
+  // 툴팁 위치 설정
+  const rect = element.getBoundingClientRect();
+  tooltip.style.left = `${rect.left + window.scrollX}px`;
+  tooltip.style.top = `${rect.top + window.scrollY - tooltip.offsetHeight}px`;
 
-    link.addEventListener('mouseout', () => {
-        tooltip.remove();
-    }, { once: true });
+  // 마우스가 벗어나면 툴팁 제거
+  element.addEventListener('mouseout', () => {
+      tooltip.remove();
+  }, { once: true });
 }
 
-document.querySelectorAll('a').forEach(link => {
-    link.addEventListener('mouseover', showProbability);
+function addHoverEffect() {
+  // 모든 텍스트 관련 태그 선택 (필요한 태그 추가 가능)
+  const elements = document.querySelectorAll("p, span, div, a, h1, h2, h3, h4, h5, h6");
+
+  elements.forEach(element => {
+      element.addEventListener("mouseover", showProbability);
+  });
+}
+
+// DOM이 로드된 후, 기존 텍스트 요소에 이벤트 추가
+document.addEventListener("DOMContentLoaded", addHoverEffect);
+
+// 동적으로 추가된 콘텐츠에도 적용
+const observer = new MutationObserver(() => {
+  addHoverEffect();
 });
 
-document.querySelectorAll('p').forEach(link => {
-  link.addEventListener('mouseover', showProbability);
+observer.observe(document.body, {
+  childList: true,
+  subtree: true
 });
