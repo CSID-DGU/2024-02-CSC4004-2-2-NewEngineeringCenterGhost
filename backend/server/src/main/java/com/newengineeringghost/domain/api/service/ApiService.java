@@ -35,11 +35,6 @@ public class ApiService {
     public void setResponseDataRepository(ResponseDataRepository responseDataRepository) {this.responseDataRepository = responseDataRepository;}
 
     private static final Logger logger = LoggerFactory.getLogger(ApiService.class);
-    /*
-    log 사용 예시
-    logger.info("Html Content: {}", document);
-    logger.error("Html Content: {}", document);
-     */
 
     /*
     Todo: 빠른 측정
@@ -52,25 +47,30 @@ public class ApiService {
     response : 확률값
      */
     public String quickMeasurement(String url) throws IOException {
-        // Todo : 해당 url에서 text 추출
+        String title = webScrapingTitle(url);
+        String content = webScrapingContent(url);
 
-        // Todo : text를 매개변수로 하여 Python 파일에 전달 및 실행
+//        // Todo : text를 매개변수로 하여 Python 파일에 전달 및 실행
+//        WebContentsDto webContentsDto = new WebContentsDto(title, content);
 
         // Todo : 파일 경로 변경 - python 파일들을 resource/static 안에 넣고 동작하는지 확인하기
-        ProcessBuilder processBuilder = new ProcessBuilder("python3", "/Users/jaehwan/Desktop/JaeHwan/WorkSpace/python/test/helloworld.py", url);
+        ProcessBuilder processBuilder = new ProcessBuilder("python3", "/Users/jaehwan/Downloads/backend/module/model", content);
         Process process = processBuilder.start();
 
         // 실행 결과 가져오기
         InputStream inputStream = process.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
-        // Todo : 실행결과 출력에서 실행결과 저장으로 변경
+        // 실행결과 저장
+        StringBuilder resultBuilder = new StringBuilder();
         String line;
         while ((line = reader.readLine()) != null) {
-            System.out.println(line);
+            resultBuilder.append(line).append(System.lineSeparator());
         }
 
-        // Todo : python 파일 실행결과 중 probability만 return
+        logger.info("Result: {}", resultBuilder);
+        ResponseDataDto responseDataDto = new ResponseDataDto(url, resultBuilder.toString(), "", "", "");
+
 
 //        // 오류 메세지 출력
 //        InputStream errorStream = process.getErrorStream();
@@ -92,7 +92,7 @@ public class ApiService {
 //        int exitCode = process.exitValue();
 //        System.out.println(exitCode);
 
-        return "33.3%";
+        return responseDataDto.getProbability();
     }
 
     /*
@@ -111,13 +111,6 @@ public class ApiService {
         ProcessBuilder processBuilder = new ProcessBuilder("python3", "test.py", url);
         Process process = processBuilder.start();
 
-        /*
-        직접 경로 설정
-        ProcessBuilder("C:/python/python311/bin..", (생략))
-        경로 예시 - mac
-        /Users/jaehwan/Desktop/JaeHwan/WorkSpace/python/test/helloworld.py
-         */
-
         // 실행 결과 가져오기
         InputStream inputStream = process.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -132,26 +125,6 @@ public class ApiService {
         python 파일 실행결과 받아와서 Response data dto에 저장한 후,
         확률값이 50%를 넘냐 마냐에 따라 dto 값 중 전체 혹은 확률 값만 반환
          */
-
-//        // 오류 메세지 출력
-//        InputStream errorStream = process.getErrorStream();
-//        BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorStream));
-//
-//        String errorLine;
-//        while ((errorLine = errorReader.readLine()) != null) {
-//            System.out.println(errorLine);
-//        }
-//
-//        // 프로세스 종료 대기
-//        int waitCode = process.waitFor();
-//        System.out.println(waitCode);
-//
-//        // 프로세스 강제 종료
-//        process.destroy();
-//
-//        // 종료 코드 확인
-//        int exitCode = process.exitValue();
-//        System.out.println(exitCode);
 
         return "";
     }
@@ -172,13 +145,6 @@ public class ApiService {
         ProcessBuilder processBuilder = new ProcessBuilder("python3", "test.py", url);
         Process process = processBuilder.start();
 
-        /*
-        직접 경로 설정
-        ProcessBuilder("C:/python/python311/bin..", (생략))
-        경로 예시 - mac
-        /Users/jaehwan/Desktop/JaeHwan/WorkSpace/python/test/helloworld.py
-         */
-
         // 실행 결과 가져오기
         InputStream inputStream = process.getInputStream();
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -193,26 +159,6 @@ public class ApiService {
         python 파일 실행결과 받아와서 Response data dto에 저장한 후,
         확률값이 50%를 넘냐 마냐에 따라 dto 값 중 전체 혹은 확률 값만 반환
          */
-
-//        // 오류 메세지 출력
-//        InputStream errorStream = process.getErrorStream();
-//        BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorStream));
-//
-//        String errorLine;
-//        while ((errorLine = errorReader.readLine()) != null) {
-//            System.out.println(errorLine);
-//        }
-//
-//        // 프로세스 종료 대기
-//        int waitCode = process.waitFor();
-//        System.out.println(waitCode);
-//
-//        // 프로세스 강제 종료
-//        process.destroy();
-//
-//        // 종료 코드 확인
-//        int exitCode = process.exitValue();
-//        System.out.println(exitCode);
 
         return "";
     }
@@ -235,7 +181,65 @@ public class ApiService {
         return driver;
     }
 
-    // 웹 페이지에서 제목&본문 추출
+    // 웹 페이지에서 제목 추출
+    public String webScrapingTitle(String url) throws IOException {
+        WebDriver driver = getChromeDriver();
+        logger.info("Chrome Driver Info: {}", driver);
+
+        if (!ObjectUtils.isEmpty(driver)) {
+            driver.get(url);
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20)); // page 전체가 넘어올 때까지 대기(5초)
+            logger.info("Chrome Driver Info: {}", driver);
+
+            // 제목 추출
+            String title = driver.getTitle();
+            logger.info("WebPage Title: {}", title);
+
+            driver.quit();
+
+            return title;
+        } else {
+            return "No Element";
+        }
+    }
+
+    // 웹 페이지에서 본문 추출
+    public String webScrapingContent(String url) throws IOException {
+        WebDriver driver = getChromeDriver();
+        logger.info("Chrome Driver Info: {}", driver);
+
+        if (!ObjectUtils.isEmpty(driver)) {
+            driver.get(url);
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20)); // page 전체가 넘어올 때까지 대기(5초)
+            logger.info("Chrome Driver Info: {}", driver);
+
+            // 본문 내용 추출
+            String content;
+            try {
+                // 시도 1: <article> 요소 찾기
+                WebElement webElement2 = driver.findElement(By.tagName("article"));
+                content = webElement2.getText();
+                logger.info("WebPage Content from <article>: {}", content);
+            } catch (NoSuchElementException e) {
+                // 시도 2: <article> 요소가 없을 경우 모든 <span> 요소 찾기
+                List<WebElement> spanElements = driver.findElements(By.tagName("span"));
+                StringBuilder contentBuilder = new StringBuilder();
+                for (WebElement span : spanElements) {
+                    contentBuilder.append(span.getText()).append("\n");
+                }
+                content = contentBuilder.toString();
+                logger.info("WebPage Content from all <span>: {}", content);
+            }
+
+            driver.quit();
+
+            return content;
+        } else {
+            return "No Element";
+        }
+    }
+
+    // 웹 페이지에서 제목&본문 추출(테스트용)
     public WebContentsDto webScraping(String url) throws IOException {
         WebDriver driver = getChromeDriver();
         logger.info("Chrome Driver Info: {}", driver);
@@ -283,47 +287,6 @@ public class ApiService {
             return webContentsDto;
         }
     }
-
-
-//    // 웹 페이지에서 제목&본문 추출
-//    public WebContentsDto webScraping(String url) throws IOException {
-//        WebDriver driver = getChromeDriver();
-//        logger.info("Chrome Driver Info: {}", driver);
-//
-//        if (!ObjectUtils.isEmpty(driver)) {
-//            driver.get(url);
-//            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5)); // page 전체가 넘어올 때까지 대기(5초)
-//            logger.info("Chrome Driver Info: {}", driver);
-//
-////            // 제목 추출
-////            // 기사는 h2 / 블로그는 h1,h2,h3 중 하나
-////            WebElement webElement1 = driver.findElement(By.tagName("h2"));
-////            String title = webElement1.getText();
-//            String title = driver.getTitle();
-//            logger.info("WebPage Title: {}", title);
-//
-//            // 본문 내용 추출
-//            // 기사는 article / 블로그는 모든 span 긁어오기
-//            WebElement webElement2 = driver.findElement(By.tagName("article"));
-//            String content = webElement2.getText();
-//            logger.info("WebPage Content: {}", content);
-//
-//            WebContentsDto webContentsDto = new WebContentsDto(title, content);
-//            logger.info("webContentsDto: {}", webContentsDto);
-//
-//            driver.quit();
-//
-//            return webContentsDto;
-//        } else {
-//            String title = "no element";
-//            String content = "no element";
-//
-//            WebContentsDto webContentsDto = new WebContentsDto(title, content);
-//            logger.info("webContentsDto: {}", webContentsDto);
-//
-//            return webContentsDto;
-//        }
-//    }
 
     /*
     Todo : OCR 위한 이미지 다운로드 기능, 사용자 정의 측정에서 사용
