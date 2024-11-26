@@ -1,7 +1,6 @@
 package com.newengineeringghost.domain.api.service;
 
 import com.newengineeringghost.domain.api.dto.ResponseDataDto;
-import com.newengineeringghost.domain.api.dto.WebContentsDto;
 import com.newengineeringghost.domain.api.entity.ResponseData;
 import com.newengineeringghost.domain.api.repository.ResponseDataRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -37,15 +36,72 @@ public class ApiService {
     private static final Logger logger = LoggerFactory.getLogger(ApiService.class);
 
     /*
-    Todo: 빠른 측정
+    Todo : ServerApplication 실행 시에 자동으로 server.py 파일 실행되게 하는 코드 작성
 
-    기능)
-    사용자가 링크 위에 마우스를 올리면 서버로 해당 링크 전송
-    서버에서 링크의 정보를 분석한 후, 낚시성 정보 포함 확률을 위에 바로 표시
+    3가지 방법 중 하나 사용
+    CommandLineRunner
+    ApplicationRunner
+    @EventListener(ApplicationReadyEvent.class)
 
-    request : 측정할 페이지 링크
-    response : 확률값
+    ServerApplication 시작과 동시에 실행
+    ServerApplication 종료와 동시에 강제종료 -> 메모리 누수 막기 위함
+
+    아래 코드 활용
      */
+//    public double quickMeasurement(String url) throws IOException {
+//        String content = webScraping(url);
+//
+//        // Todo : 파일경로 ${Path} 등으로 변경
+//        ProcessBuilder processBuilder = new ProcessBuilder("python3", "/home/testuser/project/backend/server/src/main/resources/core/request.py", content);
+//        Process process = processBuilder.start();
+//        logger.info("Process: {}", process);
+//
+//        // 실행 결과 가져오기
+//        InputStream inputStream = process.getInputStream();
+//        logger.info("InputStream: {}", inputStream);
+//        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+//        logger.info("BufferedReader: {}", reader);
+//
+//        // 실행결과 저장
+//        StringBuilder resultBuilder = new StringBuilder();
+//        String line;
+//        while ((line = reader.readLine()) != null) {
+//            resultBuilder.append(line).append(System.lineSeparator());
+//        }
+//
+//        logger.info("Result: {}", resultBuilder);
+//
+//        String[] parts = resultBuilder.toString().split("[(),]");
+//
+//        String doubleString = parts[1].trim();
+//
+//        double probability = Double.parseDouble(doubleString);
+//        logger.info("Probability: {}", probability);
+//
+//        // 오류 메세지 출력
+//        InputStream errorStream = process.getErrorStream();
+//        BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorStream));
+//
+//        String errorLine;
+//        while ((errorLine = errorReader.readLine()) != null) {
+//            System.out.println(errorLine);
+//        }
+//
+//        // 프로세스 종료 대기
+//        int waitCode = process.waitFor();
+//        System.out.println(waitCode);
+//
+//        // 프로세스 강제 종료
+//        process.destroy();
+//
+//        // 종료 코드 확인
+//        int exitCode = process.exitValue();
+//        System.out.println(exitCode);
+//
+//        return probability;
+//    }
+
+    // 빠른 정렬
     public double quickMeasurement(String url) throws IOException {
         String content = webScraping(url);
 
@@ -76,26 +132,6 @@ public class ApiService {
         double probability = Double.parseDouble(doubleString);
         logger.info("Probability: {}", probability);
 
-//        // 오류 메세지 출력
-//        InputStream errorStream = process.getErrorStream();
-//        BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorStream));
-//
-//        String errorLine;
-//        while ((errorLine = errorReader.readLine()) != null) {
-//            System.out.println(errorLine);
-//        }
-//
-//        // 프로세스 종료 대기
-//        int waitCode = process.waitFor();
-//        System.out.println(waitCode);
-//
-//        // 프로세스 강제 종료
-//        process.destroy();
-//
-//        // 종료 코드 확인
-//        int exitCode = process.exitValue();
-//        System.out.println(exitCode);
-
         return probability;
     }
 
@@ -110,19 +146,42 @@ public class ApiService {
 
     request : 측정할 페이지 링크
     response : 확률값, (50%이상일 경우-> 해설, 문장 위치, 문장 길이까지)
+
+    반환형에 대한 고민)
+    String
+    WebContentsDto
+
+    mongodb에 값 저장
      */
-    public String precisionMeasurement(String url) throws IOException {
-        ProcessBuilder processBuilder = new ProcessBuilder("python3", "test.py", url);
+    public double precisionMeasurement(String url) throws IOException {
+        String content = webScraping(url);
+
+        // Todo : 파일경로 ${Path} 등으로 변경
+        ProcessBuilder processBuilder = new ProcessBuilder("python3", "/home/testuser/project/backend/server/src/main/resources/core/request.py", content);
         Process process = processBuilder.start();
+        logger.info("Process: {}", process);
 
         // 실행 결과 가져오기
         InputStream inputStream = process.getInputStream();
+        logger.info("InputStream: {}", inputStream);
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        logger.info("BufferedReader: {}", reader);
 
+        // 실행결과 저장
+        StringBuilder resultBuilder = new StringBuilder();
         String line;
         while ((line = reader.readLine()) != null) {
-            System.out.println(line);
+            resultBuilder.append(line).append(System.lineSeparator());
         }
+
+        logger.info("Result: {}", resultBuilder);
+
+        String[] parts = resultBuilder.toString().split("[(),]");
+
+        String doubleString = parts[1].trim();
+
+        double probability = Double.parseDouble(doubleString);
+        logger.info("Probability: {}", probability);
 
         /*
         Todo
@@ -130,7 +189,7 @@ public class ApiService {
         확률값이 50%를 넘냐 마냐에 따라 dto 값 중 전체 혹은 확률 값만 반환
          */
 
-        return "";
+        return probability;
     }
 
     /*
@@ -144,19 +203,42 @@ public class ApiService {
 
     request : 페이지 링크? / 혹은 해당 이미지나 텍스트?
     response : 확률값, (50%이상일 경우-> 해설, 문장 위치, 문장 길이까지)
+
+    반환형에 대한 고민)
+    String
+    WebContentsDto
+
+    mongodb에 값 저장
      */
-    public String customMeasurement(String url) throws IOException{
-        ProcessBuilder processBuilder = new ProcessBuilder("python3", "test.py", url);
+    public double customMeasurement(String url) throws IOException{
+        String content = webScraping(url);
+
+        // Todo : 파일경로 ${Path} 등으로 변경
+        ProcessBuilder processBuilder = new ProcessBuilder("python3", "/home/testuser/project/backend/server/src/main/resources/core/request.py", content);
         Process process = processBuilder.start();
+        logger.info("Process: {}", process);
 
         // 실행 결과 가져오기
         InputStream inputStream = process.getInputStream();
+        logger.info("InputStream: {}", inputStream);
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        logger.info("BufferedReader: {}", reader);
 
+        // 실행결과 저장
+        StringBuilder resultBuilder = new StringBuilder();
         String line;
         while ((line = reader.readLine()) != null) {
-            System.out.println(line);
+            resultBuilder.append(line).append(System.lineSeparator());
         }
+
+        logger.info("Result: {}", resultBuilder);
+
+        String[] parts = resultBuilder.toString().split("[(),]");
+
+        String doubleString = parts[1].trim();
+
+        double probability = Double.parseDouble(doubleString);
+        logger.info("Probability: {}", probability);
 
         /*
         Todo
@@ -164,7 +246,7 @@ public class ApiService {
         확률값이 50%를 넘냐 마냐에 따라 dto 값 중 전체 혹은 확률 값만 반환
          */
 
-        return "";
+        return probability;
     }
 
     // Selenium 사용을 위해 ChromeDriver 설정
@@ -290,14 +372,7 @@ public class ApiService {
         }
     }
 
-    /*
-    Todo : OCR 위한 이미지 다운로드 기능, 사용자 정의 측정에서 사용
-    image를 server단에 저장
-    이후에 이미지 파일을 python에 같이 넘기기?
-    이미지 파일을 다운받고, python에 텍스트와 함께 넘기면서 이미지 파일은 삭제
-
-    동적 웹 페이지와 정적 웹 페이지 구분
-     */
+    // Todo : OCR 위한 이미지 다운로드 기능, 사용자 정의 측정에서 사용
     // 웹 페이지에서 이미지 추출
     public List<String> webScrapingImage(String url) throws IOException {
         WebDriver driver = getChromeDriver();
