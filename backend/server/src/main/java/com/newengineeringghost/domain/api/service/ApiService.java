@@ -46,20 +46,19 @@ public class ApiService {
     request : 측정할 페이지 링크
     response : 확률값
      */
-    public String quickMeasurement(String url) throws IOException {
-        String title = webScrapingTitle(url);
-        String content = webScrapingContent(url);
+    public double quickMeasurement(String url) throws IOException {
+        String content = webScraping(url);
 
-//        // Todo : text를 매개변수로 하여 Python 파일에 전달 및 실행
-//        WebContentsDto webContentsDto = new WebContentsDto(title, content);
-
-        // Todo : 파일 경로 변경 - python 파일들을 resource/static 안에 넣고 동작하는지 확인하기
-        ProcessBuilder processBuilder = new ProcessBuilder("python", "/mnt/s/ProjectForFast/2024-02-CSC4004-2-2-NewEngineeringCenterGhost/backend/server/src/main/resources/core/request.py", content);
+        // Todo : 파일경로 ${Path} 등으로 변경
+        ProcessBuilder processBuilder = new ProcessBuilder("python3", "/home/testuser/project/backend/server/src/main/resources/core/request.py", content);
         Process process = processBuilder.start();
+        logger.info("Process: {}", process);
 
         // 실행 결과 가져오기
         InputStream inputStream = process.getInputStream();
+        logger.info("InputStream: {}", inputStream);
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        logger.info("BufferedReader: {}", reader);
 
         // 실행결과 저장
         StringBuilder resultBuilder = new StringBuilder();
@@ -69,8 +68,13 @@ public class ApiService {
         }
 
         logger.info("Result: {}", resultBuilder);
-        ResponseDataDto responseDataDto = new ResponseDataDto(url, resultBuilder.toString(), "", "", "");
 
+        String[] parts = resultBuilder.toString().split("[(),]");
+
+        String doubleString = parts[1].trim();
+
+        double probability = Double.parseDouble(doubleString);
+        logger.info("Probability: {}", probability);
 
 //        // 오류 메세지 출력
 //        InputStream errorStream = process.getErrorStream();
@@ -92,7 +96,7 @@ public class ApiService {
 //        int exitCode = process.exitValue();
 //        System.out.println(exitCode);
 
-        return responseDataDto.getProbability();
+        return probability;
     }
 
     /*
@@ -166,6 +170,7 @@ public class ApiService {
     // Selenium 사용을 위해 ChromeDriver 설정
     public WebDriver getChromeDriver() {
         logger.info("Chrome Driver Start!");
+        System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
 
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments("--remote-allow-origins=*");
@@ -188,7 +193,7 @@ public class ApiService {
 
         if (!ObjectUtils.isEmpty(driver)) {
             driver.get(url);
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20)); // page 전체가 넘어올 때까지 대기(5초)
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(100)); // page 전체가 넘어올 때까지 대기(5초)
             logger.info("Chrome Driver Info: {}", driver);
 
             // 제목 추출
@@ -210,7 +215,7 @@ public class ApiService {
 
         if (!ObjectUtils.isEmpty(driver)) {
             driver.get(url);
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20)); // page 전체가 넘어올 때까지 대기(5초)
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(100)); // page 전체가 넘어올 때까지 대기(5초)
             logger.info("Chrome Driver Info: {}", driver);
 
             // 본문 내용 추출
@@ -239,14 +244,14 @@ public class ApiService {
         }
     }
 
-    // 웹 페이지에서 제목&본문 추출(테스트용)
-    public WebContentsDto webScraping(String url) throws IOException {
+    // 웹 페이지에서 제목&본문 추출
+    public String webScraping(String url) throws IOException {
         WebDriver driver = getChromeDriver();
         logger.info("Chrome Driver Info: {}", driver);
 
         if (!ObjectUtils.isEmpty(driver)) {
             driver.get(url);
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20)); // page 전체가 넘어올 때까지 대기(5초)
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(100)); // page 전체가 넘어올 때까지 대기(5초)
             logger.info("Chrome Driver Info: {}", driver);
 
             // 제목 추출
@@ -271,20 +276,17 @@ public class ApiService {
                 logger.info("WebPage Content from all <span>: {}", content);
             }
 
-            WebContentsDto webContentsDto = new WebContentsDto(title, content);
-            logger.info("webContentsDto: {}", webContentsDto);
+            StringBuilder result = new StringBuilder();
+            result.append(title);
+            result.append(".");
+            result.append(content);
+            logger.info("WEB SCRAPING RESULT: {}", result);
 
             driver.quit();
 
-            return webContentsDto;
+            return result.toString();
         } else {
-            String title = "no element";
-            String content = "no element";
-
-            WebContentsDto webContentsDto = new WebContentsDto(title, content);
-            logger.info("webContentsDto: {}", webContentsDto);
-
-            return webContentsDto;
+            return "";
         }
     }
 

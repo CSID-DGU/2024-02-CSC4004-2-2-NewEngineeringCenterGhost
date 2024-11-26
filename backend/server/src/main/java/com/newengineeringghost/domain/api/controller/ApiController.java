@@ -19,7 +19,7 @@ public class ApiController {
 
     // 빠른 측정
     @PostMapping("/quick")
-    public String quickMeasurement(@RequestParam String url) throws IOException {
+    public double quickMeasurement(@RequestParam String url) throws IOException {
         return apiService.quickMeasurement(url);
     }
 
@@ -37,7 +37,7 @@ public class ApiController {
 
     // 웹 스크래핑 테스트
     @PostMapping("/test")
-    public WebContentsDto testMeasurement(@RequestParam String url) throws IOException {
+    public String testMeasurement(@RequestParam String url) throws IOException {
         return apiService.webScraping(url);
     }
 
