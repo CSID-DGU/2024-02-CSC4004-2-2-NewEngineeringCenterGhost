@@ -18,26 +18,16 @@ model.load_state_dict(torch.load(f"{bin_path}/model_best.pth", weights_only=True
 model.eval()
 model.set_return_att(True)
 
-def compute_attention_rollout(atts):
-    rt = atts[0].squeeze(0)
+def get_important_tokens(atts) -> list:
+    att = atts[-1].squeeze().cpu().detach().numpy()
+    att = att[0]
 
-    for i in range(1, len(atts)):
-        rt = rt @ atts[i].squeeze(0)
-        rt = rt / rt.max()
-    
-    rt = rt.mean(dim=0).view(1, -1)
+    # 상위 5% attention score를 가진 토큰 index를 반환
+    _mean = np.mean(att)
+    _std = np.std(att)
+    z_score = (att - _mean) / _std
+    rt = [i for i, z in enumerate(z_score) if z >= 1.96]
 
-    # plot
-    if False:
-        rt = torch.nn.functional.avg_pool1d(rt, 3, stride=1, padding=1)
-        import matplotlib.pyplot as plt
-        plt.figure(figsize=(10, 10))
-        plt.imshow(rt.cpu().detach().numpy(), cmap='hot', interpolation='nearest')
-        plt.show()
-
-    rt = (rt / rt.max() > .9).squeeze(0)
-
-    rt = rt.nonzero().squeeze(1).cpu().tolist()
     return rt
 
 def get_sentence(tokens, ind):
@@ -65,7 +55,7 @@ def predict(text):
     y, atts = model(torch.tensor(x, device=device).view(1, _len, 256), torch.tensor(padding_mask, device=device).view(1, -1))
 
     sentences = []
-    for ind in compute_attention_rollout(atts):
+    for ind in get_important_tokens(atts):
         sentence = "".join(get_sentence(tokens, ind))
         if len(sentence) == 0:
             continue
