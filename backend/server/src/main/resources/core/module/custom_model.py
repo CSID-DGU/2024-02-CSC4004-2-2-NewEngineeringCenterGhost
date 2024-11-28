@@ -37,7 +37,7 @@ class Model(nn.Module):
             nn.Linear(self.d_model, 1),
         )
     
-    def forward(self, x, padding_mask):
+    def forward(self, x, padding_mask=None):
         x = self.pos_encoder(x)
         x, _ats = self.encoder(x, src_key_padding_mask=padding_mask)
         x = x[:, 0]
