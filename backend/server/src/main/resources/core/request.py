@@ -1,6 +1,5 @@
 import socket
 import sys
-import os
 import time
 
 socket_path = "/tmp/sock"
