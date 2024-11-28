@@ -1,8 +1,8 @@
 function showProbability(event) {
   const element = event.target;
 
-  // 텍스트가 없는 요소는 무시
-  if (!element.textContent.trim()) {
+  // 텍스트 또는 이미지가 없는 요소는 무시
+  if (element.tagName !== "IMG" && !element.textContent.trim()) {
       return;
   }
 
@@ -33,8 +33,8 @@ function showProbability(event) {
 }
 
 function addHoverEffect() {
-  // 텍스트 관련 요소만 선택
-  const elements = document.querySelectorAll("p, span, div, h1, h2, h3, h4, h5, h6");
+  // 텍스트 및 이미지 관련 요소 선택
+  const elements = document.querySelectorAll("p, span, div, h1, h2, h3, h4, h5, h6, img");
 
   elements.forEach(element => {
       // 이미 이벤트가 추가된 요소인지 확인
