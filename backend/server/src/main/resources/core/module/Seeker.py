@@ -49,7 +49,7 @@ class Seeker():
         begin = 0
         end = 0
         for i in seps:
-            if i > ind:
+            if i >= ind:
                 end = i
                 break
             begin = i
@@ -60,7 +60,7 @@ class Seeker():
         if not text.startswith("CLS"):
             text = [x.replace('\n', ' ').replace('  ', ' ').strip() for x in kss.split_sentences(text)]
             text = "CLS " + " SEP ".join(text) + " SEP"
-            
+
         tokens = self.m.morphs(text)
         return tokens
     
