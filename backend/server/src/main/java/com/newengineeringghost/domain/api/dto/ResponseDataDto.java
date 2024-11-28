@@ -5,16 +5,16 @@ import lombok.Getter;
 @Getter
 public class ResponseDataDto {
     String link;
-    String probability;
-    String sentenceLength;
+    double probability;
     String sentencePosition;
+    String sentenceLength;
     String explanation;
 
-    public ResponseDataDto(String link, String probability, String sentenceLength, String sentencePosition, String explanation) {
+    public ResponseDataDto(String link, double probability, String sentencePosition, String sentenceLength, String explanation) {
         this.link = link;
         this.probability = probability;
-        this.sentenceLength = sentenceLength;
         this.sentencePosition = sentencePosition;
+        this.sentenceLength = sentenceLength;
         this.explanation = explanation;
     }
 }

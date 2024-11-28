@@ -12,14 +12,14 @@ public class ResponseData {
     @Id
     private String id;
     private String link;
-    private String probability;
+    private double probability;
     private String sentencePosition;
     private String sentenceLength;
     private String explanation;
 
     public ResponseData(
             String link,
-            String probability,
+            double probability,
             String sentencePosition,
             String sentenceLength,
             String explanation) {

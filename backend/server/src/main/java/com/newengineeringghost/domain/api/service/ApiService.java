@@ -1,8 +1,11 @@
 package com.newengineeringghost.domain.api.service;
 
+import com.newengineeringghost.domain.api.dto.ModelDataDto;
+import com.newengineeringghost.domain.api.dto.PrecisionMeasurementDto;
 import com.newengineeringghost.domain.api.dto.ResponseDataDto;
 import com.newengineeringghost.domain.api.entity.ResponseData;
 import com.newengineeringghost.domain.api.repository.ResponseDataRepository;
+import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -28,6 +31,8 @@ import java.util.List;
 @Service
 public class ApiService {
 
+    private Process pythonServerProcess;
+
     private ResponseDataRepository responseDataRepository;
 
     @Autowired
@@ -48,60 +53,26 @@ public class ApiService {
 
     아래 코드 활용
      */
-//    public double quickMeasurement(String url) throws IOException {
-//        String content = webScraping(url);
-//
+//    // SpringApplication 실행 시 자동으로 python server 실행
+//    public void startPythonServer(String argument) throws IOException {
 //        // Todo : 파일경로 ${Path} 등으로 변경
-//        ProcessBuilder processBuilder = new ProcessBuilder("python3", "/home/testuser/project/backend/server/src/main/resources/core/request.py", content);
-//        Process process = processBuilder.start();
-//        logger.info("Process: {}", process);
+//        ProcessBuilder processBuilder = new ProcessBuilder("python3", "/home/testuser/project/backend/server/src/main/resources/core/server.py", argument);
+//        pythonServerProcess = processBuilder.start();
+//        logger.info("Process: {}", pythonServerProcess);
+//    }
 //
-//        // 실행 결과 가져오기
-//        InputStream inputStream = process.getInputStream();
-//        logger.info("InputStream: {}", inputStream);
-//        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-//        logger.info("BufferedReader: {}", reader);
-//
-//        // 실행결과 저장
-//        StringBuilder resultBuilder = new StringBuilder();
-//        String line;
-//        while ((line = reader.readLine()) != null) {
-//            resultBuilder.append(line).append(System.lineSeparator());
+//    // SpringApplication 종료 시 자동으로 python server 종료 -> 메모리 누수 막기 위함
+//    @PreDestroy
+//    public void stopPythonServer() {
+//        if (pythonServerProcess != null && pythonServerProcess.isAlive()) {
+//            pythonServerProcess.destroy();
+//            logger.info("Python process with PID {} has been destroyed.", pythonServerProcess.pid());
+//        } else {
+//            logger.info("Python Server Process is Null!");
 //        }
-//
-//        logger.info("Result: {}", resultBuilder);
-//
-//        String[] parts = resultBuilder.toString().split("[(),]");
-//
-//        String doubleString = parts[1].trim();
-//
-//        double probability = Double.parseDouble(doubleString);
-//        logger.info("Probability: {}", probability);
-//
-//        // 오류 메세지 출력
-//        InputStream errorStream = process.getErrorStream();
-//        BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorStream));
-//
-//        String errorLine;
-//        while ((errorLine = errorReader.readLine()) != null) {
-//            System.out.println(errorLine);
-//        }
-//
-//        // 프로세스 종료 대기
-//        int waitCode = process.waitFor();
-//        System.out.println(waitCode);
-//
-//        // 프로세스 강제 종료
-//        process.destroy();
-//
-//        // 종료 코드 확인
-//        int exitCode = process.exitValue();
-//        System.out.println(exitCode);
-//
-//        return probability;
 //    }
 
-    // 빠른 정렬
+    // 빠른 측정
     public double quickMeasurement(String url) throws IOException {
         String content = webScraping(url);
 
@@ -135,25 +106,32 @@ public class ApiService {
         return probability;
     }
 
-    /*
-    Todo : 정밀 측정
+    // python 모델이 반환하는 값 분리하는 함수
+    private ModelDataDto parseResult(String result) {
+        // 문자열의 앞뒤 괄호 제거 및 공백 제거
+        String trimmedResult = result.substring(1, result.length() - 1).trim();
+        logger.info("trimmedResult: {}", trimmedResult);
 
-    기능)
-    사용자가 링크에 접속한 후, 우클릭하면 측정하기 버튼이 나타난다
-    측정하기 버튼을 누르면, 서버로 해당 페이지의 데이터를 전송한다
-    서버에서 받은 정볼르 바탕으로 페이지 상단에 낚시성 정보 확률을 표시한다
-    확률이 50% 이상일 경우, LLM을 통해 생성된 해설을 상단에 제공하고, 낚시성 정보로 판단된 텍스트나 이미지를 강조한다.
+        // 첫 번째 콤마(,) 위치 찾기
+        int firstCommaIndex = trimmedResult.indexOf(",");
+        logger.info("firstCommaIndex: {}", firstCommaIndex);
 
-    request : 측정할 페이지 링크
-    response : 확률값, (50%이상일 경우-> 해설, 문장 위치, 문장 길이까지)
+        // 실수형 확률 추출
+        double probability = Double.parseDouble(trimmedResult.substring(0, firstCommaIndex).trim());
+        logger.info("probability: {}", probability);
 
-    반환형에 대한 고민)
-    String
-    WebContentsDto
+        // 문자열 리스트 추출 (리스트는 대괄호로 둘러싸여 있음)
+        String messagesString = trimmedResult.substring(firstCommaIndex + 1).trim();
+        logger.info("messagesString: {}", messagesString);
+        messagesString = messagesString.substring(1, messagesString.length() - 1); // 대괄호 제거
+        logger.info("messagesString: {}", messagesString);
 
-    mongodb에 값 저장
-     */
-    public double precisionMeasurement(String url) throws IOException {
+        // DTO 생성 및 반환
+        return new ModelDataDto(probability, messagesString);
+    }
+
+    // 정밀 측정
+    public Object precisionMeasurement(String url) throws IOException {
         String content = webScraping(url);
 
         // Todo : 파일경로 ${Path} 등으로 변경
@@ -176,20 +154,46 @@ public class ApiService {
 
         logger.info("Result: {}", resultBuilder);
 
-        String[] parts = resultBuilder.toString().split("[(),]");
+        // 실행 결과 파싱
+        String result = resultBuilder.toString().trim();
+        ModelDataDto modelDataDto = parseResult(result);
 
-        String doubleString = parts[1].trim();
+        logger.info("Dto.probability: {}", modelDataDto.getProbability());
+        logger.info("Dto.sentence: {}", modelDataDto.getSentence());
 
-        double probability = Double.parseDouble(doubleString);
-        logger.info("Probability: {}", probability);
+        // 확률 값에 따라 반환
+        if (modelDataDto.getProbability() > 0.5) {
+            // Todo : mongodb 저장
+            return new PrecisionMeasurementDto(modelDataDto.getProbability(), modelDataDto.getSentence(), openAI(modelDataDto.getSentence()));
+        } else {
+            // Todo : mongodb 저장
+            return modelDataDto.getProbability();
+        }
+    }
 
-        /*
-        Todo
-        python 파일 실행결과 받아와서 Response data dto에 저장한 후,
-        확률값이 50%를 넘냐 마냐에 따라 dto 값 중 전체 혹은 확률 값만 반환
-         */
+    public String openAI(String sentence) throws IOException {
+        // Todo : 파일경로 ${Path} 등으로 변경
+        ProcessBuilder processBuilder = new ProcessBuilder("python3", "/home/testuser/project/backend/server/src/main/resources/openai/TestOpenAi.py", sentence);
+        Process process = processBuilder.start();
+        logger.info("Process: {}", process);
 
-        return probability;
+        // 실행 결과 가져오기
+        InputStream inputStream = process.getInputStream();
+        logger.info("InputStream: {}", inputStream);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        logger.info("BufferedReader: {}", reader);
+
+        // 실행결과 저장
+        StringBuilder resultBuilder = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            resultBuilder.append(line).append(System.lineSeparator());
+        }
+
+        logger.info("openAI resultBuilder: {}", resultBuilder);
+
+        // 실행 결과 파싱
+        return resultBuilder.toString().trim();
     }
 
     /*
@@ -210,7 +214,9 @@ public class ApiService {
 
     mongodb에 값 저장
      */
-    public double customMeasurement(String url) throws IOException{
+
+    // 사용자 정의 측정
+    public Object customMeasurement(String url) throws IOException{
         String content = webScraping(url);
 
         // Todo : 파일경로 ${Path} 등으로 변경
@@ -233,20 +239,21 @@ public class ApiService {
 
         logger.info("Result: {}", resultBuilder);
 
-        String[] parts = resultBuilder.toString().split("[(),]");
+        // 실행 결과 파싱
+        String result = resultBuilder.toString().trim();
+        ModelDataDto modelDataDto = parseResult(result);
 
-        String doubleString = parts[1].trim();
+        logger.info("Dto.probability: {}", modelDataDto.getProbability());
+        logger.info("Dto.sentence: {}", modelDataDto.getSentence());
 
-        double probability = Double.parseDouble(doubleString);
-        logger.info("Probability: {}", probability);
-
-        /*
-        Todo
-        python 파일 실행결과 받아와서 Response data dto에 저장한 후,
-        확률값이 50%를 넘냐 마냐에 따라 dto 값 중 전체 혹은 확률 값만 반환
-         */
-
-        return probability;
+        // 확률 값에 따라 반환
+        if (modelDataDto.getProbability() > 0.5) {
+            // Todo : mongodb 저장
+            return new PrecisionMeasurementDto(modelDataDto.getProbability(), modelDataDto.getSentence(), openAI(modelDataDto.getSentence()));
+        } else {
+            // Todo : mongodb 저장
+            return modelDataDto.getProbability();
+        }
     }
 
     // Selenium 사용을 위해 ChromeDriver 설정

@@ -1,7 +1,6 @@
 package com.newengineeringghost.domain.api.controller;
 
 import com.newengineeringghost.domain.api.dto.ResponseDataDto;
-import com.newengineeringghost.domain.api.dto.WebContentsDto;
 import com.newengineeringghost.domain.api.service.ApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,13 +24,13 @@ public class ApiController {
 
     // 정밀 측정
     @PostMapping("/precision")
-    public String precisionMeasurement(@RequestParam String url) throws IOException {
+    public Object precisionMeasurement(@RequestParam String url) throws IOException {
         return apiService.precisionMeasurement(url);
     }
 
     // 사용자 정의 측정
     @PostMapping("/custom")
-    public String customMeasurement(@RequestParam String url) throws IOException {
+    public Object customMeasurement(@RequestParam String url) throws IOException {
         return apiService.customMeasurement(url);
     }
 
