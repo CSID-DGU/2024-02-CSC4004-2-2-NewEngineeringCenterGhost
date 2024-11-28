@@ -1,7 +1,12 @@
 import socket
 import sys
+import os
+import time
 
 socket_path = "/tmp/sock"
+
+while not os.path.exists(socket_path):
+    time.sleep(1)
 
 client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 client.connect(socket_path)
