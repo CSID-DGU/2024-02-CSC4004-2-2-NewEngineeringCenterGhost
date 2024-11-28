@@ -1,9 +1,8 @@
 function showProbability(event) {
   const element = event.target;
 
-  // 텍스트가 없는 요소는 무시
-  if (!element.textContent.trim()) {
-      console.log("빈 요소에 툴팁 표시 방지");
+  // 텍스트 또는 이미지가 없는 요소는 무시
+  if (element.tagName !== "IMG" && !element.textContent.trim()) {
       return;
   }
 
@@ -34,32 +33,29 @@ function showProbability(event) {
 }
 
 function addHoverEffect() {
-  // 텍스트 관련 요소만 선택
-  const elements = document.querySelectorAll("p, span, div, h1, h2, h3, h4, h5, h6");
-
-  if (elements.length === 0) {
-      console.log("선택된 요소가 없습니다. 페이지 구조를 확인하세요.");
-      return;
-  }
-
-  console.log(`총 ${elements.length}개의 요소에 마우스 오버 이벤트 추가.`);
+  // 텍스트 및 이미지 관련 요소 선택
+  const elements = document.querySelectorAll("p, span, div, h1, h2, h3, h4, h5, h6, img");
 
   elements.forEach(element => {
-      // 중복 이벤트 방지를 위해 기존 이벤트 제거
-      element.removeEventListener("mouseover", showProbability);
+      // 이미 이벤트가 추가된 요소인지 확인
+      if (element.hasAttribute("data-hover-added")) {
+          return;
+      }
 
       // 마우스 오버 이벤트 추가
       element.addEventListener("mouseover", showProbability);
+
+      // 이벤트가 추가된 요소로 표시
+      element.setAttribute("data-hover-added", "true");
   });
 }
 
-// DOM 로드 시 기존 요소에 이벤트 추가
+// DOM 로드 시 실행
 document.addEventListener("DOMContentLoaded", addHoverEffect);
 
-// 동적으로 추가된 콘텐츠에도 이벤트 추가
+// 동적으로 추가된 콘텐츠에도 적용
 const observer = new MutationObserver(() => {
-  console.log("새로운 콘텐츠가 감지되었습니다. 이벤트를 추가합니다.");
-  addHoverEffect();
+  addHoverEffect(); // 새로 추가된 요소에도 이벤트 추가
 });
 
 observer.observe(document.body, {
