@@ -19,14 +19,24 @@ model.eval()
 model.set_return_att(True)
 
 def get_important_tokens(atts) -> list:
-    att = atts[-1].squeeze().cpu().detach().numpy()
-    att = att[0]
+    seq_len = atts[0].shape[-1]
+    rollout = torch.eye(seq_len, device=device)
+
+    for att in atts:
+        att = att.view(seq_len, -1) + torch.eye(seq_len, device=device)
+        att = att / att.sum(dim=-1, keepdim=True)
+        rollout = torch.matmul(rollout, att)
+    
+    last_token = rollout[0].cpu().detach().numpy()
 
     # 상위 5% attention score를 가진 토큰 index를 반환
-    _mean = np.mean(att)
-    _std = np.std(att)
-    z_score = (att - _mean) / _std
+    _mean = np.mean(last_token)
+    _std = np.std(last_token)
+    z_score = (last_token - _mean) / _std
     rt = [i for i, z in enumerate(z_score) if z >= 1.96]
+
+    if len(rt) == 0:
+        rt = [np.argmax(last_token)]
 
     return rt
 
