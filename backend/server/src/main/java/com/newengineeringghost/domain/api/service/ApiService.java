@@ -12,9 +12,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -35,22 +34,22 @@ public class ApiService {
     @Autowired
     public void setResponseDataRepository(ResponseDataRepository responseDataRepository) {this.responseDataRepository = responseDataRepository;}
 
-    private static final Logger logger = LoggerFactory.getLogger(ApiService.class);
+    @Value("${python.script.path.request}")
+    private String requestScriptPath;
 
     // 빠른 측정
     public double quickMeasurement(String url) throws IOException {
         String content = webScraping(url);
 
-        // Todo : 파일경로 ${Path} 등으로 변경
-        ProcessBuilder processBuilder = new ProcessBuilder("python3", "/home/testuser/project/backend/server/src/main/resources/core/request.py", content);
+        ProcessBuilder processBuilder = new ProcessBuilder("python3", requestScriptPath, content);
         Process process = processBuilder.start();
-        logger.info("Process: {}", process);
+        log.info("Process: {}", process);
 
         // 실행 결과 가져오기
         InputStream inputStream = process.getInputStream();
-        logger.info("InputStream: {}", inputStream);
+        log.info("InputStream: {}", inputStream);
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        logger.info("BufferedReader: {}", reader);
+        log.info("BufferedReader: {}", reader);
 
         // 실행결과 저장
         StringBuilder resultBuilder = new StringBuilder();
@@ -59,14 +58,14 @@ public class ApiService {
             resultBuilder.append(line).append(System.lineSeparator());
         }
 
-        logger.info("Result: {}", resultBuilder);
+        log.info("Result: {}", resultBuilder);
 
         String[] parts = resultBuilder.toString().split("[(),]");
 
         String doubleString = parts[1].trim();
 
         double probability = Double.parseDouble(doubleString);
-        logger.info("Probability: {}", probability);
+        log.info("Probability: {}", probability);
 
         return probability;
     }
@@ -75,21 +74,21 @@ public class ApiService {
     private ModelDataDto parseResult(String result) {
         // 문자열의 앞뒤 괄호 제거 및 공백 제거
         String trimmedResult = result.substring(1, result.length() - 1).trim();
-        logger.info("trimmedResult: {}", trimmedResult);
+        log.info("trimmedResult: {}", trimmedResult);
 
         // 첫 번째 콤마(,) 위치 찾기
         int firstCommaIndex = trimmedResult.indexOf(",");
-        logger.info("firstCommaIndex: {}", firstCommaIndex);
+        log.info("firstCommaIndex: {}", firstCommaIndex);
 
         // 실수형 확률 추출
         double probability = Double.parseDouble(trimmedResult.substring(0, firstCommaIndex).trim());
-        logger.info("probability: {}", probability);
+        log.info("probability: {}", probability);
 
         // 문자열 리스트 추출 (리스트는 대괄호로 둘러싸여 있음)
         String messagesString = trimmedResult.substring(firstCommaIndex + 1).trim();
-        logger.info("messagesString: {}", messagesString);
+        log.info("messagesString: {}", messagesString);
         messagesString = messagesString.substring(1, messagesString.length() - 1); // 대괄호 제거
-        logger.info("messagesString: {}", messagesString);
+        log.info("messagesString: {}", messagesString);
 
         // DTO 생성 및 반환
         return new ModelDataDto(probability, messagesString);
@@ -99,16 +98,15 @@ public class ApiService {
     public Object precisionMeasurement(String url) throws IOException {
         String content = webScraping(url);
 
-        // Todo : 파일경로 ${Path} 등으로 변경
-        ProcessBuilder processBuilder = new ProcessBuilder("python3", "/home/testuser/project/backend/server/src/main/resources/core/request.py", content);
+        ProcessBuilder processBuilder = new ProcessBuilder("python3", requestScriptPath, content);
         Process process = processBuilder.start();
-        logger.info("Process: {}", process);
+        log.info("Process: {}", process);
 
         // 실행 결과 가져오기
         InputStream inputStream = process.getInputStream();
-        logger.info("InputStream: {}", inputStream);
+        log.info("InputStream: {}", inputStream);
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        logger.info("BufferedReader: {}", reader);
+        log.info("BufferedReader: {}", reader);
 
         // 실행결과 저장
         StringBuilder resultBuilder = new StringBuilder();
@@ -117,14 +115,14 @@ public class ApiService {
             resultBuilder.append(line).append(System.lineSeparator());
         }
 
-        logger.info("Result: {}", resultBuilder);
+        log.info("Result: {}", resultBuilder);
 
         // 실행 결과 파싱
         String result = resultBuilder.toString().trim();
         ModelDataDto modelDataDto = parseResult(result);
 
-        logger.info("Dto.probability: {}", modelDataDto.getProbability());
-        logger.info("Dto.sentence: {}", modelDataDto.getSentence());
+        log.info("Dto.probability: {}", modelDataDto.getProbability());
+        log.info("Dto.sentence: {}", modelDataDto.getSentence());
 
         // 확률 값에 따라 반환
         if (modelDataDto.getProbability() > 0.5) {
@@ -136,17 +134,17 @@ public class ApiService {
         }
     }
 
+    // openAI API Key를 사용하여 해설을 생성하는 python 파일을 실행하는 함수
     public String openAI(String sentence) throws IOException {
-        // Todo : 파일경로 ${Path} 등으로 변경
-        ProcessBuilder processBuilder = new ProcessBuilder("python3", "/home/testuser/project/backend/server/src/main/resources/openai/TestOpenAi.py", sentence);
+        ProcessBuilder processBuilder = new ProcessBuilder("python3", requestScriptPath, sentence);
         Process process = processBuilder.start();
-        logger.info("Process: {}", process);
+        log.info("Process: {}", process);
 
         // 실행 결과 가져오기
         InputStream inputStream = process.getInputStream();
-        logger.info("InputStream: {}", inputStream);
+        log.info("InputStream: {}", inputStream);
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        logger.info("BufferedReader: {}", reader);
+        log.info("BufferedReader: {}", reader);
 
         // 실행결과 저장
         StringBuilder resultBuilder = new StringBuilder();
@@ -155,7 +153,7 @@ public class ApiService {
             resultBuilder.append(line).append(System.lineSeparator());
         }
 
-        logger.info("openAI resultBuilder: {}", resultBuilder);
+        log.info("openAI resultBuilder: {}", resultBuilder);
 
         // 실행 결과 파싱
         return resultBuilder.toString().trim();
@@ -184,16 +182,15 @@ public class ApiService {
     public Object customMeasurement(String url) throws IOException{
         String content = webScraping(url);
 
-        // Todo : 파일경로 ${Path} 등으로 변경
-        ProcessBuilder processBuilder = new ProcessBuilder("python3", "/home/testuser/project/backend/server/src/main/resources/core/request.py", content);
+        ProcessBuilder processBuilder = new ProcessBuilder("python3", requestScriptPath, content);
         Process process = processBuilder.start();
-        logger.info("Process: {}", process);
+        log.info("Process: {}", process);
 
         // 실행 결과 가져오기
         InputStream inputStream = process.getInputStream();
-        logger.info("InputStream: {}", inputStream);
+        log.info("InputStream: {}", inputStream);
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        logger.info("BufferedReader: {}", reader);
+        log.info("BufferedReader: {}", reader);
 
         // 실행결과 저장
         StringBuilder resultBuilder = new StringBuilder();
@@ -202,14 +199,14 @@ public class ApiService {
             resultBuilder.append(line).append(System.lineSeparator());
         }
 
-        logger.info("Result: {}", resultBuilder);
+        log.info("Result: {}", resultBuilder);
 
         // 실행 결과 파싱
         String result = resultBuilder.toString().trim();
         ModelDataDto modelDataDto = parseResult(result);
 
-        logger.info("Dto.probability: {}", modelDataDto.getProbability());
-        logger.info("Dto.sentence: {}", modelDataDto.getSentence());
+        log.info("Dto.probability: {}", modelDataDto.getProbability());
+        log.info("Dto.sentence: {}", modelDataDto.getSentence());
 
         // 확률 값에 따라 반환
         if (modelDataDto.getProbability() > 0.5) {
@@ -223,7 +220,7 @@ public class ApiService {
 
     // Selenium 사용을 위해 ChromeDriver 설정
     public WebDriver getChromeDriver() {
-        logger.info("Chrome Driver Start!");
+        log.info("Chrome Driver Start!");
         System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
 
         ChromeOptions chromeOptions = new ChromeOptions();
@@ -240,77 +237,19 @@ public class ApiService {
         return driver;
     }
 
-    // 웹 페이지에서 제목 추출
-    public String webScrapingTitle(String url) throws IOException {
-        WebDriver driver = getChromeDriver();
-        logger.info("Chrome Driver Info: {}", driver);
-
-        if (!ObjectUtils.isEmpty(driver)) {
-            driver.get(url);
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(100)); // page 전체가 넘어올 때까지 대기(5초)
-            logger.info("Chrome Driver Info: {}", driver);
-
-            // 제목 추출
-            String title = driver.getTitle();
-            logger.info("WebPage Title: {}", title);
-
-            driver.quit();
-
-            return title;
-        } else {
-            return "No Element";
-        }
-    }
-
-    // 웹 페이지에서 본문 추출
-    public String webScrapingContent(String url) throws IOException {
-        WebDriver driver = getChromeDriver();
-        logger.info("Chrome Driver Info: {}", driver);
-
-        if (!ObjectUtils.isEmpty(driver)) {
-            driver.get(url);
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(100)); // page 전체가 넘어올 때까지 대기(5초)
-            logger.info("Chrome Driver Info: {}", driver);
-
-            // 본문 내용 추출
-            String content;
-            try {
-                // 시도 1: <article> 요소 찾기
-                WebElement webElement2 = driver.findElement(By.tagName("article"));
-                content = webElement2.getText();
-                logger.info("WebPage Content from <article>: {}", content);
-            } catch (NoSuchElementException e) {
-                // 시도 2: <article> 요소가 없을 경우 모든 <span> 요소 찾기
-                List<WebElement> spanElements = driver.findElements(By.tagName("span"));
-                StringBuilder contentBuilder = new StringBuilder();
-                for (WebElement span : spanElements) {
-                    contentBuilder.append(span.getText()).append("\n");
-                }
-                content = contentBuilder.toString();
-                logger.info("WebPage Content from all <span>: {}", content);
-            }
-
-            driver.quit();
-
-            return content;
-        } else {
-            return "No Element";
-        }
-    }
-
     // 웹 페이지에서 제목&본문 추출
     public String webScraping(String url) throws IOException {
         WebDriver driver = getChromeDriver();
-        logger.info("Chrome Driver Info: {}", driver);
+        log.info("Chrome Driver Info: {}", driver);
 
         if (!ObjectUtils.isEmpty(driver)) {
             driver.get(url);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(100)); // page 전체가 넘어올 때까지 대기(5초)
-            logger.info("Chrome Driver Info: {}", driver);
+            log.info("Chrome Driver Info: {}", driver);
 
             // 제목 추출
             String title = driver.getTitle();
-            logger.info("WebPage Title: {}", title);
+            log.info("WebPage Title: {}", title);
 
             // 본문 내용 추출
             String content;
@@ -318,7 +257,7 @@ public class ApiService {
                 // 시도 1: <article> 요소 찾기
                 WebElement webElement2 = driver.findElement(By.tagName("article"));
                 content = webElement2.getText();
-                logger.info("WebPage Content from <article>: {}", content);
+                log.info("WebPage Content from <article>: {}", content);
             } catch (NoSuchElementException e) {
                 // 시도 2: <article> 요소가 없을 경우 모든 <span> 요소 찾기
                 List<WebElement> spanElements = driver.findElements(By.tagName("span"));
@@ -327,14 +266,14 @@ public class ApiService {
                     contentBuilder.append(span.getText()).append("\n");
                 }
                 content = contentBuilder.toString();
-                logger.info("WebPage Content from all <span>: {}", content);
+                log.info("WebPage Content from all <span>: {}", content);
             }
 
             StringBuilder result = new StringBuilder();
             result.append(title);
             result.append(".");
             result.append(content);
-            logger.info("WEB SCRAPING RESULT: {}", result);
+            log.info("WEB SCRAPING RESULT: {}", result);
 
             driver.quit();
 
@@ -348,12 +287,12 @@ public class ApiService {
     // 웹 페이지에서 이미지 추출
     public List<String> webScrapingImage(String url) throws IOException {
         WebDriver driver = getChromeDriver();
-        logger.info("Chrome Driver Info: {}", driver);
+        log.info("Chrome Driver Info: {}", driver);
 
         if (!ObjectUtils.isEmpty(driver)) {
             driver.get(url);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(100)); // page 전체가 넘어올 때까지 대기(5초)
-            logger.info("Chrome Driver Info: {}", driver);
+            log.info("Chrome Driver Info: {}", driver);
 
             // 이미지 추출
             WebElement articleElement = driver.findElement(By.tagName("article"));
@@ -364,7 +303,7 @@ public class ApiService {
             for (WebElement imageElement : imageElements) {
                 String img = imageElement.getAttribute("src");
                 imgSrcs.add(img);
-                logger.info("Image: {}", img);
+                log.info("Image: {}", img);
             }
 
             driver.quit();
@@ -375,7 +314,7 @@ public class ApiService {
             List<String> imgSrcs = new ArrayList<>();
             String img = "no element";
             imgSrcs.add(img);
-            logger.info("Image: {}", imgSrcs);
+            log.info("Image: {}", imgSrcs);
 
             return imgSrcs;
         }

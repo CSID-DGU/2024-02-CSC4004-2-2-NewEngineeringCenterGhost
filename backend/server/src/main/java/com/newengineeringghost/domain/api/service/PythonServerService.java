@@ -2,6 +2,7 @@ package com.newengineeringghost.domain.api.service;
 
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -12,6 +13,9 @@ public class PythonServerService {
 
     private Process pythonServerProcess;
 
+    @Value("${python.script.path.server}")
+    private String serverScriptPath;
+
     public PythonServerService() {
         log.info("Python Server Started.");
     }
@@ -19,7 +23,7 @@ public class PythonServerService {
     // SpringApplication 실행 시 자동으로 python server 실행
     public void startPythonServer(String argument) throws IOException {
         // Todo : 파일경로 ${Path} 등으로 변경
-        ProcessBuilder processBuilder = new ProcessBuilder("python3", "/home/testuser/project/backend/server/src/main/resources/core/server.py", argument);
+        ProcessBuilder processBuilder = new ProcessBuilder("python3", serverScriptPath, argument);
         pythonServerProcess = processBuilder.start();
         log.info("Process: {}", pythonServerProcess);
     }
