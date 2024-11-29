@@ -1,35 +1,86 @@
+// function showProbability(event) {
+//   const element = event.target;
+//
+//   // 텍스트 또는 이미지가 없는 요소는 무시
+//   if (element.tagName !== "IMG" && !element.textContent.trim()) {
+//       return;
+//   }
+//
+//   const probability = Math.floor(Math.random() * 100); // 0-100 사이의 확률 생성
+//
+//   // 툴팁 생성
+//   const tooltip = document.createElement('div');
+//   tooltip.style.position = 'absolute';
+//   tooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+//   tooltip.style.color = 'white';
+//   tooltip.style.padding = '5px';
+//   tooltip.style.borderRadius = '5px';
+//   tooltip.style.fontSize = '12px';
+//   tooltip.style.zIndex = '10000';
+//   tooltip.innerText = `낚시성 확률: ${probability}%`;
+//
+//   document.body.appendChild(tooltip);
+//
+//   // 툴팁 위치 설정
+//   const rect = element.getBoundingClientRect();
+//   tooltip.style.left = `${rect.left + window.scrollX}px`;
+//   tooltip.style.top = `${rect.top + window.scrollY - tooltip.offsetHeight}px`;
+//
+//   // 마우스가 벗어나면 툴팁 제거
+//   element.addEventListener('mouseout', () => {
+//       tooltip.remove();
+//   }, { once: true });
+// }
+
 function showProbability(event) {
-  const element = event.target;
+    const element = event.target;
 
-  // 텍스트 또는 이미지가 없는 요소는 무시
-  if (element.tagName !== "IMG" && !element.textContent.trim()) {
-      return;
-  }
+    // 텍스트 또는 이미지가 없는 요소는 무시
+    if (element.tagName !== "IMG" && !element.textContent.trim()) {
+        return;
+    }
 
-  const probability = Math.floor(Math.random() * 100); // 0-100 사이의 확률 생성
+    // POST 요청 전송
+    const url = 'http://localhost:8080/api/v1/server/quick';
+    const data = { url: element.src || element.href || window.location.href };
 
-  // 툴팁 생성
-  const tooltip = document.createElement('div');
-  tooltip.style.position = 'absolute';
-  tooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-  tooltip.style.color = 'white';
-  tooltip.style.padding = '5px';
-  tooltip.style.borderRadius = '5px';
-  tooltip.style.fontSize = '12px';
-  tooltip.style.zIndex = '10000';
-  tooltip.innerText = `낚시성 확률: ${probability}%`;
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+        .then(response => response.json())
+        .then(data => {
+            const probability = data.probability; // 서버로부터 받은 확률 값 사용
 
-  document.body.appendChild(tooltip);
+            // 툴팁 생성
+            const tooltip = document.createElement('div');
+            tooltip.style.position = 'absolute';
+            tooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+            tooltip.style.color = 'white';
+            tooltip.style.padding = '5px';
+            tooltip.style.borderRadius = '5px';
+            tooltip.style.fontSize = '12px';
+            tooltip.style.zIndex = '10000';
+            tooltip.innerText = `낚시성 확률: ${probability}%`;
 
-  // 툴팁 위치 설정
-  const rect = element.getBoundingClientRect();
-  tooltip.style.left = `${rect.left + window.scrollX}px`;
-  tooltip.style.top = `${rect.top + window.scrollY - tooltip.offsetHeight}px`;
+            document.body.appendChild(tooltip);
 
-  // 마우스가 벗어나면 툴팁 제거
-  element.addEventListener('mouseout', () => {
-      tooltip.remove();
-  }, { once: true });
+            // 툴팁 위치 설정
+            const rect = element.getBoundingClientRect();
+            tooltip.style.left = `${rect.left + window.scrollX}px`;
+            tooltip.style.top = `${rect.top + window.scrollY - tooltip.offsetHeight}px`;
+
+            // 마우스가 벗어나면 툴팁 제거
+            element.addEventListener('mouseout', () => {
+                tooltip.remove();
+            }, { once: true });
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
 }
 
 function addHoverEffect() {
