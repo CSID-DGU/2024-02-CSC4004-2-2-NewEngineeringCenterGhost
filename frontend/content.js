@@ -24,37 +24,67 @@ async function fetchPOSTExample(url, data) {
 사용자 정의 측정 : http://localhost:8080/api/v1/server/custom
  */
 
-async function showProbability(event) {
+const prob_dict = {}
+const prob_queue = []
+const tooltip = document.createElement('div')
+
+async function getProbability(element) {
+  const url = element.href;
+  if (!(url in prob_dict)) {
+    const recv = await fetchPOSTExample("http://localhost:8080/api/v1/server/quick", { url: url });
+    console.log(recv.status)
+    if (recv.status) return;
+    const probability = parseInt(recv * 100);
+    prob_dict[url] = "낚시성 확률: " + probability + "%"
+  }
+  if (tooltip._url === url) tooltip.innerText = prob_dict[url];
+}
+
+async function queueProbability(element) {
+  if (element in prob_dict) return;
+  prob_queue.push(element);
+  if (prob_queue.length > 1) return;
+  while (prob_queue.length > 0) {
+    await getProbability(prob_queue.at(-1));
+    prob_queue.pop();
+  }
+}
+
+function showProbability(event) {
   const element = event.target;
 
-  // 툴팁 생성
-  const tooltip = document.createElement('div');
-  tooltip.style.position = 'absolute';
-  tooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
-  tooltip.style.color = 'white';
-  tooltip.style.padding = '5px';
-  tooltip.style.borderRadius = '5px';
-  tooltip.style.fontSize = '12px';
-  tooltip.style.zIndex = '10000';
-  tooltip.innerText = `측정 중...`;
+  tooltip.style.display = 'block';
+  if (!document.body.contains(tooltip)) {
+    // 툴팁 생성
+    tooltip.style.position = 'absolute';
+    tooltip.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+    tooltip.style.color = 'white';
+    tooltip.style.padding = '5px';
+    tooltip.style.borderRadius = '5px';
+    tooltip.style.fontSize = '12px';
+    tooltip.style.zIndex = '10000';
 
-  document.body.appendChild(tooltip);
+    document.body.appendChild(tooltip);
+  }
+  tooltip.innerText = `측정 중...`;
+  tooltip._url = element.href;
+
+  if (element.href in prob_dict) {
+    tooltip.innerText = prob_dict[element.href]
+  }
+  else {
+    setTimeout(queueProbability(element), 1);
+  }
 
   // 툴팁 위치 설정
   const rect = element.getBoundingClientRect();
   tooltip.style.left = `${rect.left + window.scrollX}px`;
   tooltip.style.top = `${rect.top + window.scrollY - tooltip.offsetHeight}px`;
 
-  const url = element.href;
-  const recv = await fetchPOSTExample("http://localhost:8080/api/v1/server/quick", { url: url });  
-
-  const probability = parseInt(recv * 100);
-  tooltip.innerText = `낚시성 확률: ${probability}%`;
-
   // 마우스가 벗어나면 툴팁 제거
   element.addEventListener('mouseout', () => {
-      tooltip.remove();
-  }, { once: true });
+    tooltip.style.display = 'none';
+  });
 }
 
 
