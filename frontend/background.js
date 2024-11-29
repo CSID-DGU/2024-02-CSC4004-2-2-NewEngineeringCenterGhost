@@ -1,14 +1,14 @@
 chrome.runtime.onInstalled.addListener(() => {
   // "측정하기" 메뉴: 모든 페이지와 이미지에서 항상 표시
   chrome.contextMenus.create({
-    id: "precisionMeasure",
+    id: "predictCustomMeasure",
     title: "측정하기",
     contexts: ["page", "selection", "image"]
   });
 
   // "측정 정보 추가" 메뉴: 텍스트 선택 및 이미지 우클릭 시 표시
   chrome.contextMenus.create({
-    id: "customMeasure",
+    id: "addCustomMeasure",
     title: "측정 정보 추가",
     contexts: ["selection", "image"] // "image" 컨텍스트 추가
   });
@@ -16,32 +16,30 @@ chrome.runtime.onInstalled.addListener(() => {
 
 // 컨텍스트 메뉴 클릭 이벤트 처리
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId === "precisionMeasure") {
+  if (info.menuItemId === "predictCustomMeasure") {
     // "측정하기" 선택 시 로직 실행
-    chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      function: startPrecisionMeasurement,
-      args: [info]
-    });
-  } else if (info.menuItemId === "customMeasure") {
+    chrome.tabs.sendMessage(tab.id, { action: "predictCustomMeasure"});
+  } else if (info.menuItemId === "addCustomMeasure") {
     // "측정 정보 추가" 선택 시 데이터 저장
-    chrome.storage.local.get({ customData: [] }, (result) => {
-      const customData = result.customData;
-      const newData = info.selectionText || info.srcUrl; // 선택된 텍스트 또는 이미지 URL 저장
-
-      if (newData) {
-        customData.push(newData);
-        chrome.storage.local.set({ customData }, () => {
-          alert("측정 정보가 저장되었습니다.");
-        });
-      }
-    });
+    chrome.tabs.sendMessage(tab.id, { action: "addData", data: info });
   }
 });
 
+function addData(info) {
+  chrome.storage.local.get({ measure_data: [] }, (result) => {
+    const measureData = result.measure_data;
+    const dataType = (info.selectionText) ? 0 : 1;
+    const newData = info.selectionText || info.srcUrl;
+    measureData.push({ type: dataType, data: newData });
+    chrome.storage.local.set({ measure_data: measureData }, () => {
+      console.log("Data:", measureData);
+    });
+  });
+}
+
+
 function startPrecisionMeasurement(info) {
   const data = info.selectionText || info.srcUrl || document.URL;
-  alert(`분석을 시작합니다: ${data}`);
 
   // 임의의 확률 생성 및 해설
   const probability = Math.floor(Math.random() * 100);
@@ -71,27 +69,16 @@ function startPrecisionMeasurement(info) {
           // 선택된 텍스트 강조 처리
           const selection = info.selectionText;
           const regex = new RegExp(selection, "g");
-          const originalHTML = document.body.innerHTML;
-
           document.body.innerHTML = document.body.innerHTML.replace(
               regex,
               `<span style="background-color: rgba(255, 0, 0, 0.4); font-weight: bold;">${selection}</span>`
           );
-
-          // 3초 후 강조 제거
-          setTimeout(() => {
-              document.body.innerHTML = originalHTML;
-          }, 3000);
       } else if (info.mediaType === "image" && info.srcUrl) {
           // 이미지 강조 처리
           const images = document.querySelectorAll(`img[src="${info.srcUrl}"]`);
           images.forEach(img => {
               // 빨간색 테두리 추가
-              const originalBorder = img.style.border;
-              const originalOpacity = img.style.opacity;
-
               img.style.border = "5px solid red";
-              img.style.opacity = "0.5";
 
               // 경고 아이콘 추가
               const warningIcon = document.createElement("div");
@@ -111,17 +98,10 @@ function startPrecisionMeasurement(info) {
               img.parentElement.style.position = "relative";
               img.parentElement.appendChild(warningIcon);
 
-              // 3초 후 강조 제거
-              setTimeout(() => {
-                  img.style.border = originalBorder || "";
-                  img.style.opacity = originalOpacity || "1";
-                  if (warningIcon.parentElement) {
-                      warningIcon.parentElement.removeChild(warningIcon);
-                  }
-              }, 3000);
+              // 이미지 흐리게 처리
+              img.style.opacity = "0.5";
           });
       }
   }
-
-  setTimeout(() => banner.remove(), 5000); // 5초 후 배너 제거
 }
+

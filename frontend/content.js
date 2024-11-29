@@ -1,12 +1,38 @@
-function showProbability(event) {
+async function fetchPOSTExample(url, data) {
+  try {
+      const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+      console.log('Success:', result);
+      return result;
+  }
+  catch (error) {
+      console.error('Error:', error);
+  }
+}
+
+/*
+[ API url mapping 가이드 ]
+빠른 측정 : http://localhost:8080/api/v1/server/quick
+정밀 측정 : http://localhost:8080/api/v1/server/precisiong
+사용자 정의 측정 : http://localhost:8080/api/v1/server/custom
+ */
+
+async function showProbability(event) {
   const element = event.target;
 
-  // 텍스트 또는 이미지가 없는 요소는 무시
-  if (element.tagName !== "IMG" && !element.textContent.trim()) {
-      return;
-  }
+  const url = element.href;
+  const recv = await fetchPOSTExample("http://localhost:8080/api/v1/server/quick", { url: url });
+  console.log("recv:", recv);
+  
 
-  const probability = Math.floor(Math.random() * 100); // 0-100 사이의 확률 생성
+  const probability = recv;
 
   // 툴팁 생성
   const tooltip = document.createElement('div');
@@ -32,9 +58,34 @@ function showProbability(event) {
   }, { once: true });
 }
 
+
+const allowLinks = [
+  "https://www.khan.co.kr/article", // 경향신문
+  "https://news.kbs.co.kr/news/", // KBS
+  "https://www.seoul.co.kr/news/", // 서울신문
+  "https://www.sisain.co.kr/news/", // 시사인
+  "https://www.hankyung.com/article/", // 한경신문
+
+  "https://blog.naver.com/", // 네이버 블로그
+];
+
+let seeker_data = [];
+
+function checkLink(element) {
+  const href = element.getAttribute("href");
+
+  if (!href) {
+      return false;
+  }
+
+  return allowLinks.some(link => href.startsWith(link));
+}
+
 function addHoverEffect() {
   // 텍스트 및 이미지 관련 요소 선택
-  const elements = document.querySelectorAll("p, span, div, h1, h2, h3, h4, h5, h6, img");
+  const elements = Array.from(document.querySelectorAll("a")).filter(element => {
+      return checkLink(element);
+  });
 
   elements.forEach(element => {
       // 이미 이벤트가 추가된 요소인지 확인
@@ -62,3 +113,25 @@ observer.observe(document.body, {
   childList: true,
   subtree: true
 });
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "predictCustomMeasure") {
+      predictCustomMeasure();
+  }
+  else if (message.action === "addData") {
+      addData(message.data);
+  }
+});
+
+function addData(info) {
+  let dataType = info.selectionText ? 0 : 1;
+  let newData = info.selectionText || info.srcUrl;
+  seeker_data.push({ type: dataType, data: newData });
+  console.log("Data:", seeker_data);
+}
+
+function predictCustomMeasure() {
+  //fetch code
+
+  let result = {}
+}

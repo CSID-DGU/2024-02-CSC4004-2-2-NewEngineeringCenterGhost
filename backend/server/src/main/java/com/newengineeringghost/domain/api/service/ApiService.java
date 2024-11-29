@@ -259,7 +259,7 @@ public class ApiService {
     // Selenium 사용을 위해 ChromeDriver 설정
     public WebDriver getChromeDriver() {
         log.info("Chrome Driver Start!");
-        System.setProperty("webdriver.chrome.driver", "/usr/bin/chromedriver");
+        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
 
         ChromeOptions chromeOptions = new ChromeOptions();
         chromeOptions.addArguments("--remote-allow-origins=*");

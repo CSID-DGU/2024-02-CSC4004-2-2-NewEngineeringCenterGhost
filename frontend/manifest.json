@@ -6,7 +6,10 @@
   "permissions": [
     "contextMenus",
     "scripting",
-    "activeTab"
+    "activeTab",
+    "storage",
+    "tabs",
+    "webNavigation"
   ],
   "background": {
     "service_worker": "background.js"
