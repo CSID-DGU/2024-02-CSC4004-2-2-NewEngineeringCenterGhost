@@ -2,6 +2,7 @@ package com.newengineeringghost.domain.api.controller;
 
 import com.newengineeringghost.domain.api.dto.ResponseDataDto;
 import com.newengineeringghost.domain.api.service.ApiService;
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/api/v1/server")
 public class ApiController {
     private ApiService apiService;
@@ -30,7 +32,7 @@ public class ApiController {
 
     // 사용자 정의 측정
     @PostMapping("/custom")
-    public Object customMeasurement(@RequestParam List<String> content) throws IOException {
+    public Object customMeasurement(@RequestBody String content) throws IOException {
         return apiService.customMeasurement(content);
     }
 

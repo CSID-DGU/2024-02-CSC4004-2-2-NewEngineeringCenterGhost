@@ -6,6 +6,7 @@ import com.newengineeringghost.domain.api.dto.ResponseDataDto;
 import com.newengineeringghost.domain.api.entity.ResponseData;
 import com.newengineeringghost.domain.api.repository.ResponseDataRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.json.JSONParser;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
@@ -131,7 +132,7 @@ public class ApiService {
         log.info("Dto.probability: {}", modelDataDto.getProbability());
         log.info("Dto.sentence: {}", modelDataDto.getSentence());
 
-        String explanation = openAI(modelDataDto.getSentence());
+        String explanation = openAI(content, modelDataDto.getSentence());
 
         // 확률 값에 따라 반환
         if (modelDataDto.getProbability() > 0.5) {
@@ -144,8 +145,8 @@ public class ApiService {
     }
 
     // openAI API Key를 사용하여 해설을 생성하는 python 파일을 실행하는 함수
-    public String openAI(String sentence) throws IOException {
-        ProcessBuilder processBuilder = new ProcessBuilder("python3", openAiScriptPath, sentence);
+    public String openAI(String content, String sentence) throws IOException {
+        ProcessBuilder processBuilder = new ProcessBuilder("python3", openAiScriptPath, content, sentence);
         Process process = processBuilder.start();
         log.info("Process: {}", process);
 
@@ -169,18 +170,24 @@ public class ApiService {
     }
 
     // 사용자 정의 측정
-    public Object customMeasurement(List<String> content) throws IOException{
+    public Object customMeasurement(String content) throws IOException{
         List<String> imageUrls = new ArrayList<>();
         List<String> texts = new ArrayList<>();
 
-        Pattern ImagePattern = Pattern.compile("(http|https)://.*\\.(?:jpg|jpeg|png|gif|bmp)");
-
-        for (String item : content) {
-            if (ImagePattern.matcher(item).matches()) {
+        List<String> geted = List.of(content.split(","));
+        String type = "";
+        for (String item : geted) {
+            if (type == "") {
+                type = item;
+                continue;
+            }
+            if (type == "image") {
                 imageUrls.add(item);
-            } else {
+            }
+            else  {
                 texts.add(item);
             }
+            type = "";
         }
 
         List<String> ocrResult = new ArrayList<>();
@@ -226,7 +233,7 @@ public class ApiService {
         // 확률 값에 따라 반환
         if (modelDataDto.getProbability() > 0.5) {
             // Todo : mongodb 저장
-            return new PrecisionMeasurementDto(modelDataDto.getProbability(), modelDataDto.getSentence(), openAI(modelDataDto.getSentence()));
+            return new PrecisionMeasurementDto(modelDataDto.getProbability(), modelDataDto.getSentence(), openAI(content, modelDataDto.getSentence()));
         } else {
             // Todo : mongodb 저장
             return modelDataDto.getProbability();

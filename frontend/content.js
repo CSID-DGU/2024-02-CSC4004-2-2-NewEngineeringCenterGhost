@@ -1,11 +1,11 @@
 async function fetchPOSTExample(url, data) {
-  url = "http://localhost:8080/api/v1/server/quick?url=" + encodeURIComponent(data.url);
   try {
       const response = await fetch(url, {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
           },
+          body: JSON.stringify(data),
       });
 
       const result = await response.json();
@@ -31,22 +31,23 @@ const tooltip = document.createElement('div')
 async function getProbability(element) {
   const url = element.href;
   if (!(url in prob_dict)) {
-    const recv = await fetchPOSTExample("http://localhost:8080/api/v1/server/quick", { url: url });
+    const recv = await fetchPOSTExample("http://localhost:8080/api/v1/server/quick?", { "url": url });
     console.log(recv.status)
     if (recv.status) return;
     const probability = parseInt(recv * 100);
-    prob_dict[url] = "낚시성 확률: " + probability + "%"
+    prob_dict[url] = probability;
   }
-  if (tooltip._url === url) tooltip.innerText = prob_dict[url];
+  if (tooltip._url === url) tooltip.innerText = "낚시성 확률: " + prob_dict[url] + "%"
 }
 
 async function queueProbability(element) {
   if (element in prob_dict) return;
   prob_queue.push(element);
   if (prob_queue.length > 1) return;
-  while (prob_queue.length > 0) {
+  while (true) {
     await getProbability(prob_queue.at(-1));
     prob_queue.pop();
+    if (prob_queue.length === 0) return;
   }
 }
 
@@ -70,7 +71,7 @@ function showProbability(event) {
   tooltip._url = element.href;
 
   if (element.href in prob_dict) {
-    tooltip.innerText = prob_dict[element.href]
+    tooltip.innerText = "낚시성 확률: " + prob_dict[element.href] + "%";
   }
   else {
     setTimeout(queueProbability(element), 1);
@@ -153,14 +154,31 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 function addData(info) {
-  let dataType = info.selectionText ? 0 : 1;
+  let dataType = info.selectionText ? "text" : "image";
   let newData = info.selectionText || info.srcUrl;
-  seeker_data.push({ type: dataType, data: newData });
+  seeker_data.push(dataType);
+  seeker_data.push(newData);
   console.log("Data:", seeker_data);
 }
 
-function predictCustomMeasure() {
-  //fetch code
+function addBanner(prob, explanation) {
+  prob = Math.floor(prob * 100);
+  const banner = document.createElement("div");
+  banner.style.position = "fixed";
+  banner.style.top = "0";
+  banner.style.width = "100%";
+  banner.style.padding = "10px";
+  banner.style.zIndex = "9999";
+  banner.style.color = "white";
+  banner.style.backgroundColor = prob >= 50 ? "rgba(255, 0, 0, 0.8)" : "rgba(0, 128, 0, 0.8)";
+  banner.innerText = '낚시성 정보 확률: ' + prob + '%\n해석:\n' + explanation;
+  document.body.appendChild(banner);
 
-  let result = {}
+  
+}
+
+async function predictCustomMeasure() {
+  console.log(seeker_data);
+  const recv = await fetchPOSTExample("http://localhost:8080/api/v1/server/custom?", { "content": seeker_data.join(",") });
+  addBanner(recv.probability, recv.explanation);
 }

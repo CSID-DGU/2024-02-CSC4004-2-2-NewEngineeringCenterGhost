@@ -5,7 +5,7 @@ import sys
 content = sys.argv[1]
 important = sys.argv[2]
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = open(os.path.dirname(os.path.realpath(__file__)) + "/api.txt", "r").read()
 
 model = "gpt-4o-mini"
 
