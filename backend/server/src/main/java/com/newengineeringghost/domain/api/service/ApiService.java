@@ -131,10 +131,12 @@ public class ApiService {
         log.info("Dto.probability: {}", modelDataDto.getProbability());
         log.info("Dto.sentence: {}", modelDataDto.getSentence());
 
+        String explanation = openAI(modelDataDto.getSentence());
+
         // 확률 값에 따라 반환
         if (modelDataDto.getProbability() > 0.5) {
             // Todo : mongodb 저장
-            return new PrecisionMeasurementDto(modelDataDto.getProbability(), modelDataDto.getSentence(), openAI(modelDataDto.getSentence()));
+            return new PrecisionMeasurementDto(modelDataDto.getProbability(), modelDataDto.getSentence(), explanation);
         } else {
             // Todo : mongodb 저장
             return modelDataDto.getProbability();
@@ -143,7 +145,7 @@ public class ApiService {
 
     // openAI API Key를 사용하여 해설을 생성하는 python 파일을 실행하는 함수
     public String openAI(String sentence) throws IOException {
-        ProcessBuilder processBuilder = new ProcessBuilder("python3", openAiScriptPath, sentence);
+        ProcessBuilder processBuilder = new ProcessBuilder("python", openAiScriptPath, sentence);
         Process process = processBuilder.start();
         log.info("Process: {}", process);
 

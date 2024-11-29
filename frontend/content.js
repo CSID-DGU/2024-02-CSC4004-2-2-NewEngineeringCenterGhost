@@ -1,11 +1,11 @@
 async function fetchPOSTExample(url, data) {
+  url = "http://localhost:8080/api/v1/server/quick?url=" + encodeURIComponent(data.url);
   try {
       const response = await fetch(url, {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
           },
-          body: JSON.stringify(data),
       });
 
       const result = await response.json();
@@ -27,13 +27,6 @@ async function fetchPOSTExample(url, data) {
 async function showProbability(event) {
   const element = event.target;
 
-  const url = element.href;
-  const recv = await fetchPOSTExample("http://localhost:8080/api/v1/server/quick", { url: url });
-  console.log("recv:", recv);
-  
-
-  const probability = recv;
-
   // 툴팁 생성
   const tooltip = document.createElement('div');
   tooltip.style.position = 'absolute';
@@ -43,7 +36,7 @@ async function showProbability(event) {
   tooltip.style.borderRadius = '5px';
   tooltip.style.fontSize = '12px';
   tooltip.style.zIndex = '10000';
-  tooltip.innerText = `낚시성 확률: ${probability}%`;
+  tooltip.innerText = `측정 중...`;
 
   document.body.appendChild(tooltip);
 
@@ -51,6 +44,12 @@ async function showProbability(event) {
   const rect = element.getBoundingClientRect();
   tooltip.style.left = `${rect.left + window.scrollX}px`;
   tooltip.style.top = `${rect.top + window.scrollY - tooltip.offsetHeight}px`;
+
+  const url = element.href;
+  const recv = await fetchPOSTExample("http://localhost:8080/api/v1/server/quick", { url: url });  
+
+  const probability = parseInt(recv * 100);
+  tooltip.innerText = `낚시성 확률: ${probability}%`;
 
   // 마우스가 벗어나면 툴팁 제거
   element.addEventListener('mouseout', () => {
