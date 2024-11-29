@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -36,6 +37,12 @@ public class ApiService {
 
     @Value("${python.script.path.request}")
     private String requestScriptPath;
+
+    @Value("${python.script.path.openAi}")
+    private String openAiScriptPath;
+
+    @Value("${python.script.path.ocr}")
+    private String ocrScriptPath;
 
     // 빠른 측정
     public double quickMeasurement(String url) throws IOException {
@@ -136,7 +143,7 @@ public class ApiService {
 
     // openAI API Key를 사용하여 해설을 생성하는 python 파일을 실행하는 함수
     public String openAI(String sentence) throws IOException {
-        ProcessBuilder processBuilder = new ProcessBuilder("python3", requestScriptPath, sentence);
+        ProcessBuilder processBuilder = new ProcessBuilder("python3", openAiScriptPath, sentence);
         Process process = processBuilder.start();
         log.info("Process: {}", process);
 
@@ -159,30 +166,36 @@ public class ApiService {
         return resultBuilder.toString().trim();
     }
 
-    /*
-    Todo : 사용자 정의 측정
-
-    기능)
-    사용자가 임의의 이미지나 드래그한 텍스트를 우클릭하면, '측정 정보 추가' 버튼이 나타남
-    이를 누르면 해당 데이터나 요소가 임시 저장됨
-    저장된 데이터가 있는 상태에서 우클릭하면 '측정하기' 버튼이 나타나며, 이 버튼을 통해 서버로 데이터를 전송하여 분석을 진행
-    분석 결과는 정밀 측정과 동일한 방법으로 처리
-
-    request : 페이지 링크? / 혹은 해당 이미지나 텍스트?
-    response : 확률값, (50%이상일 경우-> 해설, 문장 위치, 문장 길이까지)
-
-    반환형에 대한 고민)
-    String
-    WebContentsDto
-
-    mongodb에 값 저장
-     */
-
     // 사용자 정의 측정
-    public Object customMeasurement(String url) throws IOException{
-        String content = webScraping(url);
+    public Object customMeasurement(List<String> content) throws IOException{
+        List<String> imageUrls = new ArrayList<>();
+        List<String> texts = new ArrayList<>();
 
-        ProcessBuilder processBuilder = new ProcessBuilder("python3", requestScriptPath, content);
+        Pattern ImagePattern = Pattern.compile("(http|https)://.*\\.(?:jpg|jpeg|png|gif|bmp)");
+
+        for (String item : content) {
+            if (ImagePattern.matcher(item).matches()) {
+                imageUrls.add(item);
+            } else {
+                texts.add(item);
+            }
+        }
+
+        List<String> ocrResult = new ArrayList<>();
+        for (String imageUrl : imageUrls) {
+            ocrResult.add(ocr(imageUrl));
+        }
+
+        StringBuilder resultString = new StringBuilder();
+        for (String text : texts) {
+            resultString.append(text).append(" ");
+        }
+        for (String ocr : ocrResult) {
+            resultString.append(ocr).append(" ");
+        }
+
+        // text 처리
+        ProcessBuilder processBuilder = new ProcessBuilder("python3", requestScriptPath, resultString.toString().trim());
         Process process = processBuilder.start();
         log.info("Process: {}", process);
 
@@ -216,6 +229,31 @@ public class ApiService {
             // Todo : mongodb 저장
             return modelDataDto.getProbability();
         }
+    }
+
+    // image 링크를 받아서 ocr를 통해 텍스트 추출
+    public String ocr(String imageURL) throws IOException {
+        ProcessBuilder processBuilder = new ProcessBuilder("python3", ocrScriptPath, imageURL);
+        Process process = processBuilder.start();
+        log.info("Process: {}", process);
+
+        // 실행 결과 가져오기
+        InputStream inputStream = process.getInputStream();
+        log.info("InputStream: {}", inputStream);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        log.info("BufferedReader: {}", reader);
+
+        // 실행결과 저장
+        StringBuilder resultBuilder = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            resultBuilder.append(line).append(System.lineSeparator());
+        }
+
+        log.info("openAI resultBuilder: {}", resultBuilder);
+
+        // 실행 결과 파싱
+        return resultBuilder.toString().trim();
     }
 
     // Selenium 사용을 위해 ChromeDriver 설정
@@ -283,7 +321,6 @@ public class ApiService {
         }
     }
 
-    // Todo : OCR 위한 이미지 다운로드 기능, 사용자 정의 측정에서 사용
     // 웹 페이지에서 이미지 추출
     public List<String> webScrapingImage(String url) throws IOException {
         WebDriver driver = getChromeDriver();

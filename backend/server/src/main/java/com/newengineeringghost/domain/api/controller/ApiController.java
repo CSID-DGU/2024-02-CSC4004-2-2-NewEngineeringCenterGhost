@@ -30,8 +30,8 @@ public class ApiController {
 
     // 사용자 정의 측정
     @PostMapping("/custom")
-    public Object customMeasurement(@RequestParam String url) throws IOException {
-        return apiService.customMeasurement(url);
+    public Object customMeasurement(@RequestParam List<String> content) throws IOException {
+        return apiService.customMeasurement(content);
     }
 
     // 웹 스크래핑 테스트

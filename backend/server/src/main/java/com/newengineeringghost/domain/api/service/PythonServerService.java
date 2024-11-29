@@ -22,7 +22,6 @@ public class PythonServerService {
 
     // SpringApplication 실행 시 자동으로 python server 실행
     public void startPythonServer(String argument) throws IOException {
-        // Todo : 파일경로 ${Path} 등으로 변경
         ProcessBuilder processBuilder = new ProcessBuilder("python3", serverScriptPath, argument);
         pythonServerProcess = processBuilder.start();
         log.info("Process: {}", pythonServerProcess);
