@@ -115,6 +115,24 @@ train
 
 - 나아가 블로그, 카드뉴스 형식의 SNS 게시물에도 이를 적용 시킬 수 있다.
 
+## 프로젝트 아키텍처
+![프로젝트 구조도](https://github.com/user-attachments/assets/70e02ee4-391d-411e-943e-971636922fad)
+이 프로젝트 아키텍처는 본 프로젝트의 전반적인 흐름을 나타낸다.
+
+1. AI 프레임워크 
+ - AI 모델 학습 및 추론에는 PyTorch를 사용한다.
+ - 학습 데이터는 AI Hub에서 제공되는 데이터셋을 활용한다.
+
+2. 백엔드 서비스
+  - Spring Boot 기반 백엔드 역할을 한다.
+
+3. 브라우저
+  - 뉴스, 문서, 블로그 등의 콘텐츠를 처리하는 Chrome Extension이 프론트엔드 역할을 한다.
+
+4. Tesseract OCR
+  - 이미지에서 텍스트를 추출하기 위해 사용된다.
+  - 추출된 텍스트는 AI 모델이 분석하거나 백엔드에 의해 처리된다.
+
 ## 스킬 스택
 - OS : <img src="https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=Linux&logoColor=white"> <img src="https://img.shields.io/badge/Ubuntu-E95420?style=flat-square&logo=Ubuntu&logoColor=white">
 
