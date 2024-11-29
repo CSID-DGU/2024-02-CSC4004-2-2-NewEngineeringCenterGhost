@@ -14,7 +14,7 @@
 - 사용자가 신뢰도 낮은 콘텐츠를 사전에 구별하여, 정보를 효율적으로 탐색할 수 있도록 돕는 서비스. 
 - 정보 소비의 질을 높이고, 신뢰성 높은 정보 문화를 확산시킴으로써 다양한 분야에서 활용 가능성 기대.
 
-![news_image_with_Highlight](https://github.com/user-attachments/assets/d6dcba3c-b228-43c0-bad3-3f48c3997e30)
+![clickbait](https://github.com/user-attachments/assets/f481e4eb-4e00-4848-a516-8b7d572c9e6e)
 
 ## 프로젝트 파일 구조
 ```
