@@ -5,7 +5,6 @@ import com.newengineeringghost.domain.api.dto.PrecisionMeasurementDto;
 import com.newengineeringghost.domain.api.dto.ResponseDataDto;
 import com.newengineeringghost.domain.api.entity.ResponseData;
 import com.newengineeringghost.domain.api.repository.ResponseDataRepository;
-import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -31,46 +30,12 @@ import java.util.List;
 @Service
 public class ApiService {
 
-    private Process pythonServerProcess;
-
     private ResponseDataRepository responseDataRepository;
 
     @Autowired
     public void setResponseDataRepository(ResponseDataRepository responseDataRepository) {this.responseDataRepository = responseDataRepository;}
 
     private static final Logger logger = LoggerFactory.getLogger(ApiService.class);
-
-    /*
-    Todo : ServerApplication 실행 시에 자동으로 server.py 파일 실행되게 하는 코드 작성
-
-    3가지 방법 중 하나 사용
-    CommandLineRunner
-    ApplicationRunner
-    @EventListener(ApplicationReadyEvent.class)
-
-    ServerApplication 시작과 동시에 실행
-    ServerApplication 종료와 동시에 강제종료 -> 메모리 누수 막기 위함
-
-    아래 코드 활용
-     */
-//    // SpringApplication 실행 시 자동으로 python server 실행
-//    public void startPythonServer(String argument) throws IOException {
-//        // Todo : 파일경로 ${Path} 등으로 변경
-//        ProcessBuilder processBuilder = new ProcessBuilder("python3", "/home/testuser/project/backend/server/src/main/resources/core/server.py", argument);
-//        pythonServerProcess = processBuilder.start();
-//        logger.info("Process: {}", pythonServerProcess);
-//    }
-//
-//    // SpringApplication 종료 시 자동으로 python server 종료 -> 메모리 누수 막기 위함
-//    @PreDestroy
-//    public void stopPythonServer() {
-//        if (pythonServerProcess != null && pythonServerProcess.isAlive()) {
-//            pythonServerProcess.destroy();
-//            logger.info("Python process with PID {} has been destroyed.", pythonServerProcess.pid());
-//        } else {
-//            logger.info("Python Server Process is Null!");
-//        }
-//    }
 
     // 빠른 측정
     public double quickMeasurement(String url) throws IOException {
