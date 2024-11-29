@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "ProbabilityMeasure",
-  "version": "5.0",
-  "description": "Detects clickbait links and shows probability.",
+  "name": "낚시성 정보 탐지 도구",
+  "version": "1.0",
+  "description": "낚시성 정보를 탐지하고 확률 및 해설을 제공합니다.",
   "permissions": [
     "contextMenus",
     "scripting",
