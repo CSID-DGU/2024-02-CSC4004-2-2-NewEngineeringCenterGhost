@@ -13,3 +13,5 @@ python:
     path:
       request: /home/testuser/project/backend/server/src/main/resources/core/request.py
       server: /home/testuser/project/backend/server/src/main/resources/core/server.py
+      openAi: /home/testuser/project/backend/server/src/main/resources/openai/TestOpenAi.py
+      ocr: /home/testuser/project/backend/server/src/main/resources/ocr/TestOCR.py
