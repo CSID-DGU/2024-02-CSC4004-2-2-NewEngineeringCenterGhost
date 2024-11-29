@@ -145,7 +145,7 @@ public class ApiService {
 
     // openAI API Key를 사용하여 해설을 생성하는 python 파일을 실행하는 함수
     public String openAI(String sentence) throws IOException {
-        ProcessBuilder processBuilder = new ProcessBuilder("python", openAiScriptPath, sentence);
+        ProcessBuilder processBuilder = new ProcessBuilder("python3", openAiScriptPath, sentence);
         Process process = processBuilder.start();
         log.info("Process: {}", process);
 
