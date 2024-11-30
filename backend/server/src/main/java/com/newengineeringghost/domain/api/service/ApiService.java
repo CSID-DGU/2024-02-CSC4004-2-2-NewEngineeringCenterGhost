@@ -173,7 +173,7 @@ public class ApiService {
     public Object customMeasurement(String content) throws IOException{
         List<String> imageUrls = new ArrayList<>();
         List<String> texts = new ArrayList<>();
-
+        log.info(content);
         List<String> geted = List.of(content.split(","));
         String type = "";
         for (String item : geted) {
@@ -287,6 +287,7 @@ public class ApiService {
     // 웹 페이지에서 제목&본문 추출
     public String webScraping(String url) throws IOException {
         WebDriver driver = getChromeDriver();
+        log.info(url);
         log.info("Chrome Driver Info: {}", driver);
 
         if (!ObjectUtils.isEmpty(driver)) {

@@ -78,4 +78,6 @@ class Seeker():
 
         sentences = list(set(sentences))
 
+        del x, atts
+        torch.cuda.empty_cache()
         return torch.sigmoid(y).item(), sentences

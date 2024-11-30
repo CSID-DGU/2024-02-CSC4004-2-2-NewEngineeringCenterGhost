@@ -161,24 +161,175 @@ function addData(info) {
   console.log("Data:", seeker_data);
 }
 
-function addBanner(prob, explanation) {
+const banner = document.createElement("div");
+const closeButton = document.createElement("button");
+function showBanner(prob, explanation) {
   prob = Math.floor(prob * 100);
-  const banner = document.createElement("div");
   banner.style.position = "fixed";
   banner.style.top = "0";
   banner.style.width = "100%";
-  banner.style.padding = "10px";
+  banner.style.padding = "10px 50px 10px 10px"; // 오른쪽 패딩 추가
   banner.style.zIndex = "9999";
   banner.style.color = "white";
+  banner.style.display = "flex";
+  banner.style.justifyContent = "space-between";
+  banner.style.alignItems = "center";
+  banner.style.boxSizing = "border-box";
   banner.style.backgroundColor = prob >= 50 ? "rgba(255, 0, 0, 0.8)" : "rgba(0, 128, 0, 0.8)";
-  banner.innerText = '낚시성 정보 확률: ' + prob + '%\n해석:\n' + explanation;
-  document.body.appendChild(banner);
+  banner.innerHTML = `
+    <div>
+      낚시성 정보 확률: ${prob}%<br>해석:<br>${explanation}
+    </div>
+  `;
 
-  
+  closeButton.innerText = "닫기";
+  closeButton.style.position = "absolute";
+  closeButton.style.top = "10px"; // 버튼 위치를 상단으로
+  closeButton.style.right = "10px"; // 버튼을 오른쪽에 고정
+  closeButton.style.width = "80px"; // 버튼 크기 조정
+  closeButton.style.background = "rgba(0, 0, 0, 0.5)";
+  closeButton.style.color = "white";
+  closeButton.style.border = "none";
+  closeButton.style.padding = "5px"; // 버튼 내부 여백 조정
+  closeButton.style.cursor = "pointer";
+  closeButton.style.borderRadius = "5px"; // 버튼 모서리를 둥글게
+  closeButton.addEventListener("click", () => {
+    banner.removeChild(closeButton);
+    document.body.removeChild(banner);
+  });
+
+  banner.appendChild(closeButton);
+  document.body.appendChild(banner);
 }
 
+function highlight_text(text_no_spaces) {
+  // 텍스트에서 공백을 제거하는 함수
+  function removeSpaces(str) {
+      return str.replace(/\s/g, '');
+  }
+  
+  // LCS 알고리즘을 통해 가장 긴 공통 부분 문자열 찾기
+  function findLongestCommonSubstring(str1, str2) {
+      const m = str1.length;
+      const n = str2.length;
+      const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+      let maxLength = 0;
+      let endIndex = 0;
+      for (let i = 1; i <= m; i++) {
+          for (let j = 1; j <= n; j++) {
+              if (str1[i - 1] === str2[j - 1]) {
+                  dp[i][j] = dp[i - 1][j - 1] + 1;
+                  if (dp[i][j] > maxLength) {
+                      maxLength = dp[i][j];
+                      endIndex = i - 1;
+                  }
+              }
+          }
+      }
+      return {
+          startIndex: endIndex - maxLength + 1,
+          endIndex: endIndex,
+          length: maxLength
+      };
+  }
+  
+  // 본문에서 모든 텍스트 노드 찾기
+  function findTextNodesIn(node) {
+      const textNodes = [];
+      function traverseNodes(node) {
+          if (node.nodeType === Node.TEXT_NODE) {
+              textNodes.push(node);
+          } else {
+              for (let child of node.childNodes) {
+                  traverseNodes(child);
+              }
+          }
+      }
+      traverseNodes(node);
+      return textNodes;
+  }
+  
+  // 텍스트 하이라이팅 함수 (수정됨)
+  function highlightTextNode(textNode, start, end) {
+      try {
+          // 텍스트 노드를 분할하여 하이라이트
+          const range = document.createRange();
+          range.setStart(textNode, start);
+          range.setEnd(textNode, end);
+          
+          // 하이라이트할 텍스트를 감싸는 mark 요소 생성
+          const highlightSpan = document.createElement('mark');
+          highlightSpan.style.backgroundColor = 'yellow';
+          
+          // 범위를 mark 요소로 감싸기
+          range.surroundContents(highlightSpan);
+      } catch (error) {
+          console.error('하이라이트 중 오류 발생:', error);
+          
+          // 대체 방법: 텍스트 노드 분할 및 래핑
+          const beforeText = textNode.textContent.slice(0, start);
+          const highlightText = textNode.textContent.slice(start, end);
+          const afterText = textNode.textContent.slice(end);
+          
+          const beforeNode = document.createTextNode(beforeText);
+          const highlightNode = document.createElement('mark');
+          highlightNode.style.backgroundColor = 'yellow';
+          highlightNode.textContent = highlightText;
+          const afterNode = document.createTextNode(afterText);
+          
+          const parentNode = textNode.parentNode;
+          parentNode.replaceChild(afterNode, textNode);
+          parentNode.insertBefore(highlightNode, afterNode);
+          parentNode.insertBefore(beforeNode, highlightNode);
+      }
+  }
+  
+  // 메인 로직
+  const bodyElement = document.body;
+  const textNodes = findTextNodesIn(bodyElement);
+  for (let textNode of textNodes) {
+      const nodeText = textNode.textContent;
+      const nodeTextNoSpaces = removeSpaces(nodeText);
+      if (nodeTextNoSpaces.includes(text_no_spaces)) {
+          const result = findLongestCommonSubstring(nodeTextNoSpaces, text_no_spaces);
+          
+          if (result.length === text_no_spaces.length) {
+              // 원본 텍스트에서의 실제 인덱스 계산
+              let actualStart = 0;
+              let spaceCount = 0;
+              for (let i = 0; i < nodeText.length; i++) {
+                  if (removeSpaces(nodeText.slice(0, i + 1)) === nodeTextNoSpaces.slice(0, result.startIndex + 1)) {
+                      actualStart = i;
+                      break;
+                  }
+                  if (nodeText[i].trim() === '') spaceCount++;
+              }
+              highlightTextNode(
+                  textNode, 
+                  actualStart, 
+                  actualStart + result.length + spaceCount
+              );
+              break; // 첫 번째 일치하는 노드만 하이라이트
+          }
+      }
+  }
+}
+
+
 async function predictCustomMeasure() {
-  console.log(seeker_data);
+  if (seeker_data.length === 0) {
+    alert("측정할 데이터가 없습니다.");
+    return;
+  }
+  showBanner(0, "측정 중...");
   const recv = await fetchPOSTExample("http://localhost:8080/api/v1/server/custom?", { "content": seeker_data.join(",") });
-  addBanner(recv.probability, recv.explanation);
+  if (typeof(recv) === "object") {
+    for (sentence of recv.sentence) {
+      highlight_text(sentence);
+    }
+    showBanner(recv.probability, recv.explanation);
+  }
+  else {
+    showBanner(recv, "낚시성으로 판단되지 않았습니다.");
+  }
 }

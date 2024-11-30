@@ -18,6 +18,7 @@ while True:
     conn, addr = server.accept()
     data = conn.recv(8192 * 4)
     data = data.decode(encoding='utf-8')
+    print(f"Received: {data}")
     res = seeker.predict(data)
     conn.send(str(res).encode())
     conn.close()
