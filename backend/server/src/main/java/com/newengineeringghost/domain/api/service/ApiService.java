@@ -2,19 +2,14 @@ package com.newengineeringghost.domain.api.service;
 
 import com.newengineeringghost.domain.api.dto.ModelDataDto;
 import com.newengineeringghost.domain.api.dto.PrecisionMeasurementDto;
-import com.newengineeringghost.domain.api.dto.ResponseDataDto;
-import com.newengineeringghost.domain.api.entity.ResponseData;
-import com.newengineeringghost.domain.api.repository.ResponseDataRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -80,16 +75,6 @@ public class ApiService {
         urlToXpathMap.put("https://n.news.naver.com/article","//*[@id=\"dic_area\"]"); // 네이버뉴스
     }
 
-//    private ClassifyUrlRepository classifyUrlRepository;
-
-    private ResponseDataRepository responseDataRepository;
-
-//    @Autowired
-//    public void setClassifyUrlRepository(ClassifyUrlRepository classifyUrlRepository) {this.classifyUrlRepository = classifyUrlRepository;}
-
-    @Autowired
-    public void setResponseDataRepository(ResponseDataRepository responseDataRepository) {this.responseDataRepository = responseDataRepository;}
-
     @Value("${python.script.path.request}")
     private String requestScriptPath;
 
@@ -133,11 +118,9 @@ public class ApiService {
         }
     }
 
-    // 빠른 측정
-    public double quickMeasurement(String url) throws IOException {
-        String content = webScraping(url);
-
-        ProcessBuilder processBuilder = new ProcessBuilder("python3", requestScriptPath, content);
+    // python 파일 실행
+    public String pythonFileRun(String filePath, String content) throws IOException {
+        ProcessBuilder processBuilder = new ProcessBuilder("python3", filePath, content);
         Process process = processBuilder.start();
         log.info("Process: {}", process);
 
@@ -153,10 +136,18 @@ public class ApiService {
         while ((line = reader.readLine()) != null) {
             resultBuilder.append(line).append(System.lineSeparator());
         }
-
         log.info("Result: {}", resultBuilder);
 
-        String[] parts = resultBuilder.toString().split("[(),]");
+        return resultBuilder.toString().trim();
+    }
+
+    // 빠른 측정
+    public double quickMeasurement(String url) throws IOException {
+        String content = webScraping(url);
+
+        String result = pythonFileRun(requestScriptPath, content);
+
+        String[] parts = result.split("[(),]");
 
         String doubleString = parts[1].trim();
 
@@ -164,6 +155,28 @@ public class ApiService {
         log.info("Probability: {}", probability);
 
         return probability;
+    }
+
+    // 정밀 측정
+    public Object precisionMeasurement(String url) throws IOException {
+        String content = webScraping(url);
+
+        String result = pythonFileRun(requestScriptPath, content);
+        ModelDataDto modelDataDto = parseResult(result);
+
+        log.info("Dto.probability: {}", modelDataDto.getProbability());
+        log.info("Dto.sentence: {}", modelDataDto.getSentence());
+
+        String explanation = openAI(content, modelDataDto.getSentence());
+
+        // 확률 값에 따라 반환
+        if (modelDataDto.getProbability() > 0.5) {
+            // Todo : mongodb 저장
+            return new PrecisionMeasurementDto(modelDataDto.getProbability(), modelDataDto.getSentence(), explanation);
+        } else {
+            // Todo : mongodb 저장
+            return modelDataDto.getProbability();
+        }
     }
 
     // python 모델이 반환하는 값 분리하는 함수
@@ -188,48 +201,6 @@ public class ApiService {
 
         // DTO 생성 및 반환
         return new ModelDataDto(probability, messagesString);
-    }
-
-    // 정밀 측정
-    public Object precisionMeasurement(String url) throws IOException {
-        String content = webScraping(url);
-
-        ProcessBuilder processBuilder = new ProcessBuilder("python3", requestScriptPath, content);
-        Process process = processBuilder.start();
-        log.info("Process: {}", process);
-
-        // 실행 결과 가져오기
-        InputStream inputStream = process.getInputStream();
-        log.info("InputStream: {}", inputStream);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        log.info("BufferedReader: {}", reader);
-
-        // 실행결과 저장
-        StringBuilder resultBuilder = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            resultBuilder.append(line).append(System.lineSeparator());
-        }
-
-        log.info("Result: {}", resultBuilder);
-
-        // 실행 결과 파싱
-        String result = resultBuilder.toString().trim();
-        ModelDataDto modelDataDto = parseResult(result);
-
-        log.info("Dto.probability: {}", modelDataDto.getProbability());
-        log.info("Dto.sentence: {}", modelDataDto.getSentence());
-
-        String explanation = openAI(content, modelDataDto.getSentence());
-
-        // 확률 값에 따라 반환
-        if (modelDataDto.getProbability() > 0.5) {
-            // Todo : mongodb 저장
-            return new PrecisionMeasurementDto(modelDataDto.getProbability(), modelDataDto.getSentence(), explanation);
-        } else {
-            // Todo : mongodb 저장
-            return modelDataDto.getProbability();
-        }
     }
 
     // openAI API Key를 사용하여 해설을 생성하는 python 파일을 실행하는 함수
@@ -292,28 +263,7 @@ public class ApiService {
             resultString.append(ocr).append(" ");
         }
 
-        // text 처리
-        ProcessBuilder processBuilder = new ProcessBuilder("python3", requestScriptPath, resultString.toString().trim());
-        Process process = processBuilder.start();
-        log.info("Process: {}", process);
-
-        // 실행 결과 가져오기
-        InputStream inputStream = process.getInputStream();
-        log.info("InputStream: {}", inputStream);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        log.info("BufferedReader: {}", reader);
-
-        // 실행결과 저장
-        StringBuilder resultBuilder = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            resultBuilder.append(line).append(System.lineSeparator());
-        }
-
-        log.info("Result: {}", resultBuilder);
-
-        // 실행 결과 파싱
-        String result = resultBuilder.toString().trim();
+        String result = pythonFileRun(requestScriptPath, resultString.toString().trim());
         ModelDataDto modelDataDto = parseResult(result);
 
         log.info("Dto.probability: {}", modelDataDto.getProbability());
@@ -331,54 +281,7 @@ public class ApiService {
 
     // image 링크를 받아서 ocr를 통해 텍스트 추출
     public String ocr(String imageURL) throws IOException {
-        ProcessBuilder processBuilder = new ProcessBuilder("python3", ocrScriptPath, imageURL);
-        Process process = processBuilder.start();
-        log.info("Process: {}", process);
-
-        // 실행 결과 가져오기
-        InputStream inputStream = process.getInputStream();
-        log.info("InputStream: {}", inputStream);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        log.info("BufferedReader: {}", reader);
-
-        // 실행결과 저장
-        StringBuilder resultBuilder = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null) {
-            resultBuilder.append(line).append(System.lineSeparator());
-        }
-
-        log.info("openAI resultBuilder: {}", resultBuilder);
-
-        // 실행 결과 파싱
-        return resultBuilder.toString().trim();
-    }
-
-//    public Optional<String> getXpathByUrl(String url) {
-//        List<ClassifyUrl> classifyUrls = classifyUrlRepository.findByUrlStartingWith(url);
-//
-//        if (classifyUrls.isEmpty()) {
-//            return Optional.empty();
-//        }
-//
-//        // 입력된 URL과 저장된 URL의 길이를 비교하여 가장 긴 URL을 선택합니다.
-//        ClassifyUrl matchedUrl = classifyUrls.stream()
-//                .filter(classifyUrl -> url.startsWith(classifyUrl.getUrl()))
-//                .max((a, b) -> Integer.compare(a.getUrl().length(), b.getUrl().length()))
-//                .orElse(null);
-//
-//        if (matchedUrl == null) {
-//            return Optional.empty();
-//        }
-//
-//        return Optional.of(matchedUrl.getXpath());
-//    }
-
-    // 입력 URL에서 기본 URL 부분을 추출하는 메서드
-    private static String extractBaseUrl(String url) {
-        // URL에서 숫자 앞까지 잘라내는 방법 (예시: /article/028까지)
-        int lastSlashIndex = url.lastIndexOf('/');
-        return url.substring(0, lastSlashIndex);
+        return pythonFileRun(ocrScriptPath, imageURL);
     }
 
     public String webScraping(String url) throws IOException {
@@ -421,6 +324,13 @@ public class ApiService {
         } else {
             return "";
         }
+    }
+
+    // 입력 URL에서 기본 URL 부분을 추출하는 메서드
+    private static String extractBaseUrl(String url) {
+        // URL에서 숫자 앞까지 잘라내는 방법 (예시: /article/028까지)
+        int lastSlashIndex = url.lastIndexOf('/');
+        return url.substring(0, lastSlashIndex);
     }
 
     // 웹 페이지에서 제목&본문 추출
@@ -499,35 +409,4 @@ public class ApiService {
             return imgSrcs;
         }
     }
-
-    // mongodb 연동 test
-    public ResponseDataDto getData(String link) {
-        ResponseData responseData = responseDataRepository.findResponseDataByLink(link);
-
-        ResponseDataDto responseDto = new ResponseDataDto(
-                responseData.getLink(),
-                responseData.getProbability(),
-                responseData.getSentencePosition(),
-                responseData.getSentenceLength(),
-                responseData.getExplanation());
-
-        return responseDto;
-    }
-
-    // mongodb 연동 test
-    public String postData(ResponseDataDto responseDto) {
-
-        ResponseData responseData = new ResponseData(
-                responseDto.getLink(),
-                responseDto.getProbability(),
-                responseDto.getSentencePosition(),
-                responseDto.getSentenceLength(),
-                responseDto.getExplanation()
-        );
-
-        responseDataRepository.save(responseData);
-
-        return "success";
-    }
-
 }
