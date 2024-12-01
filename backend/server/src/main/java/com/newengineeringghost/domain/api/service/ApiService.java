@@ -372,7 +372,7 @@ public class ApiService {
 
                 return result.toString();
             } else {
-                return "지원되지 않는 사이트입니다.";
+                return "";
             }
         } else {
             return "";
