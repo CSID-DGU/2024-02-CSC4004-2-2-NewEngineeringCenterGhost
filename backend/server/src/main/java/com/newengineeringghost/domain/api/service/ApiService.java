@@ -28,52 +28,100 @@ public class ApiService {
     private static final Map<String, String> urlToXpathMap = new HashMap<>();
 
     static {
-        urlToXpathMap.put("news.kbs.co.kr/news/pc/view","//*[@id=\"cont_newstext\"]"); // KBS 뉴스
-        urlToXpathMap.put("www.hankyung.com/article","//*[@id=\"articletxt\"]"); //한국경제
-        urlToXpathMap.put("imnews.imbc.com/news","//*[@id=\"content\"]/div/section[1]/article/div[2]/div[4]"); // MBC 뉴스
-        urlToXpathMap.put("www.ohmynews.com/NWS_Web/View","//*[@id=\"content_wrap\"]/div[1]/div[3]/div[1]/div[1]/div[1]/div"); // 오마이뉴스
-        urlToXpathMap.put("www.mk.co.kr/news","//*[@id=\"container\"]/section/div[3]/section/div[1]/div[1]/div[1]"); // 매일경제
-        urlToXpathMap.put("www.dailian.co.kr/news/view","//*[@id=\"contentsArea\"]/div[1]/div[4]/div[2]/div[2]/description"); // 데일리안
-        urlToXpathMap.put("www.nocutnews.co.kr/news","//*[@id=\"pnlContent\"]"); // 노컷뉴스
-        urlToXpathMap.put("view.asiae.co.kr/article","//*[@id=\"txt_area\"]"); // 아시아경제
-        urlToXpathMap.put("www.edaily.co.kr/News","//*[@id=\"contents\"]/section[1]/section[1]/div[1]/div[3]/div[1]"); // 이데일리
-        urlToXpathMap.put("biz.heraldcorp.com/article","//*[@id=\"articleText\"]"); // 해럴드경제
-        urlToXpathMap.put("zdnet.co.kr/view","//*[@id=\"articleBody\"]");
-        urlToXpathMap.put("www.seoul.co.kr/news","//*[@id=\"articleContent\"]/div"); // 서울신문
-        urlToXpathMap.put("www.osen.co.kr/article","//*[@id=\"articleBody\"]"); // OSEN
-        urlToXpathMap.put("news.sbs.co.kr/news","//*[@id=\"container\"]/div[1]/div[3]/div[2]/div[1]/div[1]/div[2]"); // SBS 뉴스
-        urlToXpathMap.put("newstapa.org/article","//*[@id=\"editor_fontsize\"]"); //뉴스타파
-        urlToXpathMap.put("www.hankookilbo.com/News/Read","/html/body/div[2]/div/div[4]/div/div[1]"); // 한국일보
-        urlToXpathMap.put("isplus.com/article/view","//*[@id=\"article_body\"]"); // 일간스포츠
-        urlToXpathMap.put("www.newsis.com/view","//*[@id=\"content\"]/div[1]/div[1]/div[3]/article"); // 뉴시스
-        urlToXpathMap.put("www.inews24.com/view","//*[@id=\"articleBody\"]"); // 아이뉴스
-        urlToXpathMap.put("mydaily.co.kr/page/view","//*[@id=\"container\"]/div[1]/div[4]/div[1]/div"); // 마이데일리
-        urlToXpathMap.put("www.donga.com/news/NewsStand/article","//*[@id=\"contents\"]/div[2]/div/div[1]/section[1]"); // 동아일보
-        urlToXpathMap.put("news.jtbc.co.kr/article","//*[@id=\"wrapper\"]/div/div[6]/div/div/div/div/div[1]/div[1]"); // JTBC 뉴스
-        urlToXpathMap.put("www.ytn.co.kr/","//*[@id=\"CmAdContent\"]/span"); // ytn 뉴스
-        urlToXpathMap.put("www.newdaily.co.kr/site/data/html","//*[@id=\"article_conent\"]"); // 뉴데일리
-        urlToXpathMap.put("www.dt.co.kr/contents","//*[@id=\"v-left-scroll-in\"]/div[2]/div/div[2]"); // 디지털타임스
-        urlToXpathMap.put("sports.chosun.com/","//*[@id=\"articleBody\"]/div/div/font"); // 스포츠조선
-        urlToXpathMap.put("www.chosun.com/","//*[@id=\"fusion-app\"]/div[1]/div[2]/div/section/article/section"); // 조선일보
-        urlToXpathMap.put("www.sportsseoul.com/news/read","//*[@id=\"article-body\"]"); // 스포츠서울
-        urlToXpathMap.put("www.khan.co.kr/article","//*[@id=\"articleBody\"]"); // 경향신문
-        urlToXpathMap.put("sports.donga.com/NewsStand/article","//*[@id=\"article_body\"]"); // 스포츠동아
-        urlToXpathMap.put("news.mt.co.kr/mtview","//*[@id=\"textBody\"]"); // 머니투데이
-        urlToXpathMap.put("www.etnews.com/","//*[@id=\"articleBody\"]/p"); // 전자신문
-        urlToXpathMap.put("www.sedaily.com/NewsView","//*[@id=\"v-left-scroll-in\"]/div[2]/div[1]/div[2]"); // 서울경제
-        urlToXpathMap.put("www.joongang.co.kr/article","//*[@id=\"article_body\"]"); // 중앙일보
-        urlToXpathMap.put("www.sisain.co.kr/news/article","//*[@id=\"article-view-content-div\"]"); // 시사인
-        urlToXpathMap.put("www.wowtv.co.kr/NewsCenter/News/Read","//*[@id=\"divNewsContent\"]"); // 한국경제TV
-        urlToXpathMap.put("www.yonhapnewstv.co.kr/news/","//*[@id=\"articleBody\"]"); // 연합뉴스
-        urlToXpathMap.put("www.kmib.co.kr/article/","//*[@id=\"articleBody\"]"); // 국민일보
-        urlToXpathMap.put("www.mbn.co.kr/news","//*[@id=\"newsViewArea\"]"); // MBN 뉴스
-        urlToXpathMap.put("biz.chosun.com/","//*[@id=\"fusion-app\"]/div[1]/div[2]/div/section/article/section"); // 조선비즈
-        urlToXpathMap.put("www.segye.com/newsView","//*[@id=\"wps_layout1_box2\"]"); // 세계일보
-        urlToXpathMap.put("www.fnnews.com/news","//*[@id=\"article_content\"]"); // 파이낸셜 뉴스
-        urlToXpathMap.put("sportalkorea.com/news/","//*[@id=\"CmAdContent\"]/div[2]/div/div"); // 스포탈코리아
-        urlToXpathMap.put("www.hani.co.kr/arti","//*[@id=\"renewal2023\"]/span"); // 한겨레
-        urlToXpathMap.put("n.news.naver.com/article","//*[@id=\"dic_area\"]"); // 네이버뉴스
+        urlToXpathMap.put("news.kbs.co.kr","//*[@id=\"cont_newstext\"]"); // KBS 뉴스
+        urlToXpathMap.put("www.hankyung.com","//*[@id=\"articletxt\"]"); //한국경제
+        urlToXpathMap.put("imnews.imbc.com","//*[@id=\"content\"]/div/section[1]/article/div[2]/div[4]"); // MBC 뉴스
+        urlToXpathMap.put("www.ohmynews.com","//*[@id=\"content_wrap\"]/div[1]/div[3]/div[1]/div[1]/div[1]/div"); // 오마이뉴스
+        urlToXpathMap.put("www.mk.co.kr","//*[@id=\"container\"]/section/div[3]/section/div[1]/div[1]/div[1]"); // 매일경제
+        urlToXpathMap.put("www.dailian.co.kr","//*[@id=\"contentsArea\"]/div[1]/div[4]/div[2]/div[2]/description"); // 데일리안
+        urlToXpathMap.put("www.nocutnews.co.kr","//*[@id=\"pnlContent\"]"); // 노컷뉴스
+        urlToXpathMap.put("view.asiae.co.kr","//*[@id=\"txt_area\"]"); // 아시아경제
+        urlToXpathMap.put("www.edaily.co.kr","//*[@id=\"contents\"]/section[1]/section[1]/div[1]/div[3]/div[1]"); // 이데일리
+        urlToXpathMap.put("biz.heraldcorp.com","//*[@id=\"articleText\"]"); // 해럴드경제
+        urlToXpathMap.put("zdnet.co.kr","//*[@id=\"articleBody\"]");
+        urlToXpathMap.put("www.seoul.co.kr","//*[@id=\"articleContent\"]/div"); // 서울신문
+        urlToXpathMap.put("www.osen.co.kr","//*[@id=\"articleBody\"]"); // OSEN
+        urlToXpathMap.put("news.sbs.co.kr","//*[@id=\"container\"]/div[1]/div[3]/div[2]/div[1]/div[1]/div[2]"); // SBS 뉴스
+        urlToXpathMap.put("newstapa.org","//*[@id=\"editor_fontsize\"]"); //뉴스타파
+        urlToXpathMap.put("www.hankookilbo.com","/html/body/div[2]/div/div[4]/div/div[1]"); // 한국일보
+        urlToXpathMap.put("isplus.com","//*[@id=\"article_body\"]"); // 일간스포츠
+        urlToXpathMap.put("www.newsis.com","//*[@id=\"content\"]/div[1]/div[1]/div[3]/article"); // 뉴시스
+        urlToXpathMap.put("www.inews24.com","//*[@id=\"articleBody\"]"); // 아이뉴스
+        urlToXpathMap.put("mydaily.co.kr","//*[@id=\"container\"]/div[1]/div[4]/div[1]/div"); // 마이데일리
+        urlToXpathMap.put("www.donga.com","//*[@id=\"contents\"]/div[2]/div/div[1]/section[1]"); // 동아일보
+        urlToXpathMap.put("news.jtbc.co.kr","//*[@id=\"wrapper\"]/div/div[6]/div/div/div/div/div[1]/div[1]"); // JTBC 뉴스
+        urlToXpathMap.put("www.ytn.co.kr","//*[@id=\"CmAdContent\"]/span"); // ytn 뉴스
+        urlToXpathMap.put("www.newdaily.co.kr","//*[@id=\"article_conent\"]"); // 뉴데일리
+        urlToXpathMap.put("www.dt.co.kr","//*[@id=\"v-left-scroll-in\"]/div[2]/div/div[2]"); // 디지털타임스
+        urlToXpathMap.put("sports.chosun.com","//*[@id=\"articleBody\"]/div/div/font"); // 스포츠조선
+        urlToXpathMap.put("www.chosun.com","//*[@id=\"fusion-app\"]/div[1]/div[2]/div/section/article/section"); // 조선일보
+        urlToXpathMap.put("www.sportsseoul.com","//*[@id=\"article-body\"]"); // 스포츠서울
+        urlToXpathMap.put("www.khan.co.kr","//*[@id=\"articleBody\"]"); // 경향신문
+        urlToXpathMap.put("sports.donga.com","//*[@id=\"article_body\"]"); // 스포츠동아
+        urlToXpathMap.put("news.mt.co.kr","//*[@id=\"textBody\"]"); // 머니투데이
+        urlToXpathMap.put("www.etnews.com","//*[@id=\"articleBody\"]/p"); // 전자신문
+        urlToXpathMap.put("www.sedaily.com","//*[@id=\"v-left-scroll-in\"]/div[2]/div[1]/div[2]"); // 서울경제
+        urlToXpathMap.put("www.joongang.co.kr","//*[@id=\"article_body\"]"); // 중앙일보
+        urlToXpathMap.put("www.sisain.co.kr","//*[@id=\"article-view-content-div\"]"); // 시사인
+        urlToXpathMap.put("www.wowtv.co.kr","//*[@id=\"divNewsContent\"]"); // 한국경제TV
+        urlToXpathMap.put("www.yonhapnewstv.co.kr","//*[@id=\"articleBody\"]"); // 연합뉴스
+        urlToXpathMap.put("www.kmib.co.kr","//*[@id=\"articleBody\"]"); // 국민일보
+        urlToXpathMap.put("www.mbn.co.kr","//*[@id=\"newsViewArea\"]"); // MBN 뉴스
+        urlToXpathMap.put("biz.chosun.com","//*[@id=\"fusion-app\"]/div[1]/div[2]/div/section/article/section"); // 조선비즈
+        urlToXpathMap.put("www.segye.com","//*[@id=\"wps_layout1_box2\"]"); // 세계일보
+        urlToXpathMap.put("www.fnnews.com","//*[@id=\"article_content\"]"); // 파이낸셜 뉴스
+        urlToXpathMap.put("sportalkorea.com","//*[@id=\"CmAdContent\"]/div[2]/div/div"); // 스포탈코리아
+        urlToXpathMap.put("www.hani.co.kr","//*[@id=\"renewal2023\"]/span"); // 한겨레
+        urlToXpathMap.put("n.news.naver.com","//*[@id=\"dic_area\"]"); // 네이버뉴스
     }
+
+//    static {
+//        urlToXpathMap.put("news.kbs.co.kr/news/pc/view","//*[@id=\"cont_newstext\"]"); // KBS 뉴스
+//        urlToXpathMap.put("www.hankyung.com/article","//*[@id=\"articletxt\"]"); //한국경제
+//        urlToXpathMap.put("imnews.imbc.com/news","//*[@id=\"content\"]/div/section[1]/article/div[2]/div[4]"); // MBC 뉴스
+//        urlToXpathMap.put("www.ohmynews.com/NWS_Web/View","//*[@id=\"content_wrap\"]/div[1]/div[3]/div[1]/div[1]/div[1]/div"); // 오마이뉴스
+//        urlToXpathMap.put("www.mk.co.kr/news","//*[@id=\"container\"]/section/div[3]/section/div[1]/div[1]/div[1]"); // 매일경제
+//        urlToXpathMap.put("www.dailian.co.kr/news/view","//*[@id=\"contentsArea\"]/div[1]/div[4]/div[2]/div[2]/description"); // 데일리안
+//        urlToXpathMap.put("www.nocutnews.co.kr/news","//*[@id=\"pnlContent\"]"); // 노컷뉴스
+//        urlToXpathMap.put("view.asiae.co.kr/article","//*[@id=\"txt_area\"]"); // 아시아경제
+//        urlToXpathMap.put("www.edaily.co.kr/News","//*[@id=\"contents\"]/section[1]/section[1]/div[1]/div[3]/div[1]"); // 이데일리
+//        urlToXpathMap.put("biz.heraldcorp.com/article","//*[@id=\"articleText\"]"); // 해럴드경제
+//        urlToXpathMap.put("zdnet.co.kr/view","//*[@id=\"articleBody\"]");
+//        urlToXpathMap.put("www.seoul.co.kr/news","//*[@id=\"articleContent\"]/div"); // 서울신문
+//        urlToXpathMap.put("www.osen.co.kr/article","//*[@id=\"articleBody\"]"); // OSEN
+//        urlToXpathMap.put("news.sbs.co.kr/news","//*[@id=\"container\"]/div[1]/div[3]/div[2]/div[1]/div[1]/div[2]"); // SBS 뉴스
+//        urlToXpathMap.put("newstapa.org/article","//*[@id=\"editor_fontsize\"]"); //뉴스타파
+//        urlToXpathMap.put("www.hankookilbo.com/News/Read","/html/body/div[2]/div/div[4]/div/div[1]"); // 한국일보
+//        urlToXpathMap.put("isplus.com/article/view","//*[@id=\"article_body\"]"); // 일간스포츠
+//        urlToXpathMap.put("www.newsis.com/view","//*[@id=\"content\"]/div[1]/div[1]/div[3]/article"); // 뉴시스
+//        urlToXpathMap.put("www.inews24.com/view","//*[@id=\"articleBody\"]"); // 아이뉴스
+//        urlToXpathMap.put("mydaily.co.kr/page/view","//*[@id=\"container\"]/div[1]/div[4]/div[1]/div"); // 마이데일리
+//        urlToXpathMap.put("www.donga.com/news/NewsStand/article","//*[@id=\"contents\"]/div[2]/div/div[1]/section[1]"); // 동아일보
+//        urlToXpathMap.put("news.jtbc.co.kr/article","//*[@id=\"wrapper\"]/div/div[6]/div/div/div/div/div[1]/div[1]"); // JTBC 뉴스
+//        urlToXpathMap.put("www.ytn.co.kr/","//*[@id=\"CmAdContent\"]/span"); // ytn 뉴스
+//        urlToXpathMap.put("www.newdaily.co.kr/site/data/html","//*[@id=\"article_conent\"]"); // 뉴데일리
+//        urlToXpathMap.put("www.dt.co.kr/contents","//*[@id=\"v-left-scroll-in\"]/div[2]/div/div[2]"); // 디지털타임스
+//        urlToXpathMap.put("sports.chosun.com/","//*[@id=\"articleBody\"]/div/div/font"); // 스포츠조선
+//        urlToXpathMap.put("www.chosun.com/","//*[@id=\"fusion-app\"]/div[1]/div[2]/div/section/article/section"); // 조선일보
+//        urlToXpathMap.put("www.sportsseoul.com/news/read","//*[@id=\"article-body\"]"); // 스포츠서울
+//        urlToXpathMap.put("www.khan.co.kr/article","//*[@id=\"articleBody\"]"); // 경향신문
+//        urlToXpathMap.put("sports.donga.com/NewsStand/article","//*[@id=\"article_body\"]"); // 스포츠동아
+//        urlToXpathMap.put("news.mt.co.kr/mtview","//*[@id=\"textBody\"]"); // 머니투데이
+//        urlToXpathMap.put("www.etnews.com/","//*[@id=\"articleBody\"]/p"); // 전자신문
+//        urlToXpathMap.put("www.sedaily.com/NewsView","//*[@id=\"v-left-scroll-in\"]/div[2]/div[1]/div[2]"); // 서울경제
+//        urlToXpathMap.put("www.joongang.co.kr/article","//*[@id=\"article_body\"]"); // 중앙일보
+//        urlToXpathMap.put("www.sisain.co.kr/news/article","//*[@id=\"article-view-content-div\"]"); // 시사인
+//        urlToXpathMap.put("www.wowtv.co.kr/NewsCenter/News/Read","//*[@id=\"divNewsContent\"]"); // 한국경제TV
+//        urlToXpathMap.put("www.yonhapnewstv.co.kr/news/","//*[@id=\"articleBody\"]"); // 연합뉴스
+//        urlToXpathMap.put("www.kmib.co.kr/article/","//*[@id=\"articleBody\"]"); // 국민일보
+//        urlToXpathMap.put("www.mbn.co.kr/news","//*[@id=\"newsViewArea\"]"); // MBN 뉴스
+//        urlToXpathMap.put("biz.chosun.com/","//*[@id=\"fusion-app\"]/div[1]/div[2]/div/section/article/section"); // 조선비즈
+//        urlToXpathMap.put("www.segye.com/newsView","//*[@id=\"wps_layout1_box2\"]"); // 세계일보
+//        urlToXpathMap.put("www.fnnews.com/news","//*[@id=\"article_content\"]"); // 파이낸셜 뉴스
+//        urlToXpathMap.put("sportalkorea.com/news/","//*[@id=\"CmAdContent\"]/div[2]/div/div"); // 스포탈코리아
+//        urlToXpathMap.put("www.hani.co.kr/arti","//*[@id=\"renewal2023\"]/span"); // 한겨레
+//        urlToXpathMap.put("n.news.naver.com/article","//*[@id=\"dic_area\"]"); // 네이버뉴스
+//    }
 
     @Value("${python.script.path.request}")
     private String requestScriptPath;
@@ -301,11 +349,16 @@ public class ApiService {
             String content;
 
             // 입력 URL에서 대표 URL 부분 추출
-            String baseUrl = extractBaseUrl(url);
+            String domain = extractDomain(url);
+            log.info("baseUrl: {}", domain);
+
+            String matchedValue = findMatchingValue(urlToXpathMap, domain);
+            log.info("matchedValue: {}", matchedValue);
+
             // 대표 URL이 HashMap에 존재하는지 확인
-            if (urlToXpathMap.containsKey(baseUrl)) {
+            if (matchedValue != null) {
                 // 존재하면 해당하는 xpath를 가져옴
-                String xpath = urlToXpathMap.get(baseUrl);
+                String xpath = urlToXpathMap.get(domain);
                 log.info("Found xpath: " + xpath);
 
                 WebElement webElement = driver.findElement(By.xpath(xpath));
@@ -326,11 +379,26 @@ public class ApiService {
         }
     }
 
-    // 입력 URL에서 기본 URL 부분을 추출하는 메서드
-    private static String extractBaseUrl(String url) {
-        // URL에서 숫자 앞까지 잘라내는 방법 (예시: /article/028까지)
-        int lastSlashIndex = url.lastIndexOf('/');
-        return url.substring(0, lastSlashIndex);
+    // 입력된 URL에서 프로토콜을 제거하고 도메인을 추출하는 메서드
+    private static String extractDomain(String url) {
+        if (url.startsWith("https://")) {
+            url = url.substring(8);
+        } else if (url.startsWith("http://")) {
+            url = url.substring(7);
+        }
+        // 도메인 부분 추출
+        int endIndex = url.indexOf('/');
+        return endIndex != -1 ? url.substring(0, endIndex) : url;
+    }
+
+    // 가장 많이 일치하는 URL 키를 찾는 메서드
+    private static String findMatchingValue(Map<String, String> urlToXpathMap, String domain) {
+        for (String key : urlToXpathMap.keySet()) {
+            if (domain.contains(key)) {
+                return urlToXpathMap.get(key);
+            }
+        }
+        return null;
     }
 
     // 웹 페이지에서 제목&본문 추출
