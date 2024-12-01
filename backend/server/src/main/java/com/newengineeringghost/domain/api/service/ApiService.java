@@ -215,12 +215,10 @@ public class ApiService {
         log.info("Dto.probability: {}", modelDataDto.getProbability());
         log.info("Dto.sentence: {}", modelDataDto.getSentence());
 
-        String explanation = openAI(content, modelDataDto.getSentence());
-
         // 확률 값에 따라 반환
         if (modelDataDto.getProbability() > 0.5) {
             // Todo : mongodb 저장
-            return new PrecisionMeasurementDto(modelDataDto.getProbability(), modelDataDto.getSentence(), explanation);
+            return new PrecisionMeasurementDto(modelDataDto.getProbability(), modelDataDto.getSentence(), openAI(content, modelDataDto.getSentence()));
         } else {
             // Todo : mongodb 저장
             return modelDataDto.getProbability();
