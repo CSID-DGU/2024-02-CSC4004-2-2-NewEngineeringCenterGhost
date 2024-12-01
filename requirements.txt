@@ -4,6 +4,7 @@ scikit-learn
 scipy
 gensim
 kss
+openai
 
 --extra-index-url https://download.pytorch.org/whl/cu121
 torch==2.5.1
