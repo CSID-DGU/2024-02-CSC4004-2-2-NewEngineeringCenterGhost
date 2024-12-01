@@ -28,8 +28,7 @@ const prob_dict = {}
 const prob_queue = []
 const tooltip = document.createElement('div')
 
-async function getProbability(element) {
-  const url = element.href;
+async function getProbability(url) {
   if (!(url in prob_dict)) {
     const recv = await fetchPOST("http://localhost:8080/api/v1/server/quick?", { "url": url });
     console.log(recv.status)
@@ -40,9 +39,10 @@ async function getProbability(element) {
   if (tooltip._url === url) tooltip.innerText = "낚시성 확률: " + prob_dict[url] + "%"
 }
 
-async function queueProbability(element) {
-  if (element in prob_dict) return;
-  prob_queue.push(element);
+async function queueProbability(url) {
+  if (url in prob_dict) return;
+  if (prob_queue.includes(url)) return;
+  prob_queue.push(url);
   if (prob_queue.length > 1) return;
   while (true) {
     await getProbability(prob_queue.at(-1));
@@ -74,7 +74,7 @@ function showProbability(event) {
     tooltip.innerText = "낚시성 확률: " + prob_dict[element.href] + "%";
   }
   else {
-    setTimeout(queueProbability(element), 1);
+    setTimeout(()=>{queueProbability(element.href)}, 1);
   }
 
   // 툴팁 위치 설정
