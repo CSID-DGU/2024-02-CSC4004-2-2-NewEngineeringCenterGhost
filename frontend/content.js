@@ -1,4 +1,4 @@
-async function fetchPOSTExample(url, data) {
+async function fetchPOST(url, data) {
   try {
       const response = await fetch(url, {
           method: 'POST',
@@ -20,7 +20,7 @@ async function fetchPOSTExample(url, data) {
 /*
 [ API url mapping 가이드 ]
 빠른 측정 : http://localhost:8080/api/v1/server/quick
-정밀 측정 : http://localhost:8080/api/v1/server/precisiong
+정밀 측정 : http://localhost:8080/api/v1/server/precision
 사용자 정의 측정 : http://localhost:8080/api/v1/server/custom
  */
 
@@ -31,7 +31,7 @@ const tooltip = document.createElement('div')
 async function getProbability(element) {
   const url = element.href;
   if (!(url in prob_dict)) {
-    const recv = await fetchPOSTExample("http://localhost:8080/api/v1/server/quick?", { "url": url });
+    const recv = await fetchPOST("http://localhost:8080/api/v1/server/quick?", { "url": url });
     console.log(recv.status)
     if (recv.status) return;
     const probability = parseInt(recv * 100);
@@ -101,11 +101,9 @@ const allowLinks = [
 
 let seeker_data = [];
 
-function checkLink(element) {
-  const href = element.getAttribute("href");
-
+function checkLink(href) {
   if (!href) {
-      return false;
+    return false;
   }
 
   return allowLinks.some(link => href.startsWith(link));
@@ -114,7 +112,7 @@ function checkLink(element) {
 function addHoverEffect() {
   // 텍스트 및 이미지 관련 요소 선택
   const elements = Array.from(document.querySelectorAll("a")).filter(element => {
-      return checkLink(element);
+      return checkLink(element.getAttribute("href"));
   });
 
   elements.forEach(element => {
@@ -145,8 +143,8 @@ observer.observe(document.body, {
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.action === "predictCustomMeasure") {
-      predictCustomMeasure();
+  if (message.action === "Measure") {
+    measure();
   }
   else if (message.action === "addData") {
       addData(message.data);
@@ -315,21 +313,31 @@ function highlight_text(text_no_spaces) {
   }
 }
 
+function process_recv(recv) {
+  if (typeof(recv) === "number") {
+    showBanner(recv, "낚시성으로 판단되지 않았습니다.");
+    return;
+  }
+  for (sentence of recv.sentence) {
+    highlight_text(sentence);
+  }
+  showBanner(recv.probability, recv.explanation);
+}
 
-async function predictCustomMeasure() {
-  if (seeker_data.length === 0) {
+
+async function measure() {
+  const url = window.location.href;
+  if (seeker_data.length == 0 && !checkLink(url)) {
     alert("측정할 데이터가 없습니다.");
     return;
   }
   showBanner(0, "측정 중...");
-  const recv = await fetchPOSTExample("http://localhost:8080/api/v1/server/custom?", { "content": seeker_data.join(",") });
-  if (typeof(recv) === "object") {
-    for (sentence of recv.sentence) {
-      highlight_text(sentence);
-    }
-    showBanner(recv.probability, recv.explanation);
+  if (seeker_data.length > 0) {
+    const recv = await fetchPOST("http://localhost:8080/api/v1/server/custom?", { "content": seeker_data.join(",") });
+    process_recv(recv);
   }
   else {
-    showBanner(recv, "낚시성으로 판단되지 않았습니다.");
+    const recv = await fetchPOST("http://localhost:8080/api/v1/server/precision?", { "url": url });
+    process_recv(recv);
   }
 }
