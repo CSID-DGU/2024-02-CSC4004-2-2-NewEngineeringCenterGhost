@@ -7,6 +7,7 @@ spring:
       #test uri
       uri: mongodb://localhost:27017/yourDatabase
       #uri: mongodb+srv://<user>:<db_password>@cluster0.e7uyg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      #uri: mongodb://localhost:27017/yourDatabase
 
 python:
   script:
@@ -15,3 +16,6 @@ python:
       server: src/main/resources/core/server.py
       openAi: src/main/resources/openai/TestOpenAi.py
       ocr: src/main/resources/ocr/TestOCR.py
+
+chrome-driver:
+  path: /usr/bin/chromedriver
