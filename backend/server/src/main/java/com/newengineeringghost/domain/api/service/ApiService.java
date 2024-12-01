@@ -3,9 +3,7 @@ package com.newengineeringghost.domain.api.service;
 import com.newengineeringghost.domain.api.dto.ModelDataDto;
 import com.newengineeringghost.domain.api.dto.PrecisionMeasurementDto;
 import com.newengineeringghost.domain.api.dto.ResponseDataDto;
-import com.newengineeringghost.domain.api.entity.ClassifyUrl;
 import com.newengineeringghost.domain.api.entity.ResponseData;
-import com.newengineeringghost.domain.api.repository.ClassifyUrlRepository;
 import com.newengineeringghost.domain.api.repository.ResponseDataRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -26,20 +24,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
 public class ApiService {
 
-    private ClassifyUrlRepository classifyUrlRepository;
+    private static final Map<String, String> urlToXpathMap = new HashMap<>();
+
+    static {
+        urlToXpathMap.put("https://n.news.naver.com/article/028", "//*[@id=\"newsct_article\"]"); // 한겨레 신문
+    }
+
+//    private ClassifyUrlRepository classifyUrlRepository;
 
     private ResponseDataRepository responseDataRepository;
 
-    @Autowired
-    public void setClassifyUrlRepository(ClassifyUrlRepository classifyUrlRepository) {this.classifyUrlRepository = classifyUrlRepository;}
+//    @Autowired
+//    public void setClassifyUrlRepository(ClassifyUrlRepository classifyUrlRepository) {this.classifyUrlRepository = classifyUrlRepository;}
 
     @Autowired
     public void setResponseDataRepository(ResponseDataRepository responseDataRepository) {this.responseDataRepository = responseDataRepository;}
@@ -308,27 +310,33 @@ public class ApiService {
         return resultBuilder.toString().trim();
     }
 
-    public Optional<String> getXpathByUrl(String url) {
-        List<ClassifyUrl> classifyUrls = classifyUrlRepository.findByUrlStartingWith(url);
+//    public Optional<String> getXpathByUrl(String url) {
+//        List<ClassifyUrl> classifyUrls = classifyUrlRepository.findByUrlStartingWith(url);
+//
+//        if (classifyUrls.isEmpty()) {
+//            return Optional.empty();
+//        }
+//
+//        // 입력된 URL과 저장된 URL의 길이를 비교하여 가장 긴 URL을 선택합니다.
+//        ClassifyUrl matchedUrl = classifyUrls.stream()
+//                .filter(classifyUrl -> url.startsWith(classifyUrl.getUrl()))
+//                .max((a, b) -> Integer.compare(a.getUrl().length(), b.getUrl().length()))
+//                .orElse(null);
+//
+//        if (matchedUrl == null) {
+//            return Optional.empty();
+//        }
+//
+//        return Optional.of(matchedUrl.getXpath());
+//    }
 
-        if (classifyUrls.isEmpty()) {
-            return Optional.empty();
-        }
-
-        // 입력된 URL과 저장된 URL의 길이를 비교하여 가장 긴 URL을 선택합니다.
-        ClassifyUrl matchedUrl = classifyUrls.stream()
-                .filter(classifyUrl -> url.startsWith(classifyUrl.getUrl()))
-                .max((a, b) -> Integer.compare(a.getUrl().length(), b.getUrl().length()))
-                .orElse(null);
-
-        if (matchedUrl == null) {
-            return Optional.empty();
-        }
-
-        return Optional.of(matchedUrl.getXpath());
+    // 입력 URL에서 기본 URL 부분을 추출하는 메서드
+    private static String extractBaseUrl(String url) {
+        // URL에서 숫자 앞까지 잘라내는 방법 (예시: /article/028까지)
+        int lastSlashIndex = url.lastIndexOf('/');
+        return url.substring(0, lastSlashIndex);
     }
 
-    // 웹 페이지에서 제목&본문 추출
     public String webScraping(String url) throws IOException {
         log.info(url);
         log.info("Chrome Driver Info: {}", driver);
@@ -344,28 +352,34 @@ public class ApiService {
 
             // 본문 내용 추출
             String content;
-            Optional<String> xpath = getXpathByUrl(url);
 
-            if (xpath.isPresent()) {
-                WebElement webElement = driver.findElement(By.xpath(xpath.get()));
+            // 입력 URL에서 대표 URL 부분 추출
+            String baseUrl = extractBaseUrl(url);
+            // 대표 URL이 HashMap에 존재하는지 확인
+            if (urlToXpathMap.containsKey(baseUrl)) {
+                // 존재하면 해당하는 xpath를 가져옴
+                String xpath = urlToXpathMap.get(baseUrl);
+                log.info("Found xpath: " + xpath);
+
+                WebElement webElement = driver.findElement(By.xpath(xpath));
                 content = webElement.getText();
                 log.info("WebPage Content using xpath: {}", content);
+
+                StringBuilder result = new StringBuilder();
+                result.append(title).append(".");
+                result.append(content);
+                log.info("WEB SCRAPING RESULT: {}", result);
+
+                return result.toString();
             } else {
                 return "지원되지 않는 사이트입니다.";
             }
-
-            StringBuilder result = new StringBuilder();
-            result.append(title).append(".");
-            result.append(content);
-            log.info("WEB SCRAPING RESULT: {}", result);
-
-            return result.toString();
         } else {
             return "";
         }
     }
 
-//    // 웹 페이지에서 제목&본문 추출
+    // 웹 페이지에서 제목&본문 추출
 //    public String webScraping(String url) throws IOException {
 //        log.info(url);
 //        log.info("Chrome Driver Info: {}", driver);
