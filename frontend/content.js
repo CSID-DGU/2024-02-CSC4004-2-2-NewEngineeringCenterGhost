@@ -90,51 +90,51 @@ function showProbability(event) {
 
 
 const allowLinks = [
-  "https://news.kbs.co.kr/news/pc/view", // KBS 뉴스
-  "https://www.hankyung.com/article", //한국경제
-  "https://imnews.imbc.com/news", // MBC 뉴스
-  "https://www.ohmynews.com/NWS_Web/View", // 오마이뉴스
-  "https://www.mk.co.kr/news", // 매일경제
-  "https://www.dailian.co.kr/news/view", // 데일리안
-  "https://www.nocutnews.co.kr/news", // 노컷뉴스
-  "https://view.asiae.co.kr/article", // 아시아경제
-  "https://www.edaily.co.kr/News", // 이데일리
-  "https://biz.heraldcorp.com/article", // 해럴드경제
-  "https://zdnet.co.kr/view",
-  "https://www.seoul.co.kr/news", // 서울신문
-  "https://www.osen.co.kr/article", // OSEN
-  "https://news.sbs.co.kr/news", // SBS 뉴스
-  "https://newstapa.org/article", //뉴스타파
-  "https://www.hankookilbo.com/News/Read", // 한국일보
-  "https://isplus.com/article/view", // 일간스포츠
-  "https://www.newsis.com/view", // 뉴시스
-  "https://www.inews24.com/view", // 아이뉴스
-  "https://mydaily.co.kr/page/view", // 마이데일리
-  "https://www.donga.com/news/NewsStand/article", // 동아일보
-  "https://news.jtbc.co.kr/article", // JTBC 뉴스
-  "https://www.ytn.co.kr/", // ytn 뉴스
-  "https://www.newdaily.co.kr/site/data/html", // 뉴데일리
-  "https://www.dt.co.kr/contents", // 디지털타임스
-  "https://sports.chosun.com/", // 스포츠조선
-  "https://www.chosun.com/", // 조선일보
-  "https://www.sportsseoul.com/news/read", // 스포츠서울
-  "https://www.khan.co.kr/article", // 경향신문
-  "https://sports.donga.com/NewsStand/article", // 스포츠동아
-  "https://news.mt.co.kr/mtview", // 머니투데이
-  "https://www.etnews.com/", // 전자신문
-  "https://www.sedaily.com/NewsView", // 서울경제
-  "https://www.joongang.co.kr/article", // 중앙일보
-  "https://www.sisain.co.kr/news/article", // 시사인
-  "https://www.wowtv.co.kr/NewsCenter/News/Read", // 한국경제TV
-  "https://www.yonhapnewstv.co.kr/news/", // 연합뉴스
-  "https://www.kmib.co.kr/article/", // 국민일보
-  "https://www.mbn.co.kr/news", // MBN 뉴스
-  "https://biz.chosun.com/", // 조선비즈
-  "https://www.segye.com/newsView", // 세계일보
-  "https://www.fnnews.com/news", // 파이낸셜 뉴스
-  "https://sportalkorea.com/news/", // 스포탈코리아
-  "https://www.hani.co.kr/arti", // 한겨레
-  "https://n.news.naver.com/article", // 네이버뉴스
+  "news.kbs.co.kr/news/pc/view", // KBS 뉴스
+  "www.hankyung.com/article", //한국경제
+  "imnews.imbc.com/news", // MBC 뉴스
+  "www.ohmynews.com/NWS_Web/View", // 오마이뉴스
+  "www.mk.co.kr/news", // 매일경제
+  "www.dailian.co.kr/news/view", // 데일리안
+  "www.nocutnews.co.kr/news", // 노컷뉴스
+  "view.asiae.co.kr/article", // 아시아경제
+  "www.edaily.co.kr/News", // 이데일리
+  "biz.heraldcorp.com/article", // 해럴드경제
+  "zdnet.co.kr/view",
+  "www.seoul.co.kr/news", // 서울신문
+  "www.osen.co.kr/article", // OSEN
+  "news.sbs.co.kr/news", // SBS 뉴스
+  "newstapa.org/article", //뉴스타파
+  "www.hankookilbo.com/News/Read", // 한국일보
+  "isplus.com/article/view", // 일간스포츠
+  "www.newsis.com/view", // 뉴시스
+  "www.inews24.com/view", // 아이뉴스
+  "mydaily.co.kr/page/view", // 마이데일리
+  "www.donga.com/news/NewsStand/article", // 동아일보
+  "news.jtbc.co.kr/article", // JTBC 뉴스
+  "www.ytn.co.kr/", // ytn 뉴스
+  "www.newdaily.co.kr/site/data/html", // 뉴데일리
+  "www.dt.co.kr/contents", // 디지털타임스
+  "sports.chosun.com/", // 스포츠조선
+  "www.chosun.com/", // 조선일보
+  "www.sportsseoul.com/news/read", // 스포츠서울
+  "www.khan.co.kr/article", // 경향신문
+  "sports.donga.com/NewsStand/article", // 스포츠동아
+  "news.mt.co.kr/mtview", // 머니투데이
+  "www.etnews.com/", // 전자신문
+  "www.sedaily.com/NewsView", // 서울경제
+  "www.joongang.co.kr/article", // 중앙일보
+  "www.sisain.co.kr/news/article", // 시사인
+  "www.wowtv.co.kr/NewsCenter/News/Read", // 한국경제TV
+  "www.yonhapnewstv.co.kr/news/", // 연합뉴스
+  "www.kmib.co.kr/article/", // 국민일보
+  "www.mbn.co.kr/news", // MBN 뉴스
+  "biz.chosun.com/", // 조선비즈
+  "www.segye.com/newsView", // 세계일보
+  "www.fnnews.com/news", // 파이낸셜 뉴스
+  "sportalkorea.com/news/", // 스포탈코리아
+  "www.hani.co.kr/arti", // 한겨레
+  "n.news.naver.com/article", // 네이버뉴스
 ];
 
 let seeker_data = [];
@@ -144,7 +144,7 @@ function checkLink(href) {
     return false;
   }
 
-  return allowLinks.some(link => href.startsWith(link));
+  return allowLinks.some(link => href.includes(link))
 }
 
 function addHoverEffect() {
