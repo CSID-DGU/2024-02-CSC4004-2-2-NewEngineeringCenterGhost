@@ -17,8 +17,10 @@ if __name__ == '__main__':
         print("매개변수가 2개 필요합니다.")
         sys.exit(1)
     
-    text = sys.argv[1] + " #SEP.T.C# " + sys.argv[2]
-    client.sendall(text.encode())
+    text = (sys.argv[1] + " #SEP.T.C# " + sys.argv[2]).encode()
+    client.sendall(str(len(text)).encode())
+    client.recv(2)
+    client.sendall(text)
     data = client.recv(8192)
     print(data.decode())
     client.close()

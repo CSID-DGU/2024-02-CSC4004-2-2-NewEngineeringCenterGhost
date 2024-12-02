@@ -17,7 +17,10 @@ server.listen(5)
 
 while True:
     conn, addr = server.accept()
-    data = conn.recv(8192 * 4)
+    data_len = int(conn.recv(1024).decode())
+    print(f"Data length: {data_len}")
+    conn.send(b'ok')
+    data = conn.recv(data_len)
     data = data.decode(encoding='utf-8')
     now = time.time()
     res = seeker.predict(data)
