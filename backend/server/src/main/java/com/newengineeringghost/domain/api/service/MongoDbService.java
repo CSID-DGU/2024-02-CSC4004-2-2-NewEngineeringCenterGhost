@@ -17,16 +17,19 @@ public class MongoDbService {
 
     // mongodb 연동 test
     public ResponseDataDto getData(String link) {
-        ResponseData responseData = responseDataRepository.findResponseDataByLink(link);
+        ResponseData responseData = responseDataRepository.findResponseDataByLink(link).orElse(null);
 
-        ResponseDataDto responseDto = new ResponseDataDto(
-                responseData.getLink(),
-                responseData.getProbability(),
-                responseData.getSentencePosition(),
-                responseData.getSentenceLength(),
-                responseData.getExplanation());
+        if (responseData != null) {
+            ResponseDataDto responseDto = new ResponseDataDto(
+                    responseData.getLink(),
+                    responseData.getProbability(),
+                    responseData.getFishingSentence(),
+                    responseData.getExplanation());
 
-        return responseDto;
+            return responseDto;
+        } else {
+            return null;
+        }
     }
 
     // mongodb 연동 test
@@ -35,8 +38,7 @@ public class MongoDbService {
         ResponseData responseData = new ResponseData(
                 responseDto.getLink(),
                 responseDto.getProbability(),
-                responseDto.getSentencePosition(),
-                responseDto.getSentenceLength(),
+                responseDto.getFishingSentence(),
                 responseDto.getExplanation()
         );
 

@@ -13,20 +13,17 @@ public class ResponseData {
     private String id;
     private String link;
     private double probability;
-    private String sentencePosition;
-    private String sentenceLength;
+    private String fishingSentence;
     private String explanation;
 
     public ResponseData(
             String link,
             double probability,
-            String sentencePosition,
-            String sentenceLength,
+            String fishingSentence,
             String explanation) {
         this.link = link;
         this.probability = probability;
-        this.sentencePosition = sentencePosition;
-        this.sentenceLength = sentenceLength;
+        this.fishingSentence = fishingSentence;
         this.explanation = explanation;
     }
 }

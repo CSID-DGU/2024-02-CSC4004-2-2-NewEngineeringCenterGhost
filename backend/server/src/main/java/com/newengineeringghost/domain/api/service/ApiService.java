@@ -2,6 +2,8 @@ package com.newengineeringghost.domain.api.service;
 
 import com.newengineeringghost.domain.api.dto.ModelDataDto;
 import com.newengineeringghost.domain.api.dto.PrecisionMeasurementDto;
+import com.newengineeringghost.domain.api.entity.ResponseData;
+import com.newengineeringghost.domain.api.repository.ResponseDataRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +12,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -124,6 +127,13 @@ public class ApiService {
 //        urlToXpathMap.put("n.news.naver.com/article","//*[@id=\"dic_area\"]"); // 네이버뉴스
 //    }
 
+    private final ResponseDataRepository responseDataRepository;
+
+    @Autowired
+    public ApiService(ResponseDataRepository responseDataRepository) {
+        this.responseDataRepository = responseDataRepository;
+    }
+
     @Value("${python.script.path.request}")
     private String requestScriptPath;
 
@@ -192,37 +202,74 @@ public class ApiService {
 
     // 빠른 측정
     public double quickMeasurement(String url) throws IOException {
-        String content = webScraping(url);
+        ResponseData responseData = responseDataRepository.findResponseDataByLink(url).orElse(null);
 
-        String result = pythonFileRun(requestScriptPath, content);
+        if (responseData != null) {
+            return responseData.getProbability();
+        } else {
+            String content = webScraping(url);
 
-        String[] parts = result.split("[(),]");
+            String result = pythonFileRun(requestScriptPath, content);
 
-        String doubleString = parts[1].trim();
+            String[] parts = result.split("[(),]");
 
-        double probability = Double.parseDouble(doubleString);
-        log.info("Probability: {}", probability);
+            String doubleString = parts[1].trim();
 
-        return probability;
+            double probability = Double.parseDouble(doubleString);
+            log.info("Probability: {}", probability);
+
+            return probability;
+        }
     }
 
     // 정밀 측정
     public Object precisionMeasurement(String url) throws IOException {
-        String content = webScraping(url);
+        ResponseData responseData = responseDataRepository.findResponseDataByLink(url).orElse(null);
 
-        String result = pythonFileRun(requestScriptPath, content);
-        ModelDataDto modelDataDto = parseResult(result);
+        if (responseData != null) {
+            if (responseData.getProbability() > 0.5) {
+                return new PrecisionMeasurementDto(responseData.getProbability(), responseData.getFishingSentence(), responseData.getExplanation());
+            } else {
+                return responseData.getProbability();
+            }
+        }
+        else {
+            String content = webScraping(url);
 
-        log.info("Dto.probability: {}", modelDataDto.getProbability());
-        log.info("Dto.sentence: {}", modelDataDto.getSentence());
+            String result = pythonFileRun(requestScriptPath, content);
+            ModelDataDto modelDataDto = parseResult(result);
 
-        // 확률 값에 따라 반환
-        if (modelDataDto.getProbability() > 0.5) {
-            // Todo : mongodb 저장
-            return new PrecisionMeasurementDto(modelDataDto.getProbability(), modelDataDto.getSentence(), openAI(content, modelDataDto.getSentence()));
-        } else {
-            // Todo : mongodb 저장
-            return modelDataDto.getProbability();
+            log.info("Dto.probability: {}", modelDataDto.getProbability());
+            log.info("Dto.sentence: {}", modelDataDto.getSentence());
+
+            // 확률 값에 따라 반환
+            if (modelDataDto.getProbability() > 0.5) {
+                String explanation = openAI(content, modelDataDto.getSentence());
+
+                // mongodb에 값 저장
+                ResponseData data = new ResponseData(
+                        url,
+                        modelDataDto.getProbability(),
+                        modelDataDto.getSentence(),
+                        explanation
+                );
+
+                responseDataRepository.save(data);
+
+                return new PrecisionMeasurementDto(modelDataDto.getProbability(), modelDataDto.getSentence(), explanation);
+            } else {
+                // mongodb에 값 저장
+                ResponseData data = new ResponseData(
+                        url,
+                        modelDataDto.getProbability(),
+                        modelDataDto.getSentence(),
+                        ""
+                );
+
+                responseDataRepository.save(data);
+
+                return modelDataDto.getProbability();
+            }
         }
     }
 
@@ -318,10 +365,8 @@ public class ApiService {
 
         // 확률 값에 따라 반환
         if (modelDataDto.getProbability() > 0.5) {
-            // Todo : mongodb 저장
             return new PrecisionMeasurementDto(modelDataDto.getProbability(), modelDataDto.getSentence(), openAI(content, modelDataDto.getSentence()));
         } else {
-            // Todo : mongodb 저장
             return modelDataDto.getProbability();
         }
     }
