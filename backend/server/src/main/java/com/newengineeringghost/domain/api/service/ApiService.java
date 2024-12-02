@@ -14,6 +14,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -116,11 +117,20 @@ public class ApiService {
         chromeOptions.addArguments("--disable-gpu");
         chromeOptions.addArguments("--disable-dev-shm-usage");
 
+        driver = new ChromeDriver(chromeOptions);
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
+
+        driver.get("https://www.instagram.com/");
+        WebElement e = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[1]/div/label/input"));
+        e.sendKeys("@test_account_for_oss");
+        e = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[2]/div/label/input"));
+        e.sendKeys("oss_account");
+        e = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[3]/button"));
+        e.click();
+
         // 페이지 로드 전략 설정
         chromeOptions.setPageLoadStrategy(PageLoadStrategy.NONE);
 
-        driver = new ChromeDriver(chromeOptions);
-        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
     }
 
     // ServerApplication 종료 시에 chrome driver quit
@@ -256,6 +266,7 @@ public class ApiService {
     // python 모델이 반환하는 값 분리하는 함수
     private ModelDataDto parseResult(String result) {
         // 문자열의 앞뒤 괄호 제거 및 공백 제거
+        log.info(result);
         String trimmedResult = result.substring(1, result.length() - 1).trim();
         log.info("trimmedResult: {}", trimmedResult);
 
@@ -422,20 +433,17 @@ public class ApiService {
 
             } else if (domain.equals("www.instagram.com")) {
                 // 대표 URL이 인스타그램인 경우
+                url = driver.getCurrentUrl();
+                (new WebDriverWait(driver, Duration.ofSeconds(2))).until(driver -> true);
                 WebElement webElement = driver.findElement(By.tagName("article"));
-
-                // 모든 이미지 요소 찾기
-                List<WebElement> imageElements = webElement.findElements(By.tagName("img"));
-                // 이미지 수 출력
-                log.info("Numbers of Images: {}", imageElements.size());
 
                 // 모든 이미지 src를 추출하여 리스트에 저장
                 StringBuilder result = new StringBuilder();
-                // 각 이미지 URL 생성 (img_index 값을 변경하여 확인)
-                for (int i = 1; i <= imageElements.size(); i++) {
-                    String modifiedUrl = url.replace("img_index=1", "img_index=" + i);
-                    driver.get(modifiedUrl);
-                    log.info("Image URL with index " + i + ": " + modifiedUrl);
+                boolean has_multiple_images = url.contains("img_index=");
+                url = url.split("img_index=")[0];
+                driver.get(url + "img_index=1");
+                for (int i = 2;; i++) {
+                    log.info("Image URL with index " + (i - 1));
 
                     WebElement webElement2 = driver.findElement(By.tagName("article"));
                     WebElement imageElement = webElement2.findElement(By.tagName("img"));
@@ -444,6 +452,10 @@ public class ApiService {
                     log.info("Image: {}", img);
                     result.append(ocr(img)).append(" ");
                     log.info("Result: {}", result);
+                    if (!has_multiple_images) break;
+                    driver.get(url + "img_index=" + i);
+                    (new WebDriverWait(driver, Duration.ofSeconds(2))).until(driver -> true);
+                    if (driver.getCurrentUrl().endsWith("=1")) break;
                 }
 
                 content = result.toString().trim();
