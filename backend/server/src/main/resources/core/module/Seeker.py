@@ -59,9 +59,10 @@ class Seeker():
         return tokens[begin+1:end]
     
     def tokenize(self, text):
-        if not text.startswith("CLS"):
-            text = [x.replace('\n', ' ').replace('  ', ' ').strip() for x in kss.split_sentences(text)]
-            text = "CLS " + " SEP ".join(text) + " SEP"
+        title, text = text.split("#SEP.T.C#")
+        text = [x.replace('\n', ' ').replace('  ', ' ').strip() for x in kss.split_sentences(text)]
+        text = " SEP ".join(text) + " SEP"
+        text = "CLS " + title + " SEP " + text
 
         tokens = self.m.morphs(text)
         return tokens
