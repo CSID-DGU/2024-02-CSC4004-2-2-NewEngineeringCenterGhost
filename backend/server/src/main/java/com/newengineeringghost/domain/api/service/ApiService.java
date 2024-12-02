@@ -302,8 +302,10 @@ public class ApiService {
     public Object customMeasurement(String content) throws IOException{
         log.info(content);
 
-        List<String> texts = new ArrayList<>();
-        List<String> imageUrls = new ArrayList<>();
+        StringBuilder resultString = new StringBuilder();
+
+        boolean titleNotExist = true;
+        String title = "";
 
         List<String> geted = List.of(content.split(","));
         String type = "";
@@ -313,28 +315,18 @@ public class ApiService {
                 continue;
             }
             if (type.equals("image")) {
-                imageUrls.add(item);
+                // 이미지 처리
+                resultString.append(ocr(item)).append(" ");
             }
             else  {
-                texts.add(item);
+                // 텍스트 처리
+                if (titleNotExist) {
+                    title = item;
+                    titleNotExist = false;
+                }
+                resultString.append(item).append(" ");
             }
             type = "";
-        }
-
-        String title = texts.get(0);
-        texts.remove(0);
-
-        List<String> ocrResult = new ArrayList<>();
-        for (String imageUrl : imageUrls) {
-            ocrResult.add(ocr(imageUrl));
-        }
-
-        StringBuilder resultString = new StringBuilder();
-        for (String text : texts) {
-            resultString.append(text).append(" ");
-        }
-        for (String ocr : ocrResult) {
-            resultString.append(ocr).append(" ");
         }
 
         String result = pythonFileRun_3(requestScriptPath, title, resultString.toString().trim());
@@ -356,7 +348,7 @@ public class ApiService {
         return pythonFileRun_2(ocrScriptPath, imageURL);
     }
 
-    public WebScrappingResultDto webScraping(String url) throws IOException {
+    public WebScrappingResultDto webScraping(String url) {
         log.info(url);
         log.info("Chrome Driver Info: {}", driver);
 
@@ -458,82 +450,5 @@ public class ApiService {
         }
         return null;
     }
-
-    // 웹 페이지에서 제목&본문 추출
-//    public String webScraping(String url) throws IOException {
-//        log.info(url);
-//        log.info("Chrome Driver Info: {}", driver);
-//
-//        if (!ObjectUtils.isEmpty(driver)) {
-//            driver.get(url);
-//            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(100)); // page 전체가 넘어올 때까지 대기(5초)
-//            log.info("Chrome Driver Info: {}", driver);
-//
-//            // 제목 추출
-//            String title = driver.getTitle();
-//            log.info("WebPage Title: {}", title);
-//
-//            // 본문 내용 추출
-//            String content;
-//            try {
-//                // 시도 1: <article> 요소 찾기
-//                WebElement webElement2 = driver.findElement(By.tagName("article"));
-//                content = webElement2.getText();
-//                log.info("WebPage Content from <article>: {}", content);
-//            } catch (NoSuchElementException e) {
-//                // 시도 2: <article> 요소가 없을 경우 모든 <span> 요소 찾기
-//                List<WebElement> spanElements = driver.findElements(By.tagName("span"));
-//                StringBuilder contentBuilder = new StringBuilder();
-//                for (WebElement span : spanElements) {
-//                    contentBuilder.append(span.getText()).append("\n");
-//                }
-//                content = contentBuilder.toString();
-//                log.info("WebPage Content from all <span>: {}", content);
-//            }
-//
-//            StringBuilder result = new StringBuilder();
-//            result.append(title);
-//            result.append(".");
-//            result.append(content);
-//            log.info("WEB SCRAPING RESULT: {}", result);
-//
-//            return result.toString();
-//        } else {
-//            return "";
-//        }
-//    }
-
-//    // 웹 페이지에서 이미지 추출 -> front에서 image url 넘겨줘서 필요없어짐
-//    public List<String> webScrapingImage(String url) {
-//        log.info("Chrome Driver Info: {}", driver);
-//
-//        if (!ObjectUtils.isEmpty(driver)) {
-//            driver.get(url);
-//            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(100)); // page 전체가 넘어올 때까지 대기(5초)
-//            log.info("Chrome Driver Info: {}", driver);
-//
-//            // 이미지 추출
-//            WebElement articleElement = driver.findElement(By.tagName("article"));
-//            List<WebElement> imageElements = articleElement.findElements(By.tagName("img"));
-//
-//            // 모든 이미지 src를 추출하여 리스트에 저장
-//            List<String> imgSrcs = new ArrayList<>();
-//            for (WebElement imageElement : imageElements) {
-//                String img = imageElement.getAttribute("src");
-//                imgSrcs.add(img);
-//                log.info("Image: {}", img);
-//            }
-//
-//            // 리스트를 문자열로 반환 (필요에 따라 적절히 수정 가능)
-//            return imgSrcs;
-//        } else {
-//            List<String> imgSrcs = new ArrayList<>();
-//            String img = "no element";
-//            imgSrcs.add(img);
-//            log.info("Image: {}", imgSrcs);
-//
-//            return imgSrcs;
-//        }
-//    }
 
 }
