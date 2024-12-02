@@ -26,8 +26,7 @@ for i in range(len(image_path)):
 
     text_cv2 = pytesseract.image_to_string(image_cv2, lang="kor+eng")
 
-    #print("추출된 텍스트(PIL): ", text_PIL)
-    print("추출된 텍스트(cv2): ", text_cv2)
+    print(text_cv2)
 
 #os lib를 이용한 TempImage에 생성된 png 파일 삭제
 if os.path.exists(temp_path):
