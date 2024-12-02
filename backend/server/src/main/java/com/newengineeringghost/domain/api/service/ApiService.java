@@ -424,11 +424,22 @@ public class ApiService {
                 // 대표 URL이 인스타그램인 경우
                 WebElement webElement = driver.findElement(By.tagName("article"));
 
+                // 모든 이미지 요소 찾기
                 List<WebElement> imageElements = webElement.findElements(By.tagName("img"));
+                // 이미지 수 출력
+                log.info("Numbers of Images: {}", imageElements.size());
 
                 // 모든 이미지 src를 추출하여 리스트에 저장
                 StringBuilder result = new StringBuilder();
-                for (WebElement imageElement : imageElements) {
+                // 각 이미지 URL 생성 (img_index 값을 변경하여 확인)
+                for (int i = 1; i <= imageElements.size(); i++) {
+                    String modifiedUrl = url.replace("img_index=1", "img_index=" + i);
+                    driver.get(modifiedUrl);
+                    log.info("Image URL with index " + i + ": " + modifiedUrl);
+
+                    WebElement webElement2 = driver.findElement(By.tagName("article"));
+                    WebElement imageElement = webElement2.findElement(By.tagName("img"));
+
                     String img = imageElement.getAttribute("src");
                     log.info("Image: {}", img);
                     result.append(ocr(img)).append(" ");
