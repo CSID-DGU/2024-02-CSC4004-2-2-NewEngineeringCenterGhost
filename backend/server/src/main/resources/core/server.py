@@ -1,6 +1,7 @@
 import os
 import socket
 from module.Seeker import Seeker
+import time
 
 seeker = Seeker()
 print("Model loaded")
@@ -18,7 +19,8 @@ while True:
     conn, addr = server.accept()
     data = conn.recv(8192 * 4)
     data = data.decode(encoding='utf-8')
-    print(f"Received: {data}")
+    now = time.time()
     res = seeker.predict(data)
+    print(f"Predicted in {time.time() - now:.4f} sec")
     conn.send(str(res).encode())
     conn.close()

@@ -121,7 +121,6 @@ const allowLinks = [
   "www.khan.co.kr/article", // 경향신문
   "sports.donga.com/NewsStand/article", // 스포츠동아
   "news.mt.co.kr/mtview", // 머니투데이
-  "www.etnews.com/", // 전자신문
   "www.sedaily.com/NewsView", // 서울경제
   "www.joongang.co.kr/article", // 중앙일보
   "www.sisain.co.kr/news/article", // 시사인
