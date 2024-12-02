@@ -37,14 +37,13 @@ class Seeker():
         _mean = np.mean(last_token)
         _std = np.std(last_token)
         z_score = (last_token - _mean) / _std
-        rt = [(i, z) for i, z in enumerate(z_score) if z >= 1.96]
-        rt = rt.sort(key=lambda x: x[1], reverse=True)
-        rt = [x[0] for x in rt][:5]
+        pre = [(i, z) for i, z in enumerate(z_score)]
+        pre.sort(key=lambda x: x[1], reverse=True)
 
-        if len(rt) == 0:
-            rt = [np.argmax(last_token)]
+        rt = [x for x in pre if x[1] > 1.96]
+        rt = rt[:5] if len(rt) > 0 else pre[:1]
 
-        return rt
+        return [x[0] for x in rt]
     
     def get_sentence(self, tokens, ind):
         seps = [i for i, token in enumerate(tokens) if token == "SEP"]

@@ -52,8 +52,10 @@ async function queueProbability(url) {
 }
 
 function showProbability(event) {
-  const element = event.target;
-
+  let element = event.target;
+  if (element.href === undefined) {
+    element = element.closest('a');
+  }
   tooltip.style.display = 'block';
   if (!document.body.contains(tooltip)) {
     // 툴팁 생성
@@ -134,6 +136,9 @@ const allowLinks = [
   "sportalkorea.com/news/", // 스포탈코리아
   "www.hani.co.kr/arti", // 한겨레
   "n.news.naver.com/article", // 네이버뉴스
+  "instagram.com", // 인스타그램
+  "blog.naver.com", // 네이버블로그
+  "tistory.com", // 티스토리
 ];
 
 let seeker_data = [];
@@ -198,42 +203,63 @@ function addData(info) {
 
 const banner = document.createElement("div");
 const closeButton = document.createElement("button");
+
 function showBanner(prob, explanation) {
   prob = Math.floor(prob * 100);
+  
+  // 배너 스타일 설정
   banner.style.position = "fixed";
   banner.style.top = "0";
   banner.style.width = "100%";
-  banner.style.padding = "10px 50px 10px 10px"; // 오른쪽 패딩 추가
+  banner.style.padding = "10px 50px 10px 10px";
   banner.style.zIndex = "9999";
-  banner.style.color = "white";
   banner.style.display = "flex";
   banner.style.justifyContent = "space-between";
   banner.style.alignItems = "center";
   banner.style.boxSizing = "border-box";
   banner.style.backgroundColor = prob >= 50 ? "rgba(255, 0, 0, 0.8)" : "rgba(0, 128, 0, 0.8)";
-  banner.innerHTML = `
-    <div>
-      낚시성 정보 확률: ${prob}%<br>해석:<br>${explanation}
-    </div>
+  banner.style.fontSize = '16px';
+  banner.style.fontFamily = 'Arial, sans-serif';
+  // 폰트 색상 설정 (우선순위 높이기)
+  banner.style.setProperty('color', 'white', 'important');
+  
+  // 내용 컨테이너 생성 및 스타일 설정
+  const contentDiv = document.createElement("div");
+  contentDiv.style.fontSize = '16px';
+  contentDiv.style.fontFamily = 'Arial, sans-serif';
+  // 폰트 색상 설정 (우선순위 높이기)
+  contentDiv.style.setProperty('color', 'white', 'important');
+  contentDiv.innerHTML = `
+    낚시성 정보 확률: ${prob}%<br>해석:<br>${explanation}
   `;
-
+  
+  // 닫기 버튼 스타일 설정
   closeButton.innerText = "닫기";
   closeButton.style.position = "absolute";
-  closeButton.style.top = "10px"; // 버튼 위치를 상단으로
-  closeButton.style.right = "10px"; // 버튼을 오른쪽에 고정
-  closeButton.style.width = "80px"; // 버튼 크기 조정
+  closeButton.style.top = "10px";
+  closeButton.style.right = "10px";
+  closeButton.style.width = "80px";
   closeButton.style.background = "rgba(0, 0, 0, 0.5)";
-  closeButton.style.color = "white";
   closeButton.style.border = "none";
-  closeButton.style.padding = "5px"; // 버튼 내부 여백 조정
+  closeButton.style.padding = "5px";
   closeButton.style.cursor = "pointer";
-  closeButton.style.borderRadius = "5px"; // 버튼 모서리를 둥글게
+  closeButton.style.borderRadius = "5px";
+  closeButton.style.fontSize = '14px';
+  closeButton.style.fontFamily = 'Arial, sans-serif';
+  // 버튼 텍스트 색상 설정 (우선순위 높이기)
+  closeButton.style.setProperty('color', 'white', 'important');
+  
+  // 닫기 버튼 이벤트 리스너
   closeButton.addEventListener("click", () => {
-    banner.removeChild(closeButton);
     document.body.removeChild(banner);
   });
-
+  
+  // 배너에 요소 추가
+  banner.innerHTML = ''; // 기존 내용 초기화
+  banner.appendChild(contentDiv);
   banner.appendChild(closeButton);
+  
+  // 배너를 문서에 추가
   document.body.appendChild(banner);
 }
 
