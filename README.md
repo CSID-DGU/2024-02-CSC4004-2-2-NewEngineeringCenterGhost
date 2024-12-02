@@ -10,7 +10,7 @@
 | 조성원 | 2020112037 | AI | [@sungwon01](https://github.com/sungwon01) |
 
 ## 프로젝트 소개
-![낚시성 아이콘](https://aihub.or.kr/web-nas/aihub21/files/public/DATA_SET202304280425446420)
+![clickbait](https://github.com/user-attachments/assets/fac60d88-49b3-4c4f-8884-53c9ec04426b)
 
 - 인터넷상의 낚시성 정보로 인한 시간 낭비 문제와 사용자의 혼란를 해결하고자 시작한 프로젝트.
 - 사용자가 신뢰도 낮은 콘텐츠를 사전에 구별하여, 정보를 효율적으로 탐색할 수 있도록 돕는 서비스. 
@@ -21,9 +21,6 @@
 ## 프로젝트 파일 구조
 ```
 backend
- ┣ modules
- ┃ ┗ ocr
- ┃ ┃ ┗ TempImage
  ┗ server
  ┃ ┣ .idea
  ┃ ┃ ┣ .gitignore
