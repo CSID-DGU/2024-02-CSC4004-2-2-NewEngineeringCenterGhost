@@ -152,13 +152,44 @@ train
 - 배포 URL : 
 
 ## 설치 방법
-1. Git clone을 해주세요.
-2. 터미널에 다음을 입력해주세요.
-> ```
-> bash install.sh
-> ```
-3. 터미널에 다음을 입력해주세요.
-> ```
-> pip install -r requirements.txt
-> ```
-4. SpringBoot 환경을 구성해주세요.
+1️⃣ Git으로 프로젝트 다운로드
+
+Git이 없으면 Git 다운로드에서 설치.
+
+
+터미널에서 원하는 폴더로 이동 후 아래 명령어 입력
+
+```
+git clone <프로젝트_링크>
+cd <프로젝트_폴더_이름>
+```
+
+2️⃣ 설치 스크립트 실행
+
+아래 명령어를 터미널에 입력 
+```
+install.sh
+```
+
+3️⃣ Python 패키지 설치
+
+터미널에 입력
+```
+pip install -r requirements.txt
+```
+
+4️⃣ Java 설치 및 SpringBoot 실행
+
+Java 설치 확인
+```
+java -version
+```
+
+SpringBoot 실행
+```
+./gradlew bootRun
+```
+페이지가 뜨면 성공 🎉
+
+
+끝! 😊
