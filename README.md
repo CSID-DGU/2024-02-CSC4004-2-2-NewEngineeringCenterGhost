@@ -189,7 +189,5 @@ SpringBoot 실행
 ```
 ./gradlew bootRun
 ```
-페이지가 뜨면 성공 🎉
-
 
 끝! 😊
