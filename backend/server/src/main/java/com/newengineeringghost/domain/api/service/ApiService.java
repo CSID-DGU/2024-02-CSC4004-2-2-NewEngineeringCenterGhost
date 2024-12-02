@@ -2,6 +2,7 @@ package com.newengineeringghost.domain.api.service;
 
 import com.newengineeringghost.domain.api.dto.ModelDataDto;
 import com.newengineeringghost.domain.api.dto.PrecisionMeasurementDto;
+import com.newengineeringghost.domain.api.dto.WebScrappingResultDto;
 import com.newengineeringghost.domain.api.entity.ResponseData;
 import com.newengineeringghost.domain.api.repository.ResponseDataRepository;
 import jakarta.annotation.PostConstruct;
@@ -79,54 +80,6 @@ public class ApiService {
         urlToXpathMap.put("n.news.naver.com","//*[@id=\"dic_area\"]"); // 네이버뉴스
     }
 
-//    static {
-//        urlToXpathMap.put("news.kbs.co.kr/news/pc/view","//*[@id=\"cont_newstext\"]"); // KBS 뉴스
-//        urlToXpathMap.put("www.hankyung.com/article","//*[@id=\"articletxt\"]"); //한국경제
-//        urlToXpathMap.put("imnews.imbc.com/news","//*[@id=\"content\"]/div/section[1]/article/div[2]/div[4]"); // MBC 뉴스
-//        urlToXpathMap.put("www.ohmynews.com/NWS_Web/View","//*[@id=\"content_wrap\"]/div[1]/div[3]/div[1]/div[1]/div[1]/div"); // 오마이뉴스
-//        urlToXpathMap.put("www.mk.co.kr/news","//*[@id=\"container\"]/section/div[3]/section/div[1]/div[1]/div[1]"); // 매일경제
-//        urlToXpathMap.put("www.dailian.co.kr/news/view","//*[@id=\"contentsArea\"]/div[1]/div[4]/div[2]/div[2]/description"); // 데일리안
-//        urlToXpathMap.put("www.nocutnews.co.kr/news","//*[@id=\"pnlContent\"]"); // 노컷뉴스
-//        urlToXpathMap.put("view.asiae.co.kr/article","//*[@id=\"txt_area\"]"); // 아시아경제
-//        urlToXpathMap.put("www.edaily.co.kr/News","//*[@id=\"contents\"]/section[1]/section[1]/div[1]/div[3]/div[1]"); // 이데일리
-//        urlToXpathMap.put("biz.heraldcorp.com/article","//*[@id=\"articleText\"]"); // 해럴드경제
-//        urlToXpathMap.put("zdnet.co.kr/view","//*[@id=\"articleBody\"]");
-//        urlToXpathMap.put("www.seoul.co.kr/news","//*[@id=\"articleContent\"]/div"); // 서울신문
-//        urlToXpathMap.put("www.osen.co.kr/article","//*[@id=\"articleBody\"]"); // OSEN
-//        urlToXpathMap.put("news.sbs.co.kr/news","//*[@id=\"container\"]/div[1]/div[3]/div[2]/div[1]/div[1]/div[2]"); // SBS 뉴스
-//        urlToXpathMap.put("newstapa.org/article","//*[@id=\"editor_fontsize\"]"); //뉴스타파
-//        urlToXpathMap.put("www.hankookilbo.com/News/Read","/html/body/div[2]/div/div[4]/div/div[1]"); // 한국일보
-//        urlToXpathMap.put("isplus.com/article/view","//*[@id=\"article_body\"]"); // 일간스포츠
-//        urlToXpathMap.put("www.newsis.com/view","//*[@id=\"content\"]/div[1]/div[1]/div[3]/article"); // 뉴시스
-//        urlToXpathMap.put("www.inews24.com/view","//*[@id=\"articleBody\"]"); // 아이뉴스
-//        urlToXpathMap.put("mydaily.co.kr/page/view","//*[@id=\"container\"]/div[1]/div[4]/div[1]/div"); // 마이데일리
-//        urlToXpathMap.put("www.donga.com/news/NewsStand/article","//*[@id=\"contents\"]/div[2]/div/div[1]/section[1]"); // 동아일보
-//        urlToXpathMap.put("news.jtbc.co.kr/article","//*[@id=\"wrapper\"]/div/div[6]/div/div/div/div/div[1]/div[1]"); // JTBC 뉴스
-//        urlToXpathMap.put("www.ytn.co.kr/","//*[@id=\"CmAdContent\"]/span"); // ytn 뉴스
-//        urlToXpathMap.put("www.newdaily.co.kr/site/data/html","//*[@id=\"article_conent\"]"); // 뉴데일리
-//        urlToXpathMap.put("www.dt.co.kr/contents","//*[@id=\"v-left-scroll-in\"]/div[2]/div/div[2]"); // 디지털타임스
-//        urlToXpathMap.put("sports.chosun.com/","//*[@id=\"articleBody\"]/div/div/font"); // 스포츠조선
-//        urlToXpathMap.put("www.chosun.com/","//*[@id=\"fusion-app\"]/div[1]/div[2]/div/section/article/section"); // 조선일보
-//        urlToXpathMap.put("www.sportsseoul.com/news/read","//*[@id=\"article-body\"]"); // 스포츠서울
-//        urlToXpathMap.put("www.khan.co.kr/article","//*[@id=\"articleBody\"]"); // 경향신문
-//        urlToXpathMap.put("sports.donga.com/NewsStand/article","//*[@id=\"article_body\"]"); // 스포츠동아
-//        urlToXpathMap.put("news.mt.co.kr/mtview","//*[@id=\"textBody\"]"); // 머니투데이
-//        urlToXpathMap.put("www.etnews.com/","//*[@id=\"articleBody\"]/p"); // 전자신문
-//        urlToXpathMap.put("www.sedaily.com/NewsView","//*[@id=\"v-left-scroll-in\"]/div[2]/div[1]/div[2]"); // 서울경제
-//        urlToXpathMap.put("www.joongang.co.kr/article","//*[@id=\"article_body\"]"); // 중앙일보
-//        urlToXpathMap.put("www.sisain.co.kr/news/article","//*[@id=\"article-view-content-div\"]"); // 시사인
-//        urlToXpathMap.put("www.wowtv.co.kr/NewsCenter/News/Read","//*[@id=\"divNewsContent\"]"); // 한국경제TV
-//        urlToXpathMap.put("www.yonhapnewstv.co.kr/news/","//*[@id=\"articleBody\"]"); // 연합뉴스
-//        urlToXpathMap.put("www.kmib.co.kr/article/","//*[@id=\"articleBody\"]"); // 국민일보
-//        urlToXpathMap.put("www.mbn.co.kr/news","//*[@id=\"newsViewArea\"]"); // MBN 뉴스
-//        urlToXpathMap.put("biz.chosun.com/","//*[@id=\"fusion-app\"]/div[1]/div[2]/div/section/article/section"); // 조선비즈
-//        urlToXpathMap.put("www.segye.com/newsView","//*[@id=\"wps_layout1_box2\"]"); // 세계일보
-//        urlToXpathMap.put("www.fnnews.com/news","//*[@id=\"article_content\"]"); // 파이낸셜 뉴스
-//        urlToXpathMap.put("sportalkorea.com/news/","//*[@id=\"CmAdContent\"]/div[2]/div/div"); // 스포탈코리아
-//        urlToXpathMap.put("www.hani.co.kr/arti","//*[@id=\"renewal2023\"]/span"); // 한겨레
-//        urlToXpathMap.put("n.news.naver.com/article","//*[@id=\"dic_area\"]"); // 네이버뉴스
-//    }
-
     private final ResponseDataRepository responseDataRepository;
 
     @Autowired
@@ -177,9 +130,32 @@ public class ApiService {
         }
     }
 
-    // python 파일 실행
-    public String pythonFileRun(String filePath, String content) throws IOException {
+    // python 파일 실행 : 매개변수 2개
+    public String pythonFileRun_2(String filePath, String content) throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder("python3", filePath, content);
+        Process process = processBuilder.start();
+        log.info("Process: {}", process);
+
+        // 실행 결과 가져오기
+        InputStream inputStream = process.getInputStream();
+        log.info("InputStream: {}", inputStream);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        log.info("BufferedReader: {}", reader);
+
+        // 실행결과 저장
+        StringBuilder resultBuilder = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            resultBuilder.append(line).append(System.lineSeparator());
+        }
+        log.info("Result: {}", resultBuilder);
+
+        return resultBuilder.toString().trim();
+    }
+
+    // python 파일 실행 : 매개변수 3개(파일 경로, 제목, 본문)
+    public String pythonFileRun_3(String filePath, String title, String content) throws IOException {
+        ProcessBuilder processBuilder = new ProcessBuilder("python3", filePath, title, content);
         Process process = processBuilder.start();
         log.info("Process: {}", process);
 
@@ -207,9 +183,9 @@ public class ApiService {
         if (responseData != null) {
             return responseData.getProbability();
         } else {
-            String content = webScraping(url);
+            WebScrappingResultDto webScrappingResultDto = webScraping(url);
 
-            String result = pythonFileRun(requestScriptPath, content);
+            String result = pythonFileRun_3(requestScriptPath, webScrappingResultDto.getTitle(), webScrappingResultDto.getContent());
 
             String[] parts = result.split("[(),]");
 
@@ -234,9 +210,9 @@ public class ApiService {
             }
         }
         else {
-            String content = webScraping(url);
+            WebScrappingResultDto webScrappingResultDto = webScraping(url);
 
-            String result = pythonFileRun(requestScriptPath, content);
+            String result = pythonFileRun_3(requestScriptPath, webScrappingResultDto.getTitle(), webScrappingResultDto.getContent());
             ModelDataDto modelDataDto = parseResult(result);
 
             log.info("Dto.probability: {}", modelDataDto.getProbability());
@@ -244,7 +220,7 @@ public class ApiService {
 
             // 확률 값에 따라 반환
             if (modelDataDto.getProbability() > 0.5) {
-                String explanation = openAI(content, modelDataDto.getSentence());
+                String explanation = openAI(webScrappingResultDto.getContent(), modelDataDto.getSentence());
 
                 // mongodb에 값 저장
                 ResponseData data = new ResponseData(
@@ -324,9 +300,10 @@ public class ApiService {
 
     // 사용자 정의 측정
     public Object customMeasurement(String content) throws IOException{
-        List<String> imageUrls = new ArrayList<>();
-        List<String> texts = new ArrayList<>();
         log.info(content);
+
+        List<String> texts = new ArrayList<>();
+        List<String> imageUrls = new ArrayList<>();
 
         List<String> geted = List.of(content.split(","));
         String type = "";
@@ -344,6 +321,9 @@ public class ApiService {
             type = "";
         }
 
+        String title = texts.get(0);
+        texts.remove(0);
+
         List<String> ocrResult = new ArrayList<>();
         for (String imageUrl : imageUrls) {
             ocrResult.add(ocr(imageUrl));
@@ -357,7 +337,7 @@ public class ApiService {
             resultString.append(ocr).append(" ");
         }
 
-        String result = pythonFileRun(requestScriptPath, resultString.toString().trim());
+        String result = pythonFileRun_3(requestScriptPath, title, resultString.toString().trim());
         ModelDataDto modelDataDto = parseResult(result);
 
         log.info("Dto.probability: {}", modelDataDto.getProbability());
@@ -373,10 +353,10 @@ public class ApiService {
 
     // image 링크를 받아서 ocr를 통해 텍스트 추출
     public String ocr(String imageURL) throws IOException {
-        return pythonFileRun(ocrScriptPath, imageURL);
+        return pythonFileRun_2(ocrScriptPath, imageURL);
     }
 
-    public String webScraping(String url) throws IOException {
+    public WebScrappingResultDto webScraping(String url) throws IOException {
         log.info(url);
         log.info("Chrome Driver Info: {}", driver);
 
@@ -409,12 +389,7 @@ public class ApiService {
                 content = webElement.getText();
                 log.info("WebPage Content using xpath: {}", content);
 
-                StringBuilder result = new StringBuilder();
-                result.append(title).append(".");
-                result.append(content);
-                log.info("WEB SCRAPING RESULT: {}", result);
-
-                return result.toString();
+                return new WebScrappingResultDto(title, content);
 
             } else if (domain.equals("blog.naver.com") || domain.equals("m.blog.naver.com")) {
                 // 대표 URL이 naver blog인 경우
@@ -422,12 +397,7 @@ public class ApiService {
                 content = webElement.getText();
                 log.info("WebPage Content using classname: {}", content);
 
-                StringBuilder result = new StringBuilder();
-                result.append(title).append(".");
-                result.append(content);
-                log.info("WEB SCRAPING RESULT: {}", result);
-
-                return result.toString();
+                return new WebScrappingResultDto(title, content);
 
             } else if (domain.contains("tistory.com")) {
                 // 대표 URL이 tistory blog인 경우
@@ -441,12 +411,7 @@ public class ApiService {
                     log.info("WebPage Content using classname: {}", content);
                 }
 
-                StringBuilder result = new StringBuilder();
-                result.append(title).append(".");
-                result.append(content);
-                log.info("WEB SCRAPING RESULT: {}", result);
-
-                return result.toString();
+                return new WebScrappingResultDto(title, content);
 
             } else if (domain.equals("www.instagram.com")) {
                 // 대표 URL이 인스타그램인 경우
@@ -460,23 +425,15 @@ public class ApiService {
                     log.info("WebPage Content using classname: {}", content);
                 }
 
-                String ocrResult = ocr(content);
-                log.info("ocrResult: {}", ocrResult);
-
-                StringBuilder result = new StringBuilder();
-                result.append(title).append(".");
-                result.append(ocrResult);
-                log.info("WEB SCRAPING RESULT: {}", result);
-
-                return result.toString();
+                return new WebScrappingResultDto(title, content);
 
             } else {
                 log.info("This Service doesn't support This Web Page");
-                return "";
+                return null;
             }
         } else {
             log.info("Web Driver does not exist");
-            return "";
+            return null;
         }
     }
 
