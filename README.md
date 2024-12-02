@@ -150,3 +150,15 @@ train
 
 ## 배포 URL
 - 배포 URL : 
+
+## 설치 방법
+1. Git clone을 해주세요.
+2. 터미널에 다음을 입력해주세요.
+> ```
+> bash install.sh
+> ```
+3. 터미널에 다음을 입력해주세요.
+> ```
+> pip install -r requirements.txt
+> ```
+4. SpringBoot 환경을 구성해주세요.
