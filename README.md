@@ -163,31 +163,62 @@ Git이 없으면 [Git 다운로드](https://git-scm.com/downloads)에서 설치.
 git clone <프로젝트_링크>
 cd <프로젝트_폴더_이름>
 ```
+2️⃣ JDK 설치 및 확인
+1.JDK 다운로드 및 설치
 
-2️⃣ 설치 스크립트 실행
+[Oracle JDK 다운로드](https://www.oracle.com/java/technologies/downloads/?er=221886)
 
-아래 명령어를 터미널에 입력 
+[OpenJDK 다운로드](https://openjdk.org/)
+
+JDK 17 이상 버전을 다운로드한 뒤 설치하세요.
+
+2.환경변수 설정
+
+-Windows
+
+시스템 속성 → 환경 변수 → JAVA_HOME에 JDK 설치 경로 추가.
+
+-Mac/Linux
+
+.bashrc 또는 .zshrc에 아래 내용 추가
 ```
-install.sh
+export JAVA_HOME=/path/to/jdk
+
+export PATH=$JAVA_HOME/bin:$PATH
 ```
-
-3️⃣ Python 패키지 설치
-
-터미널에 입력
-```
-pip install -r requirements.txt
-```
-
-4️⃣ Java 설치 및 SpringBoot 실행
-
-Java 설치 확인
+3.설치 확인
 ```
 java -version
 ```
+3️⃣ Python 설치 및 패키지 설치
 
-SpringBoot 실행
+1.Python 설치
+
+[Python 다운로드 페이지](https://www.python.org/downloads/)에서 Python 3.8 이상 버전 설치.
+
+설치 시 "Add Python to PATH" 옵션을 체크하세요.
+
+2.설치 확인
 ```
-./gradlew bootRun
+python --version
+```
+3.필요한 패키지 설치
+터미널에서 아래 명령어 실행:
+```
+pip install -r requirements.txt
+```
+4️⃣ 프로젝트 빌드 및 실행
+Gradle로 프로젝트 빌드
+```
+./gradlew build
+```
+SpringBoot 애플리케이션 실행
+
+빌드 후 생성된 .jar 파일 실행
+```
+java -jar build/libs/<생성된_jar파일명>.jar
 ```
 
-끝! 😊
+
+
+끝! 😊😊😊😊😊
