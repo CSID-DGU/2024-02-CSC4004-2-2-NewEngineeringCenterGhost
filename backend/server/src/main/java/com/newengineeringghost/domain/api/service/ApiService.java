@@ -9,6 +9,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.By;
+import org.openqa.selenium.PageLoadStrategy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -114,6 +115,9 @@ public class ApiService {
         chromeOptions.addArguments("--no-sandbox");
         chromeOptions.addArguments("--disable-gpu");
         chromeOptions.addArguments("--disable-dev-shm-usage");
+
+        // 페이지 로드 전략 설정
+        chromeOptions.setPageLoadStrategy(PageLoadStrategy.NONE);
 
         driver = new ChromeDriver(chromeOptions);
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
@@ -354,7 +358,7 @@ public class ApiService {
 
         if (!ObjectUtils.isEmpty(driver)) {
             driver.get(url);
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(100)); // 페이지 전체가 넘어올 때까지 대기(100초)
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5)); // 페이지 전체가 넘어올 때까지 대기(5초)
             log.info("Chrome Driver Info: {}", driver);
 
             // 제목 추출
