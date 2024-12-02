@@ -28,6 +28,7 @@ public class ApiService {
     private static final Map<String, String> urlToXpathMap = new HashMap<>();
 
     static {
+        // 기사
         urlToXpathMap.put("news.kbs.co.kr","//*[@id=\"cont_newstext\"]"); // KBS 뉴스
         urlToXpathMap.put("www.hankyung.com","//*[@id=\"articletxt\"]"); //한국경제
         urlToXpathMap.put("imnews.imbc.com","//*[@id=\"content\"]/div/section[1]/article/div[2]/div[4]"); // MBC 뉴스
@@ -73,6 +74,13 @@ public class ApiService {
         urlToXpathMap.put("sportalkorea.com","//*[@id=\"CmAdContent\"]/div[2]/div/div"); // 스포탈코리아
         urlToXpathMap.put("www.hani.co.kr","//*[@id=\"renewal2023\"]/span"); // 한겨레
         urlToXpathMap.put("n.news.naver.com","//*[@id=\"dic_area\"]"); // 네이버뉴스
+
+        // 블로그
+        urlToXpathMap.put("https://blog.naver.com/pslmii/223372468467", "//*[@id=\"post-view223372468467\"]/div/div[3]"); // 네이버 블로그
+        urlToXpathMap.put("https://m.blog.naver.com/lifepicasso/223384990958", "//*[@id=\"viewTypeSelector\"]/div/div/div[3]"); // 네이버 모바일 블로그
+        urlToXpathMap.put("https://nakzi-lab.tistory.com/entry/%EC%98%81%EC%A2%85%EB%8F%84-%EB%B9%B5%EC%A7%91-%EC%9E%90%EC%97%B0%EB%8F%84-%EC%86%8C%EA%B8%88%EB%B9%B5-%EB%B3%B8%EC%A0%90-%ED%8F%89%EC%9D%BC-%EB%B0%A9%EB%AC%B8%EA%B8%B0%EC%99%80-%EC%86%94%EC%A7%81%ED%9B%84%EA%B8%B0", "//*[@id=\"content\"]/div/div[2]/div[2]"); // 티스토리
+        urlToXpathMap.put("https://hammihammi.tistory.com/entry/starbuckssaltybreadsandwich", "//*[@id=\"content\"]/div/div[2]/div[3]");
+        urlToXpathMap.put("https://haileyblog.tistory.com/entry/%EC%9E%90%EC%97%B0%EB%8F%84-%EC%86%8C%EA%B8%88%EB%B9%B5-IN-%EC%84%B1%EC%88%98-%EB%AA%A8%EB%91%90%EA%B0%80-%EC%9D%B8%EC%83%9D-%EC%86%8C%EA%B8%88%EB%B9%B5%EC%9D%B4%EB%9D%BC%EA%B3%A0-%EA%B7%B9%EC%B0%AC%ED%95%98%EB%8A%94-%EC%86%8C%EA%B8%88%EB%B9%B5-%EB%A7%9B%EC%A7%91-%EA%B3%BC%EC%97%B0-%EC%A7%84%EC%A7%9C-%EB%A7%9B%EC%9E%88%EC%9D%84%EA%B9%8C-%EC%86%94%EC%A7%81%ED%9B%84%EA%B8%B0-%EC%84%B1%EC%88%98-%EB%B2%A0%EC%9D%B4%EC%BB%A4%EB%A6%AC-%EC%B9%B4%ED%8E%98-%EC%B6%94%EC%B2%9C", "//*[@id=\"article-view\"]/div[3]");
     }
 
 //    static {
@@ -283,11 +291,11 @@ public class ApiService {
         List<String> geted = List.of(content.split(","));
         String type = "";
         for (String item : geted) {
-            if (type == "") {
+            if (type.isEmpty()) {
                 type = item;
                 continue;
             }
-            if (type == "image") {
+            if (type.equals("image")) {
                 imageUrls.add(item);
             }
             else  {
@@ -353,7 +361,7 @@ public class ApiService {
             String matchedValue = findMatchingValue(urlToXpathMap, domain);
             log.info("matchedValue: {}", matchedValue);
 
-            // 대표 URL이 HashMap에 존재하는지 확인
+            // 대표 URL이 HashMap에 존재하는지 확인: 기사인 경우
             if (matchedValue != null) {
                 // 존재하면 해당하는 xpath를 가져옴
                 String xpath = urlToXpathMap.get(domain);
@@ -369,10 +377,27 @@ public class ApiService {
                 log.info("WEB SCRAPING RESULT: {}", result);
 
                 return result.toString();
+            } else if (domain.equals("www.instagram.com")) { // 대표 URL이 인스타그램인 경우
+                WebElement webElement = driver.findElement(By.className("_aagv"));
+//                WebElement webElement = driver.findElement(By.tagName("img"));
+                content = webElement.getText();
+                log.info("WebPage Content using classname: {}", content);
+
+                String ocrResult = ocr(content);
+                log.info("ocrResult: {}", ocrResult);
+
+                StringBuilder result = new StringBuilder();
+                result.append(title).append(".");
+                result.append(ocrResult);
+                log.info("WEB SCRAPING RESULT: {}", result);
+
+                return result.toString();
             } else {
+                log.info("This Service doesn't support This Web Page");
                 return "";
             }
         } else {
+            log.info("Web Driver does not exist");
             return "";
         }
     }
@@ -443,36 +468,37 @@ public class ApiService {
 //        }
 //    }
 
-    // 웹 페이지에서 이미지 추출
-    public List<String> webScrapingImage(String url) throws IOException {
-        log.info("Chrome Driver Info: {}", driver);
+//    // 웹 페이지에서 이미지 추출 -> front에서 image url 넘겨줘서 필요없어짐
+//    public List<String> webScrapingImage(String url) {
+//        log.info("Chrome Driver Info: {}", driver);
+//
+//        if (!ObjectUtils.isEmpty(driver)) {
+//            driver.get(url);
+//            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(100)); // page 전체가 넘어올 때까지 대기(5초)
+//            log.info("Chrome Driver Info: {}", driver);
+//
+//            // 이미지 추출
+//            WebElement articleElement = driver.findElement(By.tagName("article"));
+//            List<WebElement> imageElements = articleElement.findElements(By.tagName("img"));
+//
+//            // 모든 이미지 src를 추출하여 리스트에 저장
+//            List<String> imgSrcs = new ArrayList<>();
+//            for (WebElement imageElement : imageElements) {
+//                String img = imageElement.getAttribute("src");
+//                imgSrcs.add(img);
+//                log.info("Image: {}", img);
+//            }
+//
+//            // 리스트를 문자열로 반환 (필요에 따라 적절히 수정 가능)
+//            return imgSrcs;
+//        } else {
+//            List<String> imgSrcs = new ArrayList<>();
+//            String img = "no element";
+//            imgSrcs.add(img);
+//            log.info("Image: {}", imgSrcs);
+//
+//            return imgSrcs;
+//        }
+//    }
 
-        if (!ObjectUtils.isEmpty(driver)) {
-            driver.get(url);
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(100)); // page 전체가 넘어올 때까지 대기(5초)
-            log.info("Chrome Driver Info: {}", driver);
-
-            // 이미지 추출
-            WebElement articleElement = driver.findElement(By.tagName("article"));
-            List<WebElement> imageElements = articleElement.findElements(By.tagName("img"));
-
-            // 모든 이미지 src를 추출하여 리스트에 저장
-            List<String> imgSrcs = new ArrayList<>();
-            for (WebElement imageElement : imageElements) {
-                String img = imageElement.getAttribute("src");
-                imgSrcs.add(img);
-                log.info("Image: {}", img);
-            }
-
-            // 리스트를 문자열로 반환 (필요에 따라 적절히 수정 가능)
-            return imgSrcs;
-        } else {
-            List<String> imgSrcs = new ArrayList<>();
-            String img = "no element";
-            imgSrcs.add(img);
-            log.info("Image: {}", imgSrcs);
-
-            return imgSrcs;
-        }
-    }
 }
