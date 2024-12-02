@@ -74,13 +74,6 @@ public class ApiService {
         urlToXpathMap.put("sportalkorea.com","//*[@id=\"CmAdContent\"]/div[2]/div/div"); // 스포탈코리아
         urlToXpathMap.put("www.hani.co.kr","//*[@id=\"renewal2023\"]/span"); // 한겨레
         urlToXpathMap.put("n.news.naver.com","//*[@id=\"dic_area\"]"); // 네이버뉴스
-
-        // 블로그
-        urlToXpathMap.put("https://blog.naver.com/pslmii/223372468467", "//*[@id=\"post-view223372468467\"]/div/div[3]"); // 네이버 블로그
-        urlToXpathMap.put("https://m.blog.naver.com/lifepicasso/223384990958", "//*[@id=\"viewTypeSelector\"]/div/div/div[3]"); // 네이버 모바일 블로그
-        urlToXpathMap.put("https://nakzi-lab.tistory.com/entry/%EC%98%81%EC%A2%85%EB%8F%84-%EB%B9%B5%EC%A7%91-%EC%9E%90%EC%97%B0%EB%8F%84-%EC%86%8C%EA%B8%88%EB%B9%B5-%EB%B3%B8%EC%A0%90-%ED%8F%89%EC%9D%BC-%EB%B0%A9%EB%AC%B8%EA%B8%B0%EC%99%80-%EC%86%94%EC%A7%81%ED%9B%84%EA%B8%B0", "//*[@id=\"content\"]/div/div[2]/div[2]"); // 티스토리
-        urlToXpathMap.put("https://hammihammi.tistory.com/entry/starbuckssaltybreadsandwich", "//*[@id=\"content\"]/div/div[2]/div[3]");
-        urlToXpathMap.put("https://haileyblog.tistory.com/entry/%EC%9E%90%EC%97%B0%EB%8F%84-%EC%86%8C%EA%B8%88%EB%B9%B5-IN-%EC%84%B1%EC%88%98-%EB%AA%A8%EB%91%90%EA%B0%80-%EC%9D%B8%EC%83%9D-%EC%86%8C%EA%B8%88%EB%B9%B5%EC%9D%B4%EB%9D%BC%EA%B3%A0-%EA%B7%B9%EC%B0%AC%ED%95%98%EB%8A%94-%EC%86%8C%EA%B8%88%EB%B9%B5-%EB%A7%9B%EC%A7%91-%EA%B3%BC%EC%97%B0-%EC%A7%84%EC%A7%9C-%EB%A7%9B%EC%9E%88%EC%9D%84%EA%B9%8C-%EC%86%94%EC%A7%81%ED%9B%84%EA%B8%B0-%EC%84%B1%EC%88%98-%EB%B2%A0%EC%9D%B4%EC%BB%A4%EB%A6%AC-%EC%B9%B4%ED%8E%98-%EC%B6%94%EC%B2%9C", "//*[@id=\"article-view\"]/div[3]");
     }
 
 //    static {
@@ -377,11 +370,50 @@ public class ApiService {
                 log.info("WEB SCRAPING RESULT: {}", result);
 
                 return result.toString();
-            } else if (domain.equals("www.instagram.com")) { // 대표 URL이 인스타그램인 경우
-                WebElement webElement = driver.findElement(By.className("_aagv"));
-//                WebElement webElement = driver.findElement(By.tagName("img"));
+
+            } else if (domain.equals("blog.naver.com") || domain.equals("m.blog.naver.com")) {
+                // 대표 URL이 naver blog인 경우
+                WebElement webElement = driver.findElement(By.className("se-main-container"));
                 content = webElement.getText();
                 log.info("WebPage Content using classname: {}", content);
+
+                StringBuilder result = new StringBuilder();
+                result.append(title).append(".");
+                result.append(content);
+                log.info("WEB SCRAPING RESULT: {}", result);
+
+                return result.toString();
+
+            } else if (domain.contains("tistory.com")) {
+                // 대표 URL이 tistory blog인 경우
+                try {
+                    WebElement webElement = driver.findElement(By.className("contents_style"));
+                    content = webElement.getText();
+                    log.info("WebPage Content using classname: {}", content);
+                } catch (NoSuchElementException e) {
+                    WebElement webElement = driver.findElement(By.className("tt_article_useless_p_margin"));
+                    content = webElement.getText();
+                    log.info("WebPage Content using classname: {}", content);
+                }
+
+                StringBuilder result = new StringBuilder();
+                result.append(title).append(".");
+                result.append(content);
+                log.info("WEB SCRAPING RESULT: {}", result);
+
+                return result.toString();
+
+            } else if (domain.equals("www.instagram.com")) {
+                // 대표 URL이 인스타그램인 경우
+                try {
+                    WebElement webElement = driver.findElement(By.className("_aagv"));
+                    content = webElement.getText();
+                    log.info("WebPage Content using classname: {}", content);
+                } catch (NoSuchElementException e) {
+                    WebElement webElement = driver.findElement(By.tagName("img"));
+                    content = webElement.getText();
+                    log.info("WebPage Content using classname: {}", content);
+                }
 
                 String ocrResult = ocr(content);
                 log.info("ocrResult: {}", ocrResult);
@@ -392,6 +424,7 @@ public class ApiService {
                 log.info("WEB SCRAPING RESULT: {}", result);
 
                 return result.toString();
+
             } else {
                 log.info("This Service doesn't support This Web Page");
                 return "";
@@ -415,10 +448,10 @@ public class ApiService {
     }
 
     // 가장 많이 일치하는 URL 키를 찾는 메서드
-    private static String findMatchingValue(Map<String, String> urlToXpathMap, String domain) {
-        for (String key : urlToXpathMap.keySet()) {
+    private static String findMatchingValue(Map<String, String> urlMap, String domain) {
+        for (String key : urlMap.keySet()) {
             if (domain.contains(key)) {
-                return urlToXpathMap.get(key);
+                return urlMap.get(key);
             }
         }
         return null;
