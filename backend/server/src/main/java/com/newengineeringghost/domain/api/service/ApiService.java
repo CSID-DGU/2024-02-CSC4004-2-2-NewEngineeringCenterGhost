@@ -422,7 +422,7 @@ public class ApiService {
 
             } else if (domain.equals("www.instagram.com")) {
                 // 대표 URL이 인스타그램인 경우
-                WebElement webElement = driver.findElement(By.className("_aagv"));
+                WebElement webElement = driver.findElement(By.tagName("article"));
 
                 List<WebElement> imageElements = webElement.findElements(By.tagName("img"));
 
