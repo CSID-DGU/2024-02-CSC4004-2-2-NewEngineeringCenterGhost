@@ -4,8 +4,8 @@
 ## 팀원 소개
 | 이름 | 학번 | 역할 | GITHUB |
 | :---: | :---: | :---: | :---: |
-| 정재환 | 2020112023 | 팀장, 백엔드, 서버 | [@smturtle2](https://github.com/smturtle2) |
-| 신동주 | 2020112541 | AI | [@hwnnn](https://github.com/hwnnn) |
+| 정재환 | 2020112023 | 팀장, 백엔드 | [@hwnnn](https://github.com/hwnnn) |
+| 신동주 | 2020112541 | AI | [@smturtle2](https://github.com/smturtle2) |
 | 정태호 | 2022113556 | 크롬 확장 프로그램, 프론트엔드 | [@Taehoo-Jeong](https://github.com/Taehoo-Jeong) |
 | 조성원 | 2020112037 | AI | [@sungwon01](https://github.com/sungwon01) |
 
@@ -135,7 +135,7 @@ train
 ## 스킬 스택
 - OS : <img src="https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=Linux&logoColor=white"> <img src="https://img.shields.io/badge/Ubuntu-E95420?style=flat-square&logo=Ubuntu&logoColor=white">
 
-- IDE : <img src="https://img.shields.io/badge/Visual Studio Code-007ACC?style=flat-square&logo=Visual Studio Code&logoColor=white">
+- IDE : <img src="https://img.shields.io/badge/Visual Studio Code-007ACC?style=flat-square&logo=Visual Studio Code&logoColor=white"> <img src="https://img.shields.io/badge/Intellij IDEA-000000?style=flat-square&logo=Intellij IDEA&logoColor=white">
 
 - Server : <img src="https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=MongoDB&logoColor=white"> <img src="https://img.shields.io/badge/Selenium-43B02A?style=flat-square&logo=Selenium&logoColor=white">
 
@@ -154,7 +154,7 @@ train
 ## 설치 방법
 1️⃣ Git으로 프로젝트 다운로드
 
-Git이 없으면 [Git 다운로드](https://git-scm.com/downloads)에서 설치.
+Git이 없으면 Git 다운로드에서 설치.
 
 
 터미널에서 원하는 폴더로 이동 후 아래 명령어 입력
@@ -218,6 +218,8 @@ SpringBoot 애플리케이션 실행
 ```
 java -jar build/libs/<생성된_jar파일명>.jar
 ```
+페이지가 뜨면 성공 🎉
+
 
 
 
