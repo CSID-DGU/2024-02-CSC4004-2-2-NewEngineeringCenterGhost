@@ -154,7 +154,7 @@ train
 ## 설치 방법
 1️⃣ Git으로 프로젝트 다운로드
 
-Git이 없으면 Git 다운로드에서 설치.
+Git이 없으면 [Git 다운로드](https://git-scm.com/downloads)에서 설치.
 
 
 터미널에서 원하는 폴더로 이동 후 아래 명령어 입력
@@ -174,11 +174,11 @@ JDK 17 이상 버전을 다운로드한 뒤 설치하세요.
 
 2.환경변수 설정
 
--Windows
+- Windows
 
 시스템 속성 → 환경 변수 → JAVA_HOME에 JDK 설치 경로 추가.
 
--Mac/Linux
+- Mac/Linux
 
 .bashrc 또는 .zshrc에 아래 내용 추가
 ```
