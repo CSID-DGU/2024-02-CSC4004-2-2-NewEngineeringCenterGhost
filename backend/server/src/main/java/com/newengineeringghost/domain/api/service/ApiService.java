@@ -352,7 +352,8 @@ public class ApiService {
         return pythonFileRun_2(ocrScriptPath, imageURL);
     }
 
-    public WebScrappingResultDto webScraping(String url) {
+    // 웹 스크래핑 - 제목 & 본문 가져오기
+    public WebScrappingResultDto webScraping(String url) throws IOException {
         log.info(url);
         log.info("Chrome Driver Info: {}", driver);
 
@@ -390,7 +391,17 @@ public class ApiService {
             } else if (domain.equals("blog.naver.com") || domain.equals("m.blog.naver.com")) {
                 // 대표 URL이 naver blog인 경우
                 WebElement webElement = driver.findElement(By.className("se-main-container"));
-                content = webElement.getText();
+
+                // 모든 <div> 요소를 찾기
+                List<WebElement> divElements = webElement.findElements(By.tagName("div"));
+
+                // 마지막 <div> 요소를 제외한 나머지 내용 가져오기
+                StringBuilder contentBuilder = new StringBuilder();
+                for (int i = 0; i < divElements.size() - 1; i++) {
+                    contentBuilder.append(divElements.get(i).getText()).append("\n");
+                }
+
+                content = contentBuilder.toString();
                 log.info("WebPage Content using classname: {}", content);
 
                 return new WebScrappingResultDto(title, content);
@@ -411,15 +422,21 @@ public class ApiService {
 
             } else if (domain.equals("www.instagram.com")) {
                 // 대표 URL이 인스타그램인 경우
-                try {
-                    WebElement webElement = driver.findElement(By.className("_aagv"));
-                    content = webElement.getText();
-                    log.info("WebPage Content using classname: {}", content);
-                } catch (NoSuchElementException e) {
-                    WebElement webElement = driver.findElement(By.tagName("img"));
-                    content = webElement.getText();
-                    log.info("WebPage Content using classname: {}", content);
+                WebElement webElement = driver.findElement(By.className("_aagv"));
+
+                List<WebElement> imageElements = webElement.findElements(By.tagName("img"));
+
+                // 모든 이미지 src를 추출하여 리스트에 저장
+                StringBuilder result = new StringBuilder();
+                for (WebElement imageElement : imageElements) {
+                    String img = imageElement.getAttribute("src");
+                    log.info("Image: {}", img);
+                    result.append(ocr(img)).append(" ");
+                    log.info("Result: {}", result);
                 }
+
+                content = result.toString().trim();
+                log.info("WebPage Content using classname: {}", content);
 
                 return new WebScrappingResultDto(title, content);
 
