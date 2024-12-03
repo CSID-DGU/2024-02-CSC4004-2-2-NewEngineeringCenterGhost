@@ -312,7 +312,7 @@ public class ApiService {
 
                 return modelDataDto.getProbability();
             }
-            String explanation = openAI(webScrappingResultDto.getTitle() + webScrappingResultDto.getContent(), modelDataDto.getSentence());
+            String explanation = openAI(webScrappingResultDto.getTitle() + " " + webScrappingResultDto.getContent(), modelDataDto.getSentence());
 
             // mongodb에 값 저장
             ResponseData data = new ResponseData(
@@ -346,7 +346,7 @@ public class ApiService {
         log.info("Dto.probability: {}", modelDataDto.getProbability());
         log.info("Dto.sentence: {}", modelDataDto.getSentence());
 
-        String explanation = openAI(webScrappingResultDto.getTitle() + webScrappingResultDto.getContent(), modelDataDto.getSentence());
+        String explanation = openAI(webScrappingResultDto.getTitle()  + " " + webScrappingResultDto.getContent(), modelDataDto.getSentence());
         log.info("Explanation: {}", explanation);
 
         // 기존에 저장된 값 update (null -> data)
@@ -449,7 +449,7 @@ public class ApiService {
 
         // 확률 값에 따라 반환
         if (modelDataDto.getProbability() > 0.5) {
-            return new PrecisionMeasurementDto(modelDataDto.getProbability(), modelDataDto.getSentence(), openAI(title + resultString.toString().trim(), modelDataDto.getSentence()));
+            return new PrecisionMeasurementDto(modelDataDto.getProbability(), modelDataDto.getSentence(), openAI(title + " " + resultString.toString().trim(), modelDataDto.getSentence()));
         } else {
             return modelDataDto.getProbability();
         }
