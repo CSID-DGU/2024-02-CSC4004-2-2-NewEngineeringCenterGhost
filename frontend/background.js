@@ -24,3 +24,9 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     chrome.tabs.sendMessage(tab.id, { action: "addData", data: info });
   }
 });
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "Measure") {
+    chrome.tabs.sendMessage(message.tabId, { action: "Measure" });
+  }
+});
