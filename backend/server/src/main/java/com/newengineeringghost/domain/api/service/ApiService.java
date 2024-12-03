@@ -121,11 +121,17 @@ public class ApiService {
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
 
         driver.get("https://www.instagram.com/");
+        // 로그인 폼에서 사용자 이름 또는 이메일을 입력하는 필드 요소 찾기
         WebElement e = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[1]/div/label/input"));
+        // @test_account_for_oss라는 사용자 이름 입력
         e.sendKeys("@test_account_for_oss");
+        // 비밀번호 입력 필드 요소 찾기
         e = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[2]/div/label/input"));
+        // oss_account라는 비밀번호 입력
         e.sendKeys("oss_account");
+        // 로그인 버튼 요소 찾기
         e = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[3]/button"));
+        // 로그인 버튼 누름
         e.click();
 
         // 페이지 로드 전략 설정
@@ -482,27 +488,36 @@ public class ApiService {
                 // 대표 URL이 인스타그램인 경우
                 url = driver.getCurrentUrl();
                 (new WebDriverWait(driver, Duration.ofSeconds(2))).until(driver -> true);
-                WebElement webElement = driver.findElement(By.tagName("article"));
 
                 // 모든 이미지 src를 추출하여 리스트에 저장
                 StringBuilder result = new StringBuilder();
+
                 boolean has_multiple_images = url.contains("img_index=");
+
                 url = url.split("img_index=")[0];
                 driver.get(url + "img_index=1");
+
                 for (int i = 2;; i++) {
                     log.info("Image URL with index " + (i - 1));
 
-                    WebElement webElement2 = driver.findElement(By.tagName("article"));
-                    WebElement imageElement = webElement2.findElement(By.tagName("img"));
-
+                    WebElement webElement = driver.findElement(By.tagName("article"));
+                    WebElement imageElement = webElement.findElement(By.tagName("img"));
                     String img = imageElement.getAttribute("src");
                     log.info("Image: {}", img);
+
                     result.append(ocr(img)).append(" ");
                     log.info("Result: {}", result);
-                    if (!has_multiple_images) break;
+
+                    if (!has_multiple_images) {
+                        break;
+                    }
+
                     driver.get(url + "img_index=" + i);
                     (new WebDriverWait(driver, Duration.ofSeconds(2))).until(driver -> true);
-                    if (driver.getCurrentUrl().endsWith("=1")) break;
+
+                    if (driver.getCurrentUrl().endsWith("=1")) {
+                        break;
+                    }
                 }
 
                 content = result.toString().trim();
