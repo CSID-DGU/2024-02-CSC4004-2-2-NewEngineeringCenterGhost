@@ -260,77 +260,36 @@ public class ApiService {
 
         }
         // DB에 해당 URL에 대한 값이 없는 경우
-        else {
-            WebScrappingResultDto webScrappingResultDto = webScraping(url);
+        WebScrappingResultDto webScrappingResultDto = webScraping(url);
 
-            String result = pythonFileRun_3(requestScriptPath, webScrappingResultDto.getTitle(), webScrappingResultDto.getContent());
+        String result = pythonFileRun_3(requestScriptPath, webScrappingResultDto.getTitle(), webScrappingResultDto.getContent());
 
-            String[] parts = result.split("[(),]");
+        String[] parts = result.split("[(),]");
 
-            String doubleString = parts[1].trim();
+        String doubleString = parts[1].trim();
 
-            double probability = Double.parseDouble(doubleString);
-            log.info("Probability: {}", probability);
+        double probability = Double.parseDouble(doubleString);
+        log.info("Probability: {}", probability);
 
-            // mongodb에 값 저장
-            ResponseData data = new ResponseData(
-                    url,
-                    probability,
-                    null,
-                    null
-            );
+        // mongodb에 값 저장
+        ResponseData data = new ResponseData(
+                url,
+                probability,
+                null,
+                null
+        );
 
-            responseDataRepository.save(data);
+        responseDataRepository.save(data);
 
-            return probability;
-        }
+        return probability;
     }
 
     // 정밀 측정
     public Object precisionMeasurement(String url) throws IOException {
         ResponseData responseData = responseDataRepository.findResponseDataByLink(url).orElse(null);
 
-        // DB에 해당 URL에 대한 값이 있는 경우
-        if (responseData != null) {
-            // DB에 해당 URL에 대한 모든 값이 있는 경우 (확률, 낚시성 의심 문장, 해설)
-            if ((responseData.getFishingSentence() != null) && (responseData.getExplanation() != null)) {
-                if (responseData.getProbability() > 0.5) {
-                    return new PrecisionMeasurementDto(responseData.getProbability(), responseData.getFishingSentence(), responseData.getExplanation());
-                }
-                else {
-                    return responseData.getProbability();
-                }
-            }
-            // DB에 해당 URL에 대한 확률 값만 있는 경우 (낚시성 의심 문장, 해설은 null 값)
-            else {
-                WebScrappingResultDto webScrappingResultDto = webScraping(url);
-
-                String result = pythonFileRun_3(requestScriptPath, webScrappingResultDto.getTitle(), webScrappingResultDto.getContent());
-                ModelDataDto modelDataDto = parseResult(result);
-
-                log.info("Dto.probability: {}", modelDataDto.getProbability());
-                log.info("Dto.sentence: {}", modelDataDto.getSentence());
-
-                String explanation = openAI(webScrappingResultDto.getContent(), modelDataDto.getSentence());
-                log.info("Explanation: {}", explanation);
-
-                // 기존에 저장된 값 update (null -> data)
-                responseData.setFishingSentence(modelDataDto.getSentence());
-                responseData.setExplanation(explanation);
-
-                responseDataRepository.save(responseData);
-
-                // 확률 값에 따라 반환
-                if (modelDataDto.getProbability() > 0.5) {
-                    return new PrecisionMeasurementDto(responseData.getProbability(), responseData.getFishingSentence(), responseData.getExplanation());
-                }
-                else {
-                    return responseData.getProbability();
-                }
-            }
-        }
-        // DB에 해당 URL에 대한 값이 하나라도 없는 경우 (확률, 낚시성 의심 문장, 해설 중에서 하나라도 없는 경우)
-        else {
+        // DB에 해당 URL에 대한 값이 없는 경우
+        if (responseData == null) {
             WebScrappingResultDto webScrappingResultDto = webScraping(url);
 
             String result = pythonFileRun_3(requestScriptPath, webScrappingResultDto.getTitle(), webScrappingResultDto.getContent());
@@ -340,21 +299,7 @@ public class ApiService {
             log.info("Dto.sentence: {}", modelDataDto.getSentence());
 
             // 확률 값에 따라 반환
-            if (modelDataDto.getProbability() > 0.5) {
-                String explanation = openAI(webScrappingResultDto.getContent(), modelDataDto.getSentence());
-
-                // mongodb에 값 저장
-                ResponseData data = new ResponseData(
-                        url,
-                        modelDataDto.getProbability(),
-                        modelDataDto.getSentence(),
-                        explanation
-                );
-
-                responseDataRepository.save(data);
-
-                return new PrecisionMeasurementDto(modelDataDto.getProbability(), modelDataDto.getSentence(), explanation);
-            } else {
+            if (modelDataDto.getProbability() <= 0.5) {
                 // mongodb에 값 저장
                 ResponseData data = new ResponseData(
                         url,
@@ -367,7 +312,50 @@ public class ApiService {
 
                 return modelDataDto.getProbability();
             }
+            String explanation = openAI(webScrappingResultDto.getTitle() + webScrappingResultDto.getContent(), modelDataDto.getSentence());
+
+            // mongodb에 값 저장
+            ResponseData data = new ResponseData(
+                    url,
+                    modelDataDto.getProbability(),
+                    modelDataDto.getSentence(),
+                    explanation
+            );
+
+            responseDataRepository.save(data);
+
+            return new PrecisionMeasurementDto(modelDataDto.getProbability(), modelDataDto.getSentence(), explanation);
         }
+        // DB에 해당 URL에 대한 값이 있는 경우
+
+        // 확률이 0.5 이하일 때
+        if (responseData.getProbability() <= 0.5) {
+            return responseData.getProbability();
+        }
+
+        // DB에 해당 URL에 대한 모든 값이 있는 경우 (확률, 낚시성 의심 문장, 해설)
+        if ((responseData.getFishingSentence() != null) && (responseData.getExplanation() != null)) {
+            return new PrecisionMeasurementDto(responseData.getProbability(), responseData.getFishingSentence(), responseData.getExplanation());
+        }
+        // DB에 해당 URL에 대한 확률 값만 있는 경우 (낚시성 의심 문장, 해설은 null 값)
+        WebScrappingResultDto webScrappingResultDto = webScraping(url);
+
+        String result = pythonFileRun_3(requestScriptPath, webScrappingResultDto.getTitle(), webScrappingResultDto.getContent());
+        ModelDataDto modelDataDto = parseResult(result);
+
+        log.info("Dto.probability: {}", modelDataDto.getProbability());
+        log.info("Dto.sentence: {}", modelDataDto.getSentence());
+
+        String explanation = openAI(webScrappingResultDto.getTitle() + webScrappingResultDto.getContent(), modelDataDto.getSentence());
+        log.info("Explanation: {}", explanation);
+
+        // 기존에 저장된 값 update (null -> data)
+        responseData.setFishingSentence(modelDataDto.getSentence());
+        responseData.setExplanation(explanation);
+
+        responseDataRepository.save(responseData);
+
+        return new PrecisionMeasurementDto(responseData.getProbability(), responseData.getFishingSentence(), responseData.getExplanation());
     }
 
     // python 모델이 반환하는 값 분리하는 함수
@@ -461,7 +449,7 @@ public class ApiService {
 
         // 확률 값에 따라 반환
         if (modelDataDto.getProbability() > 0.5) {
-            return new PrecisionMeasurementDto(modelDataDto.getProbability(), modelDataDto.getSentence(), openAI(content, modelDataDto.getSentence()));
+            return new PrecisionMeasurementDto(modelDataDto.getProbability(), modelDataDto.getSentence(), openAI(title + resultString.toString().trim(), modelDataDto.getSentence()));
         } else {
             return modelDataDto.getProbability();
         }
