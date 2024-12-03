@@ -4,10 +4,7 @@ spring:
       - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
   data:
     mongodb:
-      #test uri
-      uri: mongodb://localhost:27017/yourDatabase
-      #uri: mongodb+srv://<user>:<db_password>@cluster0.e7uyg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
-      #uri: mongodb://localhost:27017/yourDatabase
+      uri: ${MONGODB_URI}
 
 python:
   script:
@@ -19,3 +16,6 @@ python:
 
 chrome-driver:
   path: /usr/bin/chromedriver
+
+openai:
+  api-key: ${OPENAI_API_KEY}

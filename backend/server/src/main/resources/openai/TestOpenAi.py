@@ -1,11 +1,15 @@
 import openai
 import os
 import sys
+from dotenv import load_dotenv
+
+# .env 파일 로드
+load_dotenv()
 
 content = sys.argv[1]
 important = sys.argv[2]
 
-openai.api_key = open(os.path.dirname(os.path.realpath(__file__)) + "/api.txt", "r").read()
+openai.api_key = os.getenv('OPENAI_API_KEY')
 
 model = "gpt-4o-mini"
 

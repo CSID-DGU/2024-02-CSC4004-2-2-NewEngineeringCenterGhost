@@ -31,13 +31,12 @@ import java.util.*;
 @Service
 public class ApiService {
 
-    private static final Map<String, String> urlToXpathMap = new HashMap<>();
+    private static final Map<String, String> urlToXpathMap = new HashMap<>(); // Url to Xpath map
 
     static {
         // 기사
+        // 빠른 측정 실행 안되는 사이트들
         urlToXpathMap.put("news.kbs.co.kr","//*[@id=\"cont_newstext\"]"); // KBS 뉴스
-        urlToXpathMap.put("www.hankyung.com","//*[@id=\"articletxt\"]"); //한국경제
-        urlToXpathMap.put("imnews.imbc.com","//*[@id=\"content\"]/div/section[1]/article/div[2]/div[4]"); // MBC 뉴스
         urlToXpathMap.put("www.ohmynews.com","//*[@id=\"content_wrap\"]/div[1]/div[3]/div[1]/div[1]/div[1]/div"); // 오마이뉴스
         urlToXpathMap.put("www.mk.co.kr","//*[@id=\"container\"]/section/div[3]/section/div[1]/div[1]/div[1]"); // 매일경제
         urlToXpathMap.put("www.dailian.co.kr","//*[@id=\"contentsArea\"]/div[1]/div[4]/div[2]/div[2]/description"); // 데일리안
@@ -45,11 +44,10 @@ public class ApiService {
         urlToXpathMap.put("view.asiae.co.kr","//*[@id=\"txt_area\"]"); // 아시아경제
         urlToXpathMap.put("www.edaily.co.kr","//*[@id=\"contents\"]/section[1]/section[1]/div[1]/div[3]/div[1]"); // 이데일리
         urlToXpathMap.put("biz.heraldcorp.com","//*[@id=\"articleText\"]"); // 해럴드경제
-        urlToXpathMap.put("zdnet.co.kr","//*[@id=\"articleBody\"]");
+        urlToXpathMap.put("zdnet.co.kr","//*[@id=\"articleBody\"]"); // ZDNET korea
         urlToXpathMap.put("www.seoul.co.kr","//*[@id=\"articleContent\"]/div"); // 서울신문
         urlToXpathMap.put("www.osen.co.kr","//*[@id=\"articleBody\"]"); // OSEN
         urlToXpathMap.put("news.sbs.co.kr","//*[@id=\"container\"]/div[1]/div[3]/div[2]/div[1]/div[1]/div[2]"); // SBS 뉴스
-        urlToXpathMap.put("newstapa.org","//*[@id=\"editor_fontsize\"]"); //뉴스타파
         urlToXpathMap.put("www.hankookilbo.com","/html/body/div[2]/div/div[4]/div/div[1]"); // 한국일보
         urlToXpathMap.put("isplus.com","//*[@id=\"article_body\"]"); // 일간스포츠
         urlToXpathMap.put("www.newsis.com","//*[@id=\"content\"]/div[1]/div[1]/div[3]/article"); // 뉴시스
@@ -57,6 +55,11 @@ public class ApiService {
         urlToXpathMap.put("mydaily.co.kr","//*[@id=\"container\"]/div[1]/div[4]/div[1]/div"); // 마이데일리
         urlToXpathMap.put("www.donga.com","//*[@id=\"contents\"]/div[2]/div/div[1]/section[1]"); // 동아일보
         urlToXpathMap.put("news.jtbc.co.kr","//*[@id=\"wrapper\"]/div/div[6]/div/div/div/div/div[1]/div[1]"); // JTBC 뉴스
+
+        urlToXpathMap.put("www.hankyung.com","//*[@id=\"articletxt\"]"); //한국경제
+        urlToXpathMap.put("imnews.imbc.com","//*[@id=\"content\"]/div/section[1]/article/div[2]/div[4]"); // MBC 뉴스
+        urlToXpathMap.put("newstapa.org","//*[@id=\"editor_fontsize\"]"); //뉴스타파
+
         urlToXpathMap.put("www.ytn.co.kr","//*[@id=\"CmAdContent\"]/span"); // ytn 뉴스
         urlToXpathMap.put("www.newdaily.co.kr","//*[@id=\"article_conent\"]"); // 뉴데일리
         urlToXpathMap.put("www.dt.co.kr","//*[@id=\"v-left-scroll-in\"]/div[2]/div/div[2]"); // 디지털타임스
@@ -82,12 +85,63 @@ public class ApiService {
         urlToXpathMap.put("n.news.naver.com","//*[@id=\"dic_area\"]"); // 네이버뉴스
     }
 
+//    private static final Map<String, String> urlToClassnameMap = new HashMap<>(); // Url to Classname map
+//
+//    static {
+//        // 기사
+//        urlToClassnameMap.put("www.ohmynews.com","at_contents"); // 오마이뉴스
+//        urlToClassnameMap.put("www.mk.co.kr","//*[@id=\"container\"]/section/div[3]/section/div[1]/div[1]/div[1]"); // 매일경제
+//        urlToClassnameMap.put("www.dailian.co.kr","//*[@id=\"contentsArea\"]/div[1]/div[4]/div[2]/div[2]/description"); // 데일리안
+//        urlToClassnameMap.put("www.nocutnews.co.kr","//*[@id=\"pnlContent\"]"); // 노컷뉴스
+//        urlToClassnameMap.put("view.asiae.co.kr","//*[@id=\"txt_area\"]"); // 아시아경제
+//        urlToClassnameMap.put("www.edaily.co.kr","//*[@id=\"contents\"]/section[1]/section[1]/div[1]/div[3]/div[1]"); // 이데일리
+//        urlToClassnameMap.put("biz.heraldcorp.com","//*[@id=\"articleText\"]"); // 해럴드경제
+//        urlToClassnameMap.put("zdnet.co.kr","//*[@id=\"articleBody\"]");
+//        urlToClassnameMap.put("www.seoul.co.kr","//*[@id=\"articleContent\"]/div"); // 서울신문
+//        urlToClassnameMap.put("www.osen.co.kr","//*[@id=\"articleBody\"]"); // OSEN
+//        urlToClassnameMap.put("news.sbs.co.kr","//*[@id=\"container\"]/div[1]/div[3]/div[2]/div[1]/div[1]/div[2]"); // SBS 뉴스
+//        urlToClassnameMap.put("newstapa.org","//*[@id=\"editor_fontsize\"]"); //뉴스타파
+//        urlToClassnameMap.put("www.hankookilbo.com","/html/body/div[2]/div/div[4]/div/div[1]"); // 한국일보
+//        urlToClassnameMap.put("isplus.com","//*[@id=\"article_body\"]"); // 일간스포츠
+//        urlToClassnameMap.put("www.newsis.com","//*[@id=\"content\"]/div[1]/div[1]/div[3]/article"); // 뉴시스
+//        urlToClassnameMap.put("www.inews24.com","//*[@id=\"articleBody\"]"); // 아이뉴스
+//        urlToClassnameMap.put("mydaily.co.kr","//*[@id=\"container\"]/div[1]/div[4]/div[1]/div"); // 마이데일리
+//        urlToClassnameMap.put("www.donga.com","//*[@id=\"contents\"]/div[2]/div/div[1]/section[1]"); // 동아일보
+//        urlToClassnameMap.put("news.jtbc.co.kr","//*[@id=\"wrapper\"]/div/div[6]/div/div/div/div/div[1]/div[1]"); // JTBC 뉴스
+//        urlToClassnameMap.put("www.ytn.co.kr","//*[@id=\"CmAdContent\"]/span"); // ytn 뉴스
+//        urlToClassnameMap.put("www.newdaily.co.kr","//*[@id=\"article_conent\"]"); // 뉴데일리
+//        urlToClassnameMap.put("www.dt.co.kr","//*[@id=\"v-left-scroll-in\"]/div[2]/div/div[2]"); // 디지털타임스
+//        urlToClassnameMap.put("sports.chosun.com","//*[@id=\"articleBody\"]/div/div/font"); // 스포츠조선
+//        urlToClassnameMap.put("www.chosun.com","//*[@id=\"fusion-app\"]/div[1]/div[2]/div/section/article/section"); // 조선일보
+//        urlToClassnameMap.put("www.sportsseoul.com","//*[@id=\"article-body\"]"); // 스포츠서울
+//        urlToClassnameMap.put("www.khan.co.kr","//*[@id=\"articleBody\"]"); // 경향신문
+//        urlToClassnameMap.put("sports.donga.com","//*[@id=\"article_body\"]"); // 스포츠동아
+//        urlToClassnameMap.put("news.mt.co.kr","//*[@id=\"textBody\"]"); // 머니투데이
+//        urlToClassnameMap.put("www.etnews.com","//*[@id=\"articleBody\"]/p"); // 전자신문
+//        urlToClassnameMap.put("www.sedaily.com","//*[@id=\"v-left-scroll-in\"]/div[2]/div[1]/div[2]"); // 서울경제
+//        urlToClassnameMap.put("www.joongang.co.kr","//*[@id=\"article_body\"]"); // 중앙일보
+//        urlToClassnameMap.put("www.sisain.co.kr","//*[@id=\"article-view-content-div\"]"); // 시사인
+//        urlToClassnameMap.put("www.wowtv.co.kr","//*[@id=\"divNewsContent\"]"); // 한국경제TV
+//        urlToClassnameMap.put("www.yonhapnewstv.co.kr","//*[@id=\"articleBody\"]"); // 연합뉴스
+//        urlToClassnameMap.put("www.kmib.co.kr","//*[@id=\"articleBody\"]"); // 국민일보
+//        urlToClassnameMap.put("www.mbn.co.kr","//*[@id=\"newsViewArea\"]"); // MBN 뉴스
+//        urlToClassnameMap.put("biz.chosun.com","//*[@id=\"fusion-app\"]/div[1]/div[2]/div/section/article/section"); // 조선비즈
+//        urlToClassnameMap.put("www.segye.com","//*[@id=\"wps_layout1_box2\"]"); // 세계일보
+//        urlToClassnameMap.put("www.fnnews.com","//*[@id=\"article_content\"]"); // 파이낸셜 뉴스
+//        urlToClassnameMap.put("sportalkorea.com","//*[@id=\"CmAdContent\"]/div[2]/div/div"); // 스포탈코리아
+//        urlToClassnameMap.put("www.hani.co.kr","//*[@id=\"renewal2023\"]/span"); // 한겨레
+//        urlToClassnameMap.put("n.news.naver.com","//*[@id=\"dic_area\"]"); // 네이버뉴스
+//    }
+
     private final ResponseDataRepository responseDataRepository;
 
     @Autowired
     public ApiService(ResponseDataRepository responseDataRepository) {
         this.responseDataRepository = responseDataRepository;
     }
+
+    @Value("${openai.api-key}")
+    private String openAiApiKey;
 
     @Value("${python.script.path.request}")
     private String requestScriptPath;
@@ -344,6 +398,8 @@ public class ApiService {
     // openAI API Key를 사용하여 해설을 생성하는 python 파일을 실행하는 함수
     public String openAI(String content, String sentence) throws IOException {
         ProcessBuilder processBuilder = new ProcessBuilder("python3", openAiScriptPath, content, sentence);
+        processBuilder.environment().put("OPENAI_API_KEY", openAiApiKey);
+        processBuilder.redirectErrorStream(true);
         Process process = processBuilder.start();
         log.info("Process: {}", process);
 
