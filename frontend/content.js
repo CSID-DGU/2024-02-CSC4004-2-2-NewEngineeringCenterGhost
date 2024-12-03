@@ -24,6 +24,14 @@ async function fetchPOST(url, data) {
 사용자 정의 측정 : http://localhost:8080/api/v1/server/custom
  */
 
+
+function getAbsoluteUrl(href) {
+  if (href.startsWith("/")) {
+    href = window.location.origin + href;
+  }
+  return href;
+}
+
 const prob_dict = {}
 const prob_queue = []
 const tooltip = document.createElement('div')
@@ -76,7 +84,7 @@ function showProbability(event) {
     tooltip.innerText = "낚시성 확률: " + prob_dict[element.href] + "%";
   }
   else {
-    setTimeout(()=>{queueProbability(element.href)}, 1);
+    setTimeout(()=>{queueProbability(getAbsoluteUrl(element.href))}, 1);
   }
 
   // 툴팁 위치 설정
@@ -143,12 +151,13 @@ const allowLinks = [
 
 let seeker_data = [];
 
+
 function checkLink(href) {
   if (!href) {
     return false;
   }
 
-  return allowLinks.some(link => href.includes(link))
+  return allowLinks.some(link => getAbsoluteUrl(href).includes(link))
 }
 
 function addHoverEffect() {
