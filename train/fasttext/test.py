@@ -8,9 +8,9 @@ from module.HGCtrlr import decomposeHangulText, composeHangulText
 model = FastText.load("train/fasttext/model/fasttext")
 
 test_words = [
-    'CLS', 'SEP',
-    '스마트폰', '스맡폰', 'ㅏㅣ폰', '아ㅣㅇ폰',
-    '햄부기', '스파게ㅌ', '한국어', '프랑스'
+    '스마트폰', '스맡폰',
+    '아이폰', 'ㅏㅣ폰', '아ㅣㅇ폰',
+    '햄버거', '햄벅',
 ]
 
 for word in test_words:
