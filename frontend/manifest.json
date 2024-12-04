@@ -14,9 +14,15 @@
   "background": {
     "service_worker": "background.js"
   },
+  "icons": {
+    "16": "ico/16.png",
+    "32": "ico/32.png",
+    "48": "ico/48.png",
+    "128": "ico/128.png"
+  },
   "action": {
     "default_popup": "popup.html",
-    "default_icon": "256.png"
+    "default_icon": "ico/256.png"
   },
   "content_scripts": [
     {
