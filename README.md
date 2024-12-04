@@ -35,7 +35,7 @@
 
 ## 📂 **프로젝트 파일 구조**  
 
-### **Backend**  
+### 🛠️ **Backend**
 ```
 backend  
  ┗ server  
@@ -52,7 +52,7 @@ backend
          ┗ openai/TestOpenAi.py  
 ```  
 
-### **Frontend**  
+### 💻 **Frontend**
 ```
 frontend  
  ┣ background.js  
@@ -66,7 +66,7 @@ frontend
  ┗ styles.css  
 ```  
 
-### **Train**  
+### 🧠 **Train**
 ```
 train  
  ┣ fasttext/*.py  
@@ -76,7 +76,7 @@ train
  ┗ unzip.py  
 ```  
 
----
+---  
 
 ## ✨ **기능 소개**  
 
@@ -131,6 +131,27 @@ train
 
 ### **AI**  
 <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=Python&logoColor=white"> <img src="https://img.shields.io/badge/PyTorch-EE4C2C?style=flat-square&logo=PyTorch&logoColor=white"> <img src="https://img.shields.io/badge/OpenAI-412991?style=flat-square&logo=OpenAI&logoColor=white"> <img src="https://img.shields.io/badge/OpenCV-5C3EE8?style=flat-square&logo=OpenCV&logoColor=white">
+
+---  
+
+## 📋 **라이센스 정보**  
+
+### **프로젝트 라이센스**  
+이 프로젝트는 **MIT License**를 따릅니다. 자세한 내용은 [LICENSE 파일](./LICENSE)을 확인하세요.  
+
+### **사용된 OSS 라이센스 목록**  
+이 프로젝트에서 사용된 주요 오픈 소스 소프트웨어와 해당 라이센스는 다음과 같습니다:  
+
+| OSS               | Version     | License       | URL                                               |  
+|--------------------|-------------|---------------|---------------------------------------------------|  
+| **Spring Boot**    | 3.0.x       | Apache 2.0    | [Spring Boot](https://spring.io/projects/spring-boot) |  
+| **PyTorch**        | 2.5.x         | BSD           | [PyTorch](https://pytorch.org/)                  |  
+| **FastText**       | 0.9.x       | MIT           | [FastText](https://fasttext.cc/)                 |              |  
+| **Tesseract OCR**  | 5.x         | Apache 2.0    | [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) |  
+| **MongoDB**        | 6.x         | Server Side Public License | [MongoDB](https://www.mongodb.com/)  |  
+| **OpenCV**         | 4.x         | Apache 2.0    | [OpenCV](https://opencv.org/)                   |  
+
+**참고**: 사용된 라이브러리의 라이센스를 준수하며 프로젝트의 사용 목적에 따라 추가적인 요구사항이 있을 수 있습니다.  
 
 ---
 
@@ -214,7 +235,7 @@ GitHub에 모델 파일이 업로드되어 있습니다. FastText 모델만 학�
 
 ### 📝 **문의**  
 - **이메일**:
-   - 정재환:
+   - 정재환: 2020112023@dgu.ac.kr
    - 신동주: smturtle2@kakao.com
-   - 정태호:
-   - 조성원: 
+   - 정태호: t2222h@naver.com
+   - 조성원: chosung01@naver.com
