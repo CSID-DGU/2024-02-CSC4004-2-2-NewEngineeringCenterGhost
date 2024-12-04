@@ -516,14 +516,21 @@ public class ApiService {
 
             } else if (domain.contains("tistory.com")) {
                 // 대표 URL이 tistory blog인 경우
+                WebElement webElement;
                 try {
-                    WebElement webElement = driver.findElement(By.className("contents_style"));
+                    webElement = driver.findElement(By.className("contents_style"));
+                    content = webElement.getText();
+                    log.info("WebPage Content using classname: {}", content);
+                    return new WebScrappingResultDto(title, content);
+                } catch (NoSuchElementException e) {
+                    log.info("Find another element...");
+                }
+                try {
+                    webElement = driver.findElement(By.className("tt_article_useless_p_margin"));
                     content = webElement.getText();
                     log.info("WebPage Content using classname: {}", content);
                 } catch (NoSuchElementException e) {
-                    WebElement webElement = driver.findElement(By.className("tt_article_useless_p_margin"));
-                    content = webElement.getText();
-                    log.info("WebPage Content using classname: {}", content);
+                    return null;
                 }
 
                 return new WebScrappingResultDto(title, content);
