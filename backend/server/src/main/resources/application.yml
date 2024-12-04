@@ -1,0 +1,21 @@
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  data:
+    mongodb:
+      uri: ${MONGODB_URI}
+
+python:
+  script:
+    path:
+      request: src/main/resources/core/request.py
+      server: src/main/resources/core/server.py
+      openAi: src/main/resources/openai/TestOpenAi.py
+      ocr: src/main/resources/ocr/TestOCR.py
+
+chrome-driver:
+  path: /usr/bin/chromedriver
+
+openai:
+  api-key: ${OPENAI_API_KEY}
