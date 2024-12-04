@@ -8,10 +8,7 @@ import com.newengineeringghost.domain.api.repository.ResponseDataRepository;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
-import org.openqa.selenium.By;
-import org.openqa.selenium.PageLoadStrategy;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -26,6 +23,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.time.Duration;
 import java.util.*;
+import java.util.NoSuchElementException;
 
 @Slf4j
 @Service
@@ -463,6 +461,18 @@ public class ApiService {
         log.info(url);
         log.info("Chrome Driver Info: {}", driver);
 
+        ((JavascriptExecutor) driver).executeScript("window.open('about:blank', '_blank');");
+        Set<String> allTabs = driver.getWindowHandles();
+        String handle = driver.getWindowHandle();
+        for (String tab : allTabs) {
+            if (!tab.equals(handle)) {
+                handle = tab;
+                break;
+            }
+        }
+        driver.close();
+        driver.switchTo().window(handle); // 새 탭으로 전환
+
         if (!ObjectUtils.isEmpty(driver)) {
             driver.get(url);
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5)); // 페이지 전체가 넘어올 때까지 대기(5초)
@@ -496,10 +506,16 @@ public class ApiService {
 
             } else if (domain.equals("blog.naver.com") || domain.equals("m.blog.naver.com")) {
                 // 대표 URL이 naver blog인 경우
-                WebElement webElement = driver.findElement(By.className("se-main-container"));
+                WebElement webElement;
+                try {
+                    webElement = driver.findElement(By.className("se-main-container"));
+                }
+                catch (Exception e) {
+                    return null;
+                }
 
                 // 모든 <div> 요소를 찾기
-                List<WebElement> divElements = webElement.findElements(By.tagName("div"));
+                List<WebElement> divElements = webElement.findElements(By.tagName("p"));
 
                 // 마지막 <div> 요소를 제외한 나머지 내용 가져오기
                 StringBuilder contentBuilder = new StringBuilder();
