@@ -19,8 +19,7 @@
 
 ---
 
-## 📖 **프로젝트 소개**  
-
+## 📖 **프로젝트: 낚시성 정보 탐지 도구 Click-bait Seeker**  
 ![Clickbait Icon](frontend/ico/512.png)  
 
 - **문제점**  
@@ -140,6 +139,8 @@ train
 ## 📋 **라이센스 정보**  
 
 ### **프로젝트 라이센스**  
+<img src="https://img.shields.io/badge/Click--bait%20Seeker-1.0.0%20(MIT%20License)-blueviolet?style=flat-square">
+
 이 프로젝트는 **MIT License**를 따릅니다. 자세한 내용은 [LICENSE 파일](./LICENSE)을 확인하세요.  
 
 ### **사용된 OSS 목록:**  
