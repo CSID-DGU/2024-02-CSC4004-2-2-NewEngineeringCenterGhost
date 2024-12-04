@@ -62,7 +62,6 @@ public class ApiService {
 
         urlToXpathMap.put("www.ytn.co.kr","//*[@id=\"CmAdContent\"]/span"); // ytn 뉴스
         urlToXpathMap.put("www.newdaily.co.kr","//*[@id=\"article_conent\"]"); // 뉴데일리
-        urlToXpathMap.put("www.dt.co.kr","//*[@id=\"v-left-scroll-in\"]/div[2]/div/div[2]"); // 디지털타임스
         urlToXpathMap.put("sports.chosun.com","//*[@id=\"articleBody\"]/div/div/font"); // 스포츠조선
         urlToXpathMap.put("www.chosun.com","//*[@id=\"fusion-app\"]/div[1]/div[2]/div/section/article/section"); // 조선일보
         urlToXpathMap.put("www.sportsseoul.com","//*[@id=\"article-body\"]"); // 스포츠서울
@@ -263,7 +262,7 @@ public class ApiService {
         WebScrappingResultDto webScrappingResultDto = webScraping(url);
 
         String result = pythonFileRun_3(requestScriptPath, webScrappingResultDto.getTitle(), webScrappingResultDto.getContent());
-
+        log.info(result);
         String[] parts = result.split("[(),]");
 
         String doubleString = parts[1].trim();

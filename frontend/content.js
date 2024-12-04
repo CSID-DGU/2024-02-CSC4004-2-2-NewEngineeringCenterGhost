@@ -124,7 +124,6 @@ const allowLinks = [
   "news.jtbc.co.kr/article", // JTBC 뉴스
   "www.ytn.co.kr/", // ytn 뉴스
   "www.newdaily.co.kr/site/data/html", // 뉴데일리
-  "www.dt.co.kr/contents", // 디지털타임스
   "sports.chosun.com/", // 스포츠조선
   "www.chosun.com/", // 조선일보
   "www.sportsseoul.com/news/read", // 스포츠서울
