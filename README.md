@@ -83,15 +83,20 @@ train
 
 ### 1️⃣ **빠른 측정 기능**  
 - 링크 위에 마우스를 올리면, 해당 기사 또는 게시글의 낚시성 확률을 실시간으로 표시합니다.  
+![스크린샷 2024-12-04 221110](https://github.com/user-attachments/assets/4860d8e5-5fa2-485f-a2d6-cb617bbb4882)
 
 ### 2️⃣ **정밀 측정 기능**  
 - 기사 또는 게시글 페이지에서 '측정하기'를 클릭하면 분석 결과를 상단 배너로 표시합니다.  
 - 확률에 따라 배너 색상이 초록색(낮음) 또는 빨간색(높음)으로 나타납니다.  
-- 네이버 및 구글에서 검색된 기사, 네이버 블로그, 티스토리, 인스타그램에서 사용 가능합니다.
+- 네이버 및 구글에서 검색된 기사, 네이버 블로그, 티스토리, 인스타그램에서 사용 가능합니다.  
+![스크린샷 2024-12-04 220710](https://github.com/user-attachments/assets/3774c102-f7b3-4794-a91a-08818b111936)
+
 
 ### 3️⃣ **사용자 정의 측정 기능**  
 - 사용자가 선택한 텍스트나 이미지를 분석하여 결과를 시각적으로 강조합니다.  
-- 정밀 측정 기능에서 지원되지 않는 페이지에서 사용할 수 있도록 도와주는 기능입니다.
+- 정밀 측정 기능에서 지원되지 않는 페이지에서 사용할 수 있도록 도와주는 기능입니다.  
+![스크린샷 2024-12-04 221235](https://github.com/user-attachments/assets/c308e71d-a3ee-41c9-86fe-e436744c5dd3)
+
 
 ---
 
@@ -121,11 +126,8 @@ train
 ### **IDE**  
 <img src="https://img.shields.io/badge/Visual Studio Code-007ACC?style=flat-square&logo=Visual Studio Code&logoColor=white"> <img src="https://img.shields.io/badge/Intellij IDEA-000000?style=flat-square&logo=Intellij IDEA&logoColor=white">
 
-### **Server**  
-<img src="https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=MongoDB&logoColor=white"> <img src="https://img.shields.io/badge/Selenium-43B02A?style=flat-square&logo=Selenium&logoColor=white">
-
 ### **Backend** 
-<img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=flat-square&logo=Spring Boot&logoColor=white"> <img src="https://img.shields.io/badge/Gradle-02303A?style=flat-square&logo=Gradle&logoColor=white">
+<img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=flat-square&logo=Spring Boot&logoColor=white"> <img src="https://img.shields.io/badge/Gradle-02303A?style=flat-square&logo=Gradle&logoColor=white"> <img src="https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=MongoDB&logoColor=white"> <img src="https://img.shields.io/badge/Selenium-43B02A?style=flat-square&logo=Selenium&logoColor=white">
 
 ### **Frontend**
 <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=JavaScript&logoColor=white"> <img src="https://img.shields.io/badge/JSON-000000?style=flat-square&logo=JSON&logoColor=white"> <img src="https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=HTML5&logoColor=white"> <img src="https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=CSS3&logoColor=white">
