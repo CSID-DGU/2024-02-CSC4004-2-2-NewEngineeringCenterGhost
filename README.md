@@ -182,9 +182,6 @@ cd <프로젝트_폴더_이름>
 
 ### 2️⃣ **JDK 설치 및 설정**  
 - JDK 17 이상 설치 후 환경변수 설정.  
-
-[Oracle JDK 다운로드](https://www.oracle.com/java/technologies/downloads/?er=221886)
-
 [OpenJDK 다운로드](https://openjdk.org/)
 
 JDK 17 이상 버전을 다운로드한 뒤 설치하세요.
