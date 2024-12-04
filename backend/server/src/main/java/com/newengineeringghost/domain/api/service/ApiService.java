@@ -44,7 +44,6 @@ public class ApiService {
         urlToXpathMap.put("view.asiae.co.kr","//*[@id=\"txt_area\"]"); // 아시아경제
         urlToXpathMap.put("www.edaily.co.kr","//*[@id=\"contents\"]/section[1]/section[1]/div[1]/div[3]/div[1]"); // 이데일리
         urlToXpathMap.put("biz.heraldcorp.com","//*[@id=\"articleText\"]"); // 해럴드경제
-        urlToXpathMap.put("zdnet.co.kr","//*[@id=\"articleBody\"]"); // ZDNET korea
         urlToXpathMap.put("www.seoul.co.kr","//*[@id=\"articleContent\"]/div"); // 서울신문
         urlToXpathMap.put("www.osen.co.kr","//*[@id=\"articleBody\"]"); // OSEN
         urlToXpathMap.put("news.sbs.co.kr","//*[@id=\"container\"]/div[1]/div[3]/div[2]/div[1]/div[1]/div[2]"); // SBS 뉴스

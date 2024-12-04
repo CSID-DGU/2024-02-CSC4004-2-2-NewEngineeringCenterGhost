@@ -110,7 +110,6 @@ const allowLinks = [
   "view.asiae.co.kr/article", // 아시아경제
   "www.edaily.co.kr/News", // 이데일리
   "biz.heraldcorp.com/article", // 해럴드경제
-  "zdnet.co.kr/view",
   "www.seoul.co.kr/news", // 서울신문
   "www.osen.co.kr/article", // OSEN
   "news.sbs.co.kr/news", // SBS 뉴스
