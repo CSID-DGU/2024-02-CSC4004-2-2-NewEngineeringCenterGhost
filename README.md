@@ -140,17 +140,14 @@ train
 ### **프로젝트 라이센스**  
 이 프로젝트는 **MIT License**를 따릅니다. 자세한 내용은 [LICENSE 파일](./LICENSE)을 확인하세요.  
 
-### **사용된 OSS 라이센스 목록**  
-이 프로젝트에서 사용된 주요 오픈 소스 소프트웨어와 해당 라이센스는 다음과 같습니다:  
+### **사용된 OSS 라이센스 목록:**  
+[<img src="https://img.shields.io/badge/Spring%20Boot-3.0.x%20(Apache%202.0)-6DB33F?style=flat-square&logo=Spring%20Boot&logoColor=white">](https://spring.io/projects/spring-boot)  
+[<img src="https://img.shields.io/badge/PyTorch-2.5.1%20(BSD--3--Clause)-EE4C2C?style=flat-square&logo=PyTorch&logoColor=white">](https://pytorch.org/)  
+[<img src="https://img.shields.io/badge/Gensim-4.3.1%20(LGPL%20v2.1)-0078D4?style=flat-square">](https://radimrehurek.com/gensim/)  
+[<img src="https://img.shields.io/badge/Tesseract%20OCR-5.x%20(Apache%202.0)-5C3EE8?style=flat-square&logo=Tesseract&logoColor=white">](https://github.com/tesseract-ocr/tesseract)  
+[<img src="https://img.shields.io/badge/NLTK-3.9.1%20(Apache%202.0)-39A85E?style=flat-square&logo=NLTK&logoColor=white">](https://github.com/nltk/nltk)  
+[<img src="https://img.shields.io/badge/KSS-6.0.4%20(BSD--3--Clause)-FF4500?style=flat-square&logo=KSS&logoColor=white">](https://github.com/hyunwoongko/kss)
 
-| OSS               | Version     | License       | URL                                               |  
-|--------------------|-------------|---------------|---------------------------------------------------|  
-| **Spring Boot**    | 3.0.x       | Apache 2.0    | [Spring Boot](https://spring.io/projects/spring-boot) |  
-| **PyTorch**        | 2.5.1         | BSD-3-Clause           | [PyTorch](https://pytorch.org/)                  |  
-| **Gensim**         | 4.3.1         | LGPL v2.1           | [Gensim](https://radimrehurek.com/gensim/) |  
-| **Tesseract OCR**  | 5.x         | Apache 2.0    | [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) |  
-| **NLTK**        | 3.9.1         | Apache 2.0           | [NLTK](https://github.com/nltk/nltk)                  |  
-| **KSS**        | 6.0.4        | BSD-3-Clause           | [KSS](https://github.com/hyunwoongko/kss)                  |   
 
 ---
 
