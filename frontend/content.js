@@ -38,7 +38,7 @@ const tooltip = document.createElement('div')
 
 async function getProbability(url) {
   if (!(url in prob_dict)) {
-    const recv = await fetchPOST("http://localhost:8080/api/v1/server/quick?", { "url": url });
+    const recv = await fetchPOST("https://necg.site/api/v1/server/quick?", { "url": url });
     console.log(recv.status)
     if (recv.status) return;
     const probability = parseInt(recv * 100);
@@ -291,11 +291,11 @@ async function measure() {
   }
   showBanner(0, "측정 중...");
   if (seeker_data.length > 0) {
-    const recv = await fetchPOST("http://localhost:8080/api/v1/server/custom?", { "content": seeker_data.join(",") });
+    const recv = await fetchPOST("https://necg.site/api/v1/server/custom?", { "content": seeker_data.join(",") });
     process_recv(recv);
   }
   else {
-    const recv = await fetchPOST("http://localhost:8080/api/v1/server/precision?", { "url": url });
+    const recv = await fetchPOST("https://necg.site/api/v1/server/precision?", { "url": url });
     process_recv(recv);
   }
 }
