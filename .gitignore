@@ -5,6 +5,7 @@
 /train/fasttext/model
 **/*.pth
 **/bin
+!/train/model_best.pth
 
 # 파이썬 캐시 파일
 **/__pycache__
