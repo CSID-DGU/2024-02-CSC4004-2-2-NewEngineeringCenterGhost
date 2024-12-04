@@ -1,21 +1,22 @@
 {
   "manifest_version": 3,
-  "name": "낚시성 정보 탐지 도구",
+  "name": "낚시성 정보 탐지 도구(Click-bait Seeker)",
   "version": "1.0",
   "description": "낚시성 정보를 탐지하고 확률 및 해설을 제공합니다.",
   "permissions": [
     "contextMenus",
-    "scripting",
-    "activeTab",
-    "storage",
     "tabs",
-    "webNavigation"
+    "scripting"
+  ],
+  "host_permissions": [
+    "http://34.64.45.233/*"
   ],
   "background": {
     "service_worker": "background.js"
   },
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": "256.png"
   },
   "content_scripts": [
     {
@@ -23,8 +24,9 @@
         "<all_urls>"
       ],
       "js": [
-        "content.js",
-        "popup.js"
+        "highlight.js",
+        "markdown.js",
+        "content.js"
       ]
     }
   ]
