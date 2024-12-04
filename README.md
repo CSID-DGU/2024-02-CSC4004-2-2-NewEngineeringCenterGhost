@@ -146,10 +146,11 @@ train
 | OSS               | Version     | License       | URL                                               |  
 |--------------------|-------------|---------------|---------------------------------------------------|  
 | **Spring Boot**    | 3.0.x       | Apache 2.0    | [Spring Boot](https://spring.io/projects/spring-boot) |  
-| **PyTorch**        | 2.5.x         | BSD-3-Clause           | [PyTorch](https://pytorch.org/)                  |  
-| **FastText**       | 0.9.x       | MIT License          | [FastText](https://fasttext.cc/)                 |              |  
+| **PyTorch**        | 2.5.1         | BSD-3-Clause           | [PyTorch](https://pytorch.org/)                  |  
+| **Gensim**         | 4.3.1         | LGPL v2.1           | [Gensim](https://radimrehurek.com/gensim/) |  
 | **Tesseract OCR**  | 5.x         | Apache 2.0    | [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) |  
-| **MongoDB**        | 6.x         | Server Side Public License | [MongoDB](https://www.mongodb.com/)  |  
+| **NLTK**        | 3.9.1         | Apache 2.0           | [NLTK](https://github.com/nltk/nltk)                  |  
+| **KSS**        | 6.0.4        | BSD-3-Clause           | [KSS](https://github.com/hyunwoongko/kss)                  |   
 
 ---
 
