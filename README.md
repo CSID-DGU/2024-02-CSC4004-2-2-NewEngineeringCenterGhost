@@ -15,6 +15,7 @@
 | **신동주** | 2020112541 | AI                       | [@smturtle2](https://github.com/smturtle2) |  
 | **정태호** | 2022113556 | 크롬 확장 프로그램, 프론트엔드 | [@Taehoo-Jeong](https://github.com/Taehoo-Jeong) |  
 | **조성원** | 2020112037 | AI                       | [@sungwon01](https://github.com/sungwon01) |  
+| **임상수** | | 담당 교수                       |  |  
 
 ---
 
@@ -130,7 +131,7 @@ train
 <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=JavaScript&logoColor=white"> <img src="https://img.shields.io/badge/JSON-000000?style=flat-square&logo=JSON&logoColor=white"> <img src="https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=HTML5&logoColor=white"> <img src="https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=CSS3&logoColor=white">
 
 ### **AI**  
-<img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=Python&logoColor=white"> <img src="https://img.shields.io/badge/PyTorch-EE4C2C?style=flat-square&logo=PyTorch&logoColor=white"> <img src="https://img.shields.io/badge/OpenAI-412991?style=flat-square&logo=OpenAI&logoColor=white"> <img src="https://img.shields.io/badge/OpenCV-5C3EE8?style=flat-square&logo=OpenCV&logoColor=white">
+<img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=Python&logoColor=white"> <img src="https://img.shields.io/badge/PyTorch-EE4C2C?style=flat-square&logo=PyTorch&logoColor=white"> <img src="https://img.shields.io/badge/OpenAI-412991?style=flat-square&logo=OpenAI&logoColor=white"> <img src="https://img.shields.io/badge/Tesseract OCR-5C3EE8?style=flat-square&logo=Tesseract&logoColor=white">
 
 ---  
 
@@ -145,13 +146,10 @@ train
 | OSS               | Version     | License       | URL                                               |  
 |--------------------|-------------|---------------|---------------------------------------------------|  
 | **Spring Boot**    | 3.0.x       | Apache 2.0    | [Spring Boot](https://spring.io/projects/spring-boot) |  
-| **PyTorch**        | 2.5.x         | BSD           | [PyTorch](https://pytorch.org/)                  |  
-| **FastText**       | 0.9.x       | MIT           | [FastText](https://fasttext.cc/)                 |              |  
+| **PyTorch**        | 2.5.x         | BSD-3-Clause           | [PyTorch](https://pytorch.org/)                  |  
+| **FastText**       | 0.9.x       | MIT License          | [FastText](https://fasttext.cc/)                 |              |  
 | **Tesseract OCR**  | 5.x         | Apache 2.0    | [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) |  
 | **MongoDB**        | 6.x         | Server Side Public License | [MongoDB](https://www.mongodb.com/)  |  
-| **OpenCV**         | 4.x         | Apache 2.0    | [OpenCV](https://opencv.org/)                   |  
-
-**참고**: 사용된 라이브러리의 라이센스를 준수하며 프로젝트의 사용 목적에 따라 추가적인 요구사항이 있을 수 있습니다.  
 
 ---
 
