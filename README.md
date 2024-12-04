@@ -140,13 +140,14 @@ train
 ### **프로젝트 라이센스**  
 이 프로젝트는 **MIT License**를 따릅니다. 자세한 내용은 [LICENSE 파일](./LICENSE)을 확인하세요.  
 
-### **사용된 OSS 라이센스 목록:**  
-[<img src="https://img.shields.io/badge/Spring%20Boot-3.0.x%20(Apache%202.0)-6DB33F?style=flat-square&logo=Spring%20Boot&logoColor=white">](https://spring.io/projects/spring-boot)  
-[<img src="https://img.shields.io/badge/PyTorch-2.5.1%20(BSD--3--Clause)-EE4C2C?style=flat-square&logo=PyTorch&logoColor=white">](https://pytorch.org/)  
-[<img src="https://img.shields.io/badge/Gensim-4.3.1%20(LGPL%20v2.1)-0078D4?style=flat-square">](https://radimrehurek.com/gensim/)  
-[<img src="https://img.shields.io/badge/Tesseract%20OCR-5.x%20(Apache%202.0)-5C3EE8?style=flat-square&logo=Tesseract&logoColor=white">](https://github.com/tesseract-ocr/tesseract)  
-[<img src="https://img.shields.io/badge/NLTK-3.9.1%20(Apache%202.0)-39A85E?style=flat-square&logo=NLTK&logoColor=white">](https://github.com/nltk/nltk)  
+### **사용된 OSS 목록:**  
+[<img src="https://img.shields.io/badge/Spring%20Boot-3.0.x%20(Apache%202.0)-6DB33F?style=flat-square&logo=Spring%20Boot&logoColor=white">](https://spring.io/projects/spring-boot)
+[<img src="https://img.shields.io/badge/PyTorch-2.5.1%20(BSD--3--Clause)-EE4C2C?style=flat-square&logo=PyTorch&logoColor=white">](https://pytorch.org/)
+[<img src="https://img.shields.io/badge/Gensim-4.3.1%20(LGPL%20v2.1)-0078D4?style=flat-square">](https://radimrehurek.com/gensim/)
+[<img src="https://img.shields.io/badge/Tesseract%20OCR-5.x%20(Apache%202.0)-5C3EE8?style=flat-square&logo=Tesseract&logoColor=white">](https://github.com/tesseract-ocr/tesseract)
+[<img src="https://img.shields.io/badge/NLTK-3.9.1%20(Apache%202.0)-39A85E?style=flat-square&logo=NLTK&logoColor=white">](https://github.com/nltk/nltk)
 [<img src="https://img.shields.io/badge/KSS-6.0.4%20(BSD--3--Clause)-FF4500?style=flat-square&logo=KSS&logoColor=white">](https://github.com/hyunwoongko/kss)
+[<img src="https://img.shields.io/badge/Selenium-4.x%20(Apache%202.0)-43B02A?style=flat-square&logo=Selenium&logoColor=white">](https://www.selenium.dev/)
 
 
 ---
