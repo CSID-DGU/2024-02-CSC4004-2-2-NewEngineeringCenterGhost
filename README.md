@@ -71,6 +71,7 @@ frontend
 train  
  ┣ fasttext/*.py  
  ┣ module/*.py  
+ ┣ model_best.pth  
  ┣ train.py  
  ┗ unzip.py  
 ```  
@@ -139,7 +140,7 @@ train
 ---
 
 ## 🌐 **배포 URL**  
-- **URL**:  
+- **크롬 스토어**:  
 
 
 ---
@@ -182,5 +183,38 @@ java -jar build/libs/<생성된_jar파일명>.jar
 
 ---
 
+## 📊 **AI 모델 학습**
+
+### **FastText 모델 학습**  
+```bash
+cd train/fasttext
+python3 train.py
+```
+학습된 모델은 `train/fasttext/model`에 저장됩니다.
+해당 디렉토리 내의 모든 파일을 `backend/src/main/resources/core/bin`에 복사합니다.
+
+### **Transformer 모델 학습**  
+학습을 하기 전, [AI Hub 낚시성 정보 데이터](https://www.aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&dataSetSn=71338)를 다운로드하여 모든 라벨링 데이터 zip 파일을 `train/data/zip`에 저장합니다.
+
+```bash
+python3 unzip.py
+```
+위 명령어로 `train/data/data.jsonl`이 생성됩니다.
+
+```bash
+python3 train.py
+```
+모델 학습을 진행합니다. 컴퓨팅 자원이 부족할 수 있으니 주의하세요.
+
+### **제공된 모델 사용**
+GitHub에 모델 파일이 업로드되어 있습니다. FastText 모델만 학습시킨 후,
+`train/model_best.pth`를 `backend/src/main/resources/core/bin`에 복사합니다.
+
+---
+
 ### 📝 **문의**  
-- 프로젝트 관련 문의는 각 팀원의 GitHub를 통해 가능합니다.  
+- **이메일**:
+   - 정재환:
+   - 신동주: smturtle2@kakao.com
+   - 정태호:
+   - 조성원: 
