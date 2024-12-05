@@ -142,7 +142,7 @@ train
 <img src="https://img.shields.io/badge/Click--bait%20Seeker-1.0.0%20(MIT%20License)-blueviolet?style=flat-square">
 
 이 프로젝트는 **MIT License**를 따릅니다. 자세한 내용은 [LICENSE 파일](./LICENSE)을 확인하세요.  
-또한, **PyTorch**의 일부 코드를 수정하여 포함하고 있습니다. 해당 코드는 BSD 3-Clause 라이선스의 조건을 따릅니다. 자세한 내용은 [PyTorch NOTICE](https://github.com/pytorch/pytorch/blob/main/NOTICE)를 확인하세요.
+또한, **PyTorch**의 일부 코드를 수정하여 포함하고 있습니다. 해당 코드는 **BSD 3-Clause License**의 조건을 따릅니다. 자세한 내용은 [PyTorch NOTICE](https://github.com/pytorch/pytorch/blob/main/NOTICE)를 확인하세요.
 
 
 ### **사용된 OSS 목록:**  
