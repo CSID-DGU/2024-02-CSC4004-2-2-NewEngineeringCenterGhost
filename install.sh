@@ -1,6 +1,6 @@
 #cli: bash install.sh
 
-# MeCab 설치
+# MeCab 및 tesseract 설치
 sudo apt-get update
 sudo apt-get install -y g++ openjdk-8-jdk python3-dev python3-pip curl git
 sudo apt install tesseract-ocr
