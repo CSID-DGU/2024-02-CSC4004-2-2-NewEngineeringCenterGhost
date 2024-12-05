@@ -19,9 +19,9 @@ async function fetchPOST(url, data) {
 
 /*
 [ API url mapping 가이드 ]
-빠른 측정 : http://localhost:8080/api/v1/server/quick
-정밀 측정 : http://localhost:8080/api/v1/server/precision
-사용자 정의 측정 : http://localhost:8080/api/v1/server/custom
+빠른 측정 : https://necg.site/api/v1/server/quick
+정밀 측정 : https://necg.site/api/v1/server/precision
+사용자 정의 측정 : https://necg.site/api/v1/server/custom
  */
 
 
