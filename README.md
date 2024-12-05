@@ -158,13 +158,7 @@ train
 ---
 
 ## 🎥 **시연 영상**  
-- **링크**:  https://www.youtube.com/watch?v=gFVVAIdI-GQ
-<iframe width="560" height="315" 
-    src="https://www.youtube.com/watch?v=gFVVAIdI-GQ" 
-    frameborder="0" 
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-    allowfullscreen>
-</iframe>
+[![Video Label](https://img.youtube.com/vi/gFVVAIdI-GQ/0.jpg)](https://www.youtube.com/watch?v=gFVVAIdI-GQ)  
 
 ---
 
