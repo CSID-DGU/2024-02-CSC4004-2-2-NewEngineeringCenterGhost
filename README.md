@@ -19,7 +19,7 @@
 
 ---
 
-## 📖 **프로젝트: 낚시성 정보 탐지 도구 Click-bait Seeker**  
+## 📖 **프로젝트: 낚시성 정보 탐지 도구 (Click-bait Seeker)**  
 ![Clickbait Icon](frontend/ico/512.png)  
 
 ---
