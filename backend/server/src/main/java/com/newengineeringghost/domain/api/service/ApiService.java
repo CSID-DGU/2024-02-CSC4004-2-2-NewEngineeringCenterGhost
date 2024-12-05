@@ -17,10 +17,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.time.Duration;
 import java.util.*;
 import java.util.NoSuchElementException;
@@ -136,17 +137,20 @@ public class ApiService {
         this.responseDataRepository = responseDataRepository;
     }
 
-    @Value("${openai.api-key}")
-    private String openAiApiKey;
-
-    @Value("${python.script.path.request}")
     private String requestScriptPath;
 
-    @Value("${python.script.path.openAi}")
-    private String openAiScriptPath;
+    private String openaiScriptPath;
 
-    @Value("${python.script.path.ocr}")
     private String ocrScriptPath;
+
+    private Path requestTempfile;
+
+    private Path openaiTempfile;
+
+    private Path ocrTempfile;
+
+    @Value("${openai.api-key}")
+    private String openAiApiKey;
 
     @Value("${chrome-driver.path}")
     private String chromeDriverScriptPath;
@@ -170,19 +174,19 @@ public class ApiService {
         driver = new ChromeDriver(chromeOptions);
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
 
-        driver.get("https://www.instagram.com/");
-        // 로그인 폼에서 사용자 이름 또는 이메일을 입력하는 필드 요소 찾기
-        WebElement e = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[1]/div/label/input"));
-        // @test_account_for_oss라는 사용자 이름 입력
-        e.sendKeys("@test_account_for_oss");
-        // 비밀번호 입력 필드 요소 찾기
-        e = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[2]/div/label/input"));
-        // oss_account라는 비밀번호 입력
-        e.sendKeys("oss_account");
-        // 로그인 버튼 요소 찾기
-        e = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[3]/button"));
-        // 로그인 버튼 누름
-        e.click();
+//        driver.get("https://www.instagram.com/");
+//        // 로그인 폼에서 사용자 이름 또는 이메일을 입력하는 필드 요소 찾기
+//        WebElement e = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[1]/div/label/input"));
+//        // @test_account_for_oss라는 사용자 이름 입력
+//        e.sendKeys("@test_account_for_oss");
+//        // 비밀번호 입력 필드 요소 찾기
+//        e = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[2]/div/label/input"));
+//        // oss_account라는 비밀번호 입력
+//        e.sendKeys("oss_account");
+//        // 로그인 버튼 요소 찾기
+//        e = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[3]/button"));
+//        // 로그인 버튼 누름
+//        e.click();
 
         // 페이지 로드 전략 설정
         chromeOptions.setPageLoadStrategy(PageLoadStrategy.NONE);
@@ -200,8 +204,78 @@ public class ApiService {
         }
     }
 
+    // 서버 구동 시에 /tmp에 임시 파일들 생성
+    @PostConstruct
+    public void setPythonTempfilePath() throws IOException {
+        // request.py 임시 파일 생성
+        InputStream requestTempStream = getClass().getClassLoader().getResourceAsStream("core/request.py");
+        log.info("requestTempStream: {}", requestTempStream);
+        if (requestTempStream == null) {
+            throw new IOException("File not found in classpath");
+        }
+
+        requestTempfile = createTempFileFromStream(requestTempStream);
+
+        requestScriptPath = requestTempfile.toAbsolutePath().toString();
+        log.info("requestScriptPath: {}", requestScriptPath);
+
+        // TestOpenAi.py 임시 파일 생성
+        InputStream openaiTempStream = getClass().getClassLoader().getResourceAsStream("openai/TestOpenAi.py");
+        log.info("openaiTempStream: {}", openaiTempStream);
+        if (openaiTempStream == null) {
+            throw new IOException("File not found in classpath");
+        }
+
+        openaiTempfile = createTempFileFromStream(openaiTempStream);
+
+        openaiScriptPath = openaiTempfile.toAbsolutePath().toString();
+        log.info("openaiScriptPath: {}", openaiScriptPath);
+
+        // TestOCR.py 임시 파일 생성
+        InputStream ocrTempStream = getClass().getClassLoader().getResourceAsStream("ocr/TestOCR.py");
+        log.info("ocrTempStream: {}", ocrTempStream);
+        if (ocrTempStream == null) {
+            throw new IOException("File not found in classpath");
+        }
+
+        ocrTempfile = createTempFileFromStream(ocrTempStream);
+
+        ocrScriptPath = ocrTempfile.toAbsolutePath().toString();
+        log.info("ocrScriptPath: {}", ocrScriptPath);
+    }
+
+    // 임시 파일 생성 메서드
+    private Path createTempFileFromStream(InputStream inputStream) throws IOException {
+        // 임시 파일 생성
+        Path tempFile = Files.createTempFile("script", ".py");
+
+        // 파일에 내용을 UTF-8로 저장
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+             FileWriter writer = new FileWriter(tempFile.toFile(), StandardCharsets.UTF_8)) {
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                writer.write(line + System.lineSeparator());
+            }
+        }
+
+        // 파일 권한 설정
+        Files.setPosixFilePermissions(tempFile, PosixFilePermissions.fromString("rwxr-xr-x"));
+        return tempFile;
+    }
+
+    // 임시 생성한 파일 삭제
+    @PreDestroy
+    public void deleteTempFiles() {
+        requestTempfile.toFile().deleteOnExit();
+        openaiTempfile.toFile().deleteOnExit();
+        ocrTempfile.toFile().deleteOnExit();
+    }
+
     // python 파일 실행 : 매개변수 2개
     public String pythonFileRun_2(String filePath, String content) throws IOException {
+        log.info("filepath: {}", filePath);
+
         ProcessBuilder processBuilder = new ProcessBuilder("python3", filePath, content);
         Process process = processBuilder.start();
         log.info("Process: {}", process);
@@ -224,30 +298,71 @@ public class ApiService {
     }
 
     // python 파일 실행 : 매개변수 3개(파일 경로, 제목, 본문)
-    public String pythonFileRun_3(String filePath, String title, String content) throws IOException {
+    public String pythonFileRun_3(String filePath, String title, String content) throws IOException, InterruptedException {
+        log.info("filepath: {}", filePath);
+
         ProcessBuilder processBuilder = new ProcessBuilder("python3", filePath, title, content);
         Process process = processBuilder.start();
-        log.info("Process: {}", process);
 
-        // 실행 결과 가져오기
+        // 프로세스의 표준 출력 스트림 및 표준 오류 스트림 읽기
         InputStream inputStream = process.getInputStream();
-        log.info("InputStream: {}", inputStream);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        log.info("BufferedReader: {}", reader);
+        InputStream errorStream = process.getErrorStream();
 
-        // 실행결과 저장
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        BufferedReader errorReader = new BufferedReader(new InputStreamReader(errorStream));
+
         StringBuilder resultBuilder = new StringBuilder();
+        StringBuilder errorBuilder = new StringBuilder();
         String line;
+
+        // 표준 출력 스트림 읽기
         while ((line = reader.readLine()) != null) {
             resultBuilder.append(line).append(System.lineSeparator());
         }
-        log.info("Result: {}", resultBuilder);
 
-        return resultBuilder.toString().trim();
+        // 표준 오류 스트림 읽기
+        while ((line = errorReader.readLine()) != null) {
+            errorBuilder.append(line).append(System.lineSeparator());
+        }
+
+        // 프로세스 종료 상태 확인
+        int exitCode = process.waitFor();
+        if (exitCode != 0) {
+            log.error("Python script error: {}", errorBuilder);
+            throw new IOException("Error executing Python script: " + errorBuilder);
+        }
+
+        String result = resultBuilder.toString().trim();
+        log.info("Result: {}", result);
+        return result;
     }
 
+
+//    // python 파일 실행 : 매개변수 3개(파일 경로, 제목, 본문)
+//    public String pythonFileRun_3(String filePath, String title, String content) throws IOException {
+//        ProcessBuilder processBuilder = new ProcessBuilder("python3", filePath, title, content);
+//        Process process = processBuilder.start();
+//        log.info("Process: {}", process);
+//
+//        // 실행 결과 가져오기
+//        InputStream inputStream = process.getInputStream();
+//        log.info("InputStream: {}", inputStream);
+//        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+//        log.info("BufferedReader: {}", reader);
+//
+//        // 실행결과 저장
+//        StringBuilder resultBuilder = new StringBuilder();
+//        String line;
+//        while ((line = reader.readLine()) != null) {
+//            resultBuilder.append(line).append(System.lineSeparator());
+//        }
+//        log.info("Result: {}", resultBuilder);
+//
+//        return resultBuilder.toString().trim();
+//    }
+
     // 빠른 측정
-    public double quickMeasurement(String url) throws IOException {
+    public double quickMeasurement(String url) throws IOException, InterruptedException {
         ResponseData responseData = responseDataRepository.findResponseDataByLink(url).orElse(null);
 
         // DB에 해당 URL에 대한 값이 있는 경우
@@ -255,37 +370,78 @@ public class ApiService {
             return responseData.getProbability();
 
         }
-        // DB에 해당 URL에 대한 값이 없는 경우
-        WebScrappingResultDto webScrappingResultDto = webScraping(url);
+        else {
+            // DB에 해당 URL에 대한 값이 없는 경우
+            WebScrappingResultDto webScrappingResultDto = webScraping(url);
 
-        String result = pythonFileRun_3(requestScriptPath, webScrappingResultDto.getTitle(), webScrappingResultDto.getContent());
-        log.info(result);
-        String[] parts = result.split("[(),]");
+            String result = pythonFileRun_3(requestScriptPath, webScrappingResultDto.getTitle(), webScrappingResultDto.getContent());
+            log.info(result);
 
-        String doubleString = parts[1].trim();
+            String[] parts = result.split("[(),]");
+            String doubleString = parts[1].trim();
 
-        double probability = Double.parseDouble(doubleString);
-        log.info("Probability: {}", probability);
+            double probability = Double.parseDouble(doubleString);
+            log.info("Probability: {}", probability);
 
-        // mongodb에 값 저장
-        ResponseData data = new ResponseData(
-                url,
-                probability,
-                null,
-                null
-        );
+            // mongodb에 값 저장
+            ResponseData data = new ResponseData(
+                    url,
+                    probability,
+                    null,
+                    null
+            );
 
-        responseDataRepository.save(data);
+            responseDataRepository.save(data);
 
-        return probability;
+            return probability;
+        }
     }
 
     // 정밀 측정
-    public Object precisionMeasurement(String url) throws IOException {
+    public Object precisionMeasurement(String url) throws IOException, InterruptedException {
         ResponseData responseData = responseDataRepository.findResponseDataByLink(url).orElse(null);
 
-        // DB에 해당 URL에 대한 값이 없는 경우
-        if (responseData == null) {
+        // DB에 해당 URL에 대한 값이 있는 경우
+        if (responseData != null) {
+            // DB에 해당 URL에 대한 모든 값이 있는 경우 (확률, 낚시성 의심 문장, 해설)
+            if ((responseData.getFishingSentence() != null) && (responseData.getExplanation() != null)) {
+                if (responseData.getProbability() > 0.5) {
+                    return new PrecisionMeasurementDto(responseData.getProbability(), responseData.getFishingSentence(), responseData.getExplanation());
+                }
+                else {
+                    return responseData.getProbability();
+                }
+            }
+            // DB에 해당 URL에 대한 확률 값만 있는 경우 (낚시성 의심 문장, 해설은 null 값)
+            else {
+                WebScrappingResultDto webScrappingResultDto = webScraping(url);
+
+                String result = pythonFileRun_3(requestScriptPath, webScrappingResultDto.getTitle(), webScrappingResultDto.getContent());
+                ModelDataDto modelDataDto = parseResult(result);
+
+                log.info("Dto.probability: {}", modelDataDto.getProbability());
+                log.info("Dto.sentence: {}", modelDataDto.getSentence());
+
+                String explanation = openAI(webScrappingResultDto.getTitle() + " " + webScrappingResultDto.getContent(), modelDataDto.getSentence());
+                log.info("Explanation: {}", explanation);
+
+                // 기존에 저장된 값 update (null -> data)
+                responseData.setFishingSentence(modelDataDto.getSentence());
+                responseData.setExplanation(explanation);
+
+                responseDataRepository.save(responseData);
+
+                // 확률 값에 따라 반환
+                if (modelDataDto.getProbability() > 0.5) {
+                    return new PrecisionMeasurementDto(responseData.getProbability(), responseData.getFishingSentence(), responseData.getExplanation());
+                }
+                else {
+                    return responseData.getProbability();
+                }
+            }
+        }
+        // DB에 해당 URL에 대한 값이 하나라도 없는 경우 (확률, 낚시성 의심 문장, 해설 중에서 하나라도 없는 경우)
+        else {
             WebScrappingResultDto webScrappingResultDto = webScraping(url);
 
             String result = pythonFileRun_3(requestScriptPath, webScrappingResultDto.getTitle(), webScrappingResultDto.getContent());
@@ -294,21 +450,8 @@ public class ApiService {
             log.info("Dto.probability: {}", modelDataDto.getProbability());
             log.info("Dto.sentence: {}", modelDataDto.getSentence());
 
-            // 확률 값에 따라 반환
-            if (modelDataDto.getProbability() <= 0.5) {
-                // mongodb에 값 저장
-                ResponseData data = new ResponseData(
-                        url,
-                        modelDataDto.getProbability(),
-                        modelDataDto.getSentence(),
-                        ""
-                );
-
-                responseDataRepository.save(data);
-
-                return modelDataDto.getProbability();
-            }
             String explanation = openAI(webScrappingResultDto.getTitle() + " " + webScrappingResultDto.getContent(), modelDataDto.getSentence());
+            log.info("Explanation: {}", explanation);
 
             // mongodb에 값 저장
             ResponseData data = new ResponseData(
@@ -320,38 +463,14 @@ public class ApiService {
 
             responseDataRepository.save(data);
 
-            return new PrecisionMeasurementDto(modelDataDto.getProbability(), modelDataDto.getSentence(), explanation);
+            // 확률 값에 따라 반환
+            if (modelDataDto.getProbability() > 0.5) {
+                return new PrecisionMeasurementDto(modelDataDto.getProbability(), modelDataDto.getSentence(), explanation);
+
+            } else {
+                return modelDataDto.getProbability();
+            }
         }
-        // DB에 해당 URL에 대한 값이 있는 경우
-
-        // 확률이 0.5 이하일 때
-        if (responseData.getProbability() <= 0.5) {
-            return responseData.getProbability();
-        }
-
-        // DB에 해당 URL에 대한 모든 값이 있는 경우 (확률, 낚시성 의심 문장, 해설)
-        if ((responseData.getFishingSentence() != null) && (responseData.getExplanation() != null)) {
-            return new PrecisionMeasurementDto(responseData.getProbability(), responseData.getFishingSentence(), responseData.getExplanation());
-        }
-        // DB에 해당 URL에 대한 확률 값만 있는 경우 (낚시성 의심 문장, 해설은 null 값)
-        WebScrappingResultDto webScrappingResultDto = webScraping(url);
-
-        String result = pythonFileRun_3(requestScriptPath, webScrappingResultDto.getTitle(), webScrappingResultDto.getContent());
-        ModelDataDto modelDataDto = parseResult(result);
-
-        log.info("Dto.probability: {}", modelDataDto.getProbability());
-        log.info("Dto.sentence: {}", modelDataDto.getSentence());
-
-        String explanation = openAI(webScrappingResultDto.getTitle()  + " " + webScrappingResultDto.getContent(), modelDataDto.getSentence());
-        log.info("Explanation: {}", explanation);
-
-        // 기존에 저장된 값 update (null -> data)
-        responseData.setFishingSentence(modelDataDto.getSentence());
-        responseData.setExplanation(explanation);
-
-        responseDataRepository.save(responseData);
-
-        return new PrecisionMeasurementDto(responseData.getProbability(), responseData.getFishingSentence(), responseData.getExplanation());
     }
 
     // python 모델이 반환하는 값 분리하는 함수
@@ -381,7 +500,9 @@ public class ApiService {
 
     // openAI API Key를 사용하여 해설을 생성하는 python 파일을 실행하는 함수
     public String openAI(String content, String sentence) throws IOException {
-        ProcessBuilder processBuilder = new ProcessBuilder("python3", openAiScriptPath, content, sentence);
+        log.info("filepath: {}", openaiScriptPath);
+
+        ProcessBuilder processBuilder = new ProcessBuilder("python3", openaiScriptPath, content, sentence);
         processBuilder.environment().put("OPENAI_API_KEY", openAiApiKey);
         processBuilder.redirectErrorStream(true);
         Process process = processBuilder.start();
@@ -407,7 +528,7 @@ public class ApiService {
     }
 
     // 사용자 정의 측정
-    public Object customMeasurement(String content) throws IOException{
+    public Object customMeasurement(String content) throws IOException, InterruptedException {
         log.info(content);
 
         StringBuilder resultString = new StringBuilder();

@@ -18,19 +18,19 @@ public class ApiController {
 
     // 빠른 측정
     @PostMapping("/quick")
-    public double quickMeasurement(@RequestBody Map<String, String> request) throws IOException {
+    public double quickMeasurement(@RequestBody Map<String, String> request) throws IOException, InterruptedException {
         return apiService.quickMeasurement(request.get("url"));
     }
 
     // 정밀 측정
     @PostMapping("/precision")
-    public Object precisionMeasurement(@RequestBody Map<String, String> request) throws IOException {
+    public Object precisionMeasurement(@RequestBody Map<String, String> request) throws IOException, InterruptedException {
         return apiService.precisionMeasurement(request.get("url"));
     }
 
     // 사용자 정의 측정
     @PostMapping("/custom")
-    public Object customMeasurement(@RequestBody Map<String, String> request) throws IOException {
+    public Object customMeasurement(@RequestBody Map<String, String> request) throws IOException, InterruptedException {
         return apiService.customMeasurement(request.get("content"));
     }
 }
