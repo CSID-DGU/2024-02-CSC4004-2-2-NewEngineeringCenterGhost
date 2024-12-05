@@ -217,12 +217,12 @@ python3 train.py
 학습을 하기 전, [AI Hub 낚시성 정보 데이터](https://www.aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&dataSetSn=71338)를 다운로드하여 모든 라벨링 데이터 zip 파일을 `train/data/zip`에 저장합니다.
 
 ```bash
-python3 unzip.py
+python3 train/unzip.py
 ```
 위 명령어로 `train/data/data.jsonl`이 생성됩니다.
 
 ```bash
-python3 train.py
+python3 train/train.py
 ```
 모델 학습을 진행합니다. 컴퓨팅 자원이 부족할 수 있으니 주의하세요.
 
