@@ -19,7 +19,7 @@ class Seeker():
         self.m = Mecab()
         self.fasttext = FastText.load(f"{bin_path}/fasttext")
         self.model = Model().to(device)
-        self.model.load_state_dict(torch.load(f"{bin_path}/model_best.pth", weights_only=True))
+        self.model.load_state_dict(torch.load(f"{bin_path}/model_best.pth", weights_only=True, map_location=device))
         self.model.eval()
         self.model.set_return_att(True)
     
