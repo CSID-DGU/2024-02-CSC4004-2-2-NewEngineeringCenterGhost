@@ -7,15 +7,18 @@
 
 ---
 
-## 👩‍💻 **팀원 소개**  
+## 👩‍💻 **팀원 소개**
 
-| 이름       | 학번       | 역할                     | GitHub                                   |  
-|------------|------------|--------------------------|------------------------------------------|  
-| **정재환** | 2020112023 | 팀장, 백엔드             | [@hwnnn](https://github.com/hwnnn)      |  
-| **신동주** | 2020112541 | AI                       | [@smturtle2](https://github.com/smturtle2) |  
-| **정태호** | 2022113556 | 크롬 확장 프로그램, 프론트엔드 | [@Taehoo-Jeong](https://github.com/Taehoo-Jeong) |  
-| **조성원** | 2020112037 | AI                       | [@sungwon01](https://github.com/sungwon01) |  
-| **임상수** | | 담당 교수                       |  |  
+| ![](https://github.com/hwnnn.png) | ![](https://github.com/smturtle2.png) | ![](https://github.com/Taehoo-Jeong.png) | ![](https://github.com/sungwon01.png) | ![](https://aix.dongguk.edu/bbs/view_image.php?bo_table=aid1_2&fn=32495905_ZDpUCJVX_17d52f4e20be7223d9b54dcdfba4982ff38d647e.jpg) |
+| :--------------------------------: | :-----------------------------------: | :---------------------------------------: | :-----------------------------------: | :-------: |
+| **정재환**                          | **신동주**                            | **정태호**                                | **조성원**                            | **임상수** |
+| <sub>2020112023</sub>              | <sub>2020112541</sub>                 | <sub>2022113556</sub>                     | <sub>2020112037</sub>                 |           |
+| *🏆 Lead & ⚙️ Backend*             | *🤖 AI*                                | *🧩 Chrome Extension & 💻 Frontend*        | *🤖 AI*                               | *🎓 Advisor* |
+| [@hwnnn](https://github.com/hwnnn) | [@smturtle2](https://github.com/smturtle2) | [@Taehoo-Jeong](https://github.com/Taehoo-Jeong) | [@sungwon01](https://github.com/sungwon01) |           |
+
+
+
+
 
 ---
 
