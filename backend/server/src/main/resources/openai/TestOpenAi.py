@@ -19,7 +19,7 @@ messages = [
     {"role":"system","content": content},
     {"role":"system","content": "다음은 낚시성 정보라고 판단하는 데 중요한 역할을 한 문장들입니다:"},
     {"role":"system","content": important},
-    {"role":"system","content": "이에 대한 해설을 간결하고 논리정연하게 작성하세요:"},
+    {"role":"system","content": "이에 대한 해석을 간단하게 Markdown 형식으로 작성해주세요:"}
 ]
 
 response = openai.chat.completions.create(model = model, messages = messages)
