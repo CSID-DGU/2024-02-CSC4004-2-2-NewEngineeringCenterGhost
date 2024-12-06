@@ -5,11 +5,10 @@
   "description": "낚시성 정보를 탐지하고 확률 및 해설을 제공합니다.",
   "permissions": [
     "contextMenus",
-    "tabs",
-    "scripting"
+    "tabs"
   ],
   "host_permissions": [
-    "http://34.64.45.233/*"
+    "https://necg.site/*"
   ],
   "background": {
     "service_worker": "background.js"
