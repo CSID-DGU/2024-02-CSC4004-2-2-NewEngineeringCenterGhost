@@ -6,6 +6,14 @@ spring:
     mongodb:
       uri: ${MONGODB_URI}
 
+python:
+  script:
+    path:
+      request: build/resources/main/core/request.py
+      server: build/resources/main/core/server.py
+      openAi: build/resources/main/openai/TestOpenAi.py
+      ocr: build/resources/main/ocr/TestOCR.py
+
 chrome-driver:
   path: /usr/bin/chromedriver
 
