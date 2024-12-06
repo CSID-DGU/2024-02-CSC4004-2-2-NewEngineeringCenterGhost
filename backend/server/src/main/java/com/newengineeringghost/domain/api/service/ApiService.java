@@ -78,53 +78,7 @@ public class ApiService {
         urlToXpathMap.put("n.news.naver.com","//*[@id=\"dic_area\"]"); // 네이버뉴스
     }
 
-//    private static final Map<String, String> urlToClassnameMap = new HashMap<>(); // Url to Classname map
-//
-//    static {
-//        // 기사
-//        urlToClassnameMap.put("www.ohmynews.com","at_contents"); // 오마이뉴스
-//        urlToClassnameMap.put("www.mk.co.kr","//*[@id=\"container\"]/section/div[3]/section/div[1]/div[1]/div[1]"); // 매일경제
-//        urlToClassnameMap.put("www.dailian.co.kr","//*[@id=\"contentsArea\"]/div[1]/div[4]/div[2]/div[2]/description"); // 데일리안
-//        urlToClassnameMap.put("www.nocutnews.co.kr","//*[@id=\"pnlContent\"]"); // 노컷뉴스
-//        urlToClassnameMap.put("view.asiae.co.kr","//*[@id=\"txt_area\"]"); // 아시아경제
-//        urlToClassnameMap.put("www.edaily.co.kr","//*[@id=\"contents\"]/section[1]/section[1]/div[1]/div[3]/div[1]"); // 이데일리
-//        urlToClassnameMap.put("biz.heraldcorp.com","//*[@id=\"articleText\"]"); // 해럴드경제
-//        urlToClassnameMap.put("zdnet.co.kr","//*[@id=\"articleBody\"]");
-//        urlToClassnameMap.put("www.seoul.co.kr","//*[@id=\"articleContent\"]/div"); // 서울신문
-//        urlToClassnameMap.put("www.osen.co.kr","//*[@id=\"articleBody\"]"); // OSEN
-//        urlToClassnameMap.put("news.sbs.co.kr","//*[@id=\"container\"]/div[1]/div[3]/div[2]/div[1]/div[1]/div[2]"); // SBS 뉴스
-//        urlToClassnameMap.put("newstapa.org","//*[@id=\"editor_fontsize\"]"); //뉴스타파
-//        urlToClassnameMap.put("www.hankookilbo.com","/html/body/div[2]/div/div[4]/div/div[1]"); // 한국일보
-//        urlToClassnameMap.put("isplus.com","//*[@id=\"article_body\"]"); // 일간스포츠
-//        urlToClassnameMap.put("www.newsis.com","//*[@id=\"content\"]/div[1]/div[1]/div[3]/article"); // 뉴시스
-//        urlToClassnameMap.put("www.inews24.com","//*[@id=\"articleBody\"]"); // 아이뉴스
-//        urlToClassnameMap.put("mydaily.co.kr","//*[@id=\"container\"]/div[1]/div[4]/div[1]/div"); // 마이데일리
-//        urlToClassnameMap.put("www.donga.com","//*[@id=\"contents\"]/div[2]/div/div[1]/section[1]"); // 동아일보
-//        urlToClassnameMap.put("news.jtbc.co.kr","//*[@id=\"wrapper\"]/div/div[6]/div/div/div/div/div[1]/div[1]"); // JTBC 뉴스
-//        urlToClassnameMap.put("www.ytn.co.kr","//*[@id=\"CmAdContent\"]/span"); // ytn 뉴스
-//        urlToClassnameMap.put("www.newdaily.co.kr","//*[@id=\"article_conent\"]"); // 뉴데일리
-//        urlToClassnameMap.put("www.dt.co.kr","//*[@id=\"v-left-scroll-in\"]/div[2]/div/div[2]"); // 디지털타임스
-//        urlToClassnameMap.put("sports.chosun.com","//*[@id=\"articleBody\"]/div/div/font"); // 스포츠조선
-//        urlToClassnameMap.put("www.chosun.com","//*[@id=\"fusion-app\"]/div[1]/div[2]/div/section/article/section"); // 조선일보
-//        urlToClassnameMap.put("www.sportsseoul.com","//*[@id=\"article-body\"]"); // 스포츠서울
-//        urlToClassnameMap.put("www.khan.co.kr","//*[@id=\"articleBody\"]"); // 경향신문
-//        urlToClassnameMap.put("sports.donga.com","//*[@id=\"article_body\"]"); // 스포츠동아
-//        urlToClassnameMap.put("news.mt.co.kr","//*[@id=\"textBody\"]"); // 머니투데이
-//        urlToClassnameMap.put("www.etnews.com","//*[@id=\"articleBody\"]/p"); // 전자신문
-//        urlToClassnameMap.put("www.sedaily.com","//*[@id=\"v-left-scroll-in\"]/div[2]/div[1]/div[2]"); // 서울경제
-//        urlToClassnameMap.put("www.joongang.co.kr","//*[@id=\"article_body\"]"); // 중앙일보
-//        urlToClassnameMap.put("www.sisain.co.kr","//*[@id=\"article-view-content-div\"]"); // 시사인
-//        urlToClassnameMap.put("www.wowtv.co.kr","//*[@id=\"divNewsContent\"]"); // 한국경제TV
-//        urlToClassnameMap.put("www.yonhapnewstv.co.kr","//*[@id=\"articleBody\"]"); // 연합뉴스
-//        urlToClassnameMap.put("www.kmib.co.kr","//*[@id=\"articleBody\"]"); // 국민일보
-//        urlToClassnameMap.put("www.mbn.co.kr","//*[@id=\"newsViewArea\"]"); // MBN 뉴스
-//        urlToClassnameMap.put("biz.chosun.com","//*[@id=\"fusion-app\"]/div[1]/div[2]/div/section/article/section"); // 조선비즈
-//        urlToClassnameMap.put("www.segye.com","//*[@id=\"wps_layout1_box2\"]"); // 세계일보
-//        urlToClassnameMap.put("www.fnnews.com","//*[@id=\"article_content\"]"); // 파이낸셜 뉴스
-//        urlToClassnameMap.put("sportalkorea.com","//*[@id=\"CmAdContent\"]/div[2]/div/div"); // 스포탈코리아
-//        urlToClassnameMap.put("www.hani.co.kr","//*[@id=\"renewal2023\"]/span"); // 한겨레
-//        urlToClassnameMap.put("n.news.naver.com","//*[@id=\"dic_area\"]"); // 네이버뉴스
-//    }
+    // Todo: urlToClassnameMap 작성
 
     private final ResponseDataRepository responseDataRepository;
 
@@ -141,18 +95,6 @@ public class ApiService {
 
     @Value("${python.script.path.ocr}")
     private String ocrScriptPath;
-
-//    private String requestScriptPath;
-//
-//    private String openaiScriptPath;
-//
-//    private String ocrScriptPath;
-//
-//    private Path requestTempfile;
-//
-//    private Path openaiTempfile;
-//
-//    private Path ocrTempfile;
 
     @Value("${openai.api-key}")
     private String openAiApiKey;
@@ -208,74 +150,6 @@ public class ApiService {
             log.info("Chrome Driver is null!");
         }
     }
-
-//    // 서버 구동 시에 /tmp에 임시 파일들 생성
-//    @PostConstruct
-//    public void setPythonTempfilePath() throws IOException {
-//        // request.py 임시 파일 생성
-//        InputStream requestTempStream = getClass().getClassLoader().getResourceAsStream("core/request.py");
-//        log.info("requestTempStream: {}", requestTempStream);
-//        if (requestTempStream == null) {
-//            throw new IOException("File not found in classpath");
-//        }
-//
-//        requestTempfile = createTempFileFromStream(requestTempStream);
-//
-//        requestScriptPath = requestTempfile.toAbsolutePath().toString();
-//        log.info("requestScriptPath: {}", requestScriptPath);
-//
-//        // TestOpenAi.py 임시 파일 생성
-//        InputStream openaiTempStream = getClass().getClassLoader().getResourceAsStream("openai/TestOpenAi.py");
-//        log.info("openaiTempStream: {}", openaiTempStream);
-//        if (openaiTempStream == null) {
-//            throw new IOException("File not found in classpath");
-//        }
-//
-//        openaiTempfile = createTempFileFromStream(openaiTempStream);
-//
-//        openaiScriptPath = openaiTempfile.toAbsolutePath().toString();
-//        log.info("openaiScriptPath: {}", openaiScriptPath);
-//
-//        // TestOCR.py 임시 파일 생성
-//        InputStream ocrTempStream = getClass().getClassLoader().getResourceAsStream("ocr/TestOCR.py");
-//        log.info("ocrTempStream: {}", ocrTempStream);
-//        if (ocrTempStream == null) {
-//            throw new IOException("File not found in classpath");
-//        }
-//
-//        ocrTempfile = createTempFileFromStream(ocrTempStream);
-//
-//        ocrScriptPath = ocrTempfile.toAbsolutePath().toString();
-//        log.info("ocrScriptPath: {}", ocrScriptPath);
-//    }
-//
-//    // 임시 파일 생성 메서드
-//    private Path createTempFileFromStream(InputStream inputStream) throws IOException {
-//        // 임시 파일 생성
-//        Path tempFile = Files.createTempFile("script", ".py");
-//
-//        // 파일에 내용을 UTF-8로 저장
-//        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-//             FileWriter writer = new FileWriter(tempFile.toFile(), StandardCharsets.UTF_8)) {
-//
-//            String line;
-//            while ((line = reader.readLine()) != null) {
-//                writer.write(line + System.lineSeparator());
-//            }
-//        }
-//
-//        // 파일 권한 설정
-//        Files.setPosixFilePermissions(tempFile, PosixFilePermissions.fromString("rwxr-xr-x"));
-//        return tempFile;
-//    }
-//
-//    // 임시 생성한 파일 삭제
-//    @PreDestroy
-//    public void deleteTempFiles() {
-//        requestTempfile.toFile().deleteOnExit();
-//        openaiTempfile.toFile().deleteOnExit();
-//        ocrTempfile.toFile().deleteOnExit();
-//    }
 
     // python 파일 실행 : 매개변수 2개
     public String pythonFileRun_2(String filePath, String content) throws IOException {
@@ -341,30 +215,6 @@ public class ApiService {
         log.info("Result: {}", result);
         return result;
     }
-
-
-//    // python 파일 실행 : 매개변수 3개(파일 경로, 제목, 본문)
-//    public String pythonFileRun_3(String filePath, String title, String content) throws IOException {
-//        ProcessBuilder processBuilder = new ProcessBuilder("python3", filePath, title, content);
-//        Process process = processBuilder.start();
-//        log.info("Process: {}", process);
-//
-//        // 실행 결과 가져오기
-//        InputStream inputStream = process.getInputStream();
-//        log.info("InputStream: {}", inputStream);
-//        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-//        log.info("BufferedReader: {}", reader);
-//
-//        // 실행결과 저장
-//        StringBuilder resultBuilder = new StringBuilder();
-//        String line;
-//        while ((line = reader.readLine()) != null) {
-//            resultBuilder.append(line).append(System.lineSeparator());
-//        }
-//        log.info("Result: {}", resultBuilder);
-//
-//        return resultBuilder.toString().trim();
-//    }
 
     // 빠른 측정
     public double quickMeasurement(String url) throws IOException, InterruptedException {
