@@ -9,7 +9,7 @@
 
 ## 👩‍💻 **팀원 소개**
 
-| ![](https://github.com/hwnnn.png) | ![](https://github.com/smturtle2.png) | ![](https://github.com/Taehoo-Jeong.png) | ![](https://github.com/sungwon01.png) | ![](https://aix.dongguk.edu/bbs/view_image.php?bo_table=aid1_2&fn=32495905_ZDpUCJVX_17d52f4e20be7223d9b54dcdfba4982ff38d647e.jpg) |
+| ![](https://github.com/hwnnn.png) | ![](https://github.com/smturtle2.png) | ![](https://github.com/Taehoo-Jeong.png) | ![](https://github.com/sungwon01.png) | ![]() |
 | :--------------------------------: | :-----------------------------------: | :---------------------------------------: | :-----------------------------------: | :-------: |
 | **정재환**                          | **신동주**                            | **정태호**                                | **조성원**                            | **임상수** |
 | <sub>2020112023</sub>              | <sub>2020112541</sub>                 | <sub>2022113556</sub>                     | <sub>2020112037</sub>                 |           |
