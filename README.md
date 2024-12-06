@@ -7,15 +7,18 @@
 
 ---
 
-## 👩‍💻 **팀원 소개**  
+## 👩‍💻 **팀원 소개**
 
-| 이름       | 학번       | 역할                     | GitHub                                   |  
-|------------|------------|--------------------------|------------------------------------------|  
-| **정재환** | 2020112023 | 팀장, 백엔드             | [@hwnnn](https://github.com/hwnnn)      |  
-| **신동주** | 2020112541 | AI                       | [@smturtle2](https://github.com/smturtle2) |  
-| **정태호** | 2022113556 | 크롬 확장 프로그램, 프론트엔드 | [@Taehoo-Jeong](https://github.com/Taehoo-Jeong) |  
-| **조성원** | 2020112037 | AI                       | [@sungwon01](https://github.com/sungwon01) |  
-| **임상수** | | 담당 교수                       |  |  
+| ![](https://github.com/hwnnn.png) | ![](https://github.com/smturtle2.png) | ![](https://github.com/Taehoo-Jeong.png) | ![](https://github.com/sungwon01.png) | ![]() |
+| :--------------------------------: | :-----------------------------------: | :---------------------------------------: | :-----------------------------------: | :-------: |
+| **정재환**                          | **신동주**                            | **정태호**                                | **조성원**                            | **임상수** |
+| <sub>2020112023</sub>              | <sub>2020112541</sub>                 | <sub>2022113556</sub>                     | <sub>2020112037</sub>                 |           |
+| *🏆 Lead & ⚙️ Backend*             | *🤖 AI*                                | *🧩 Chrome Extension & 💻 Frontend*        | *🤖 AI*                               | *🎓 Advisor* |
+| [@hwnnn](https://github.com/hwnnn) | [@smturtle2](https://github.com/smturtle2) | [@Taehoo-Jeong](https://github.com/Taehoo-Jeong) | [@sungwon01](https://github.com/sungwon01) |           |
+
+
+
+
 
 ---
 
@@ -171,44 +174,61 @@ train
 
 ---
 
-## 🚀 **설치 방법**  
+## 🚀 **설치 방법**
 
 ### 1️⃣ **Git으로 프로젝트 다운로드**  
-
-Git이 없으면 [Git 다운로드](https://git-scm.com/downloads)에서 설치.
-
-터미널에서 원하는 폴더로 이동 후 아래 명령어 입력:
-
+Git이 없으면 [Git 다운로드](https://git-scm.com/downloads)에서 설치합니다.  
+터미널에서 원하는 폴더로 이동 후 아래 명령어를 입력하세요:
 ```bash  
 git clone <프로젝트_링크>  
 cd <프로젝트_폴더_이름>  
-``` 
+```
 
 ### 2️⃣ **JDK 설치 및 설정**  
 - JDK 17 이상 설치 후 환경변수 설정.  
 [OpenJDK 다운로드](https://openjdk.org/)
 
-JDK 17 이상 버전을 다운로드한 뒤 설치하세요.
+JDK 17 이상 버전을 다운로드한 뒤 설치한 후, JAVA_HOME 등을 포함한 환경변수를 설정하세요.
 
-### 3️⃣ **설치 스크립트 실행**  
-터미널에서 프로젝트 폴더로 이동 후 아래 명령어 입력:
+### 3️⃣ **환경변수 설정**  
+해당 프로젝트는 실행 전에 다음 환경변수가 필요합니다.
+- `MONGODB_URI` : MongoDB 연결 URI를 설정해야 합니다.
+- `OPENAI_API_KEY` : OpenAI API 사용을 위한 키를 설정해야 합니다.
 
+#### 환경변수 등록
+`~/.bashrc` 또는 `~/.zshrc` 파일을 열고 아래 내용을 추가하세요:
+```bash
+export MONGODB_URI="mongodb+srv://<username>:<password>@<cluster-url>/<dbname>?retryWrites=true&w=majority"
+export OPENAI_API_KEY="<your_openai_api_key>"
+```
+
+설정을 적용하려면 아래 명령어를 실행하세요:
+```bash
+source ~/.bashrc  # bash 사용 시
+source ~/.zshrc   # zsh 사용 시
+```
+
+---
+
+### 4️⃣ **설치 스크립트 실행**  
+프로젝트 폴더에서 아래 명령어를 통해 추가 설치 과정을 진행하세요:
 ```bash
 bash install.sh
 ```
 
-### 4️⃣ **Python 패키지 설치**  
+### 5️⃣ **Python 패키지 설치**  
 - Python 3.11 이상을 권장합니다.
 
 ```bash  
 pip install -r requirements.txt  
 ```  
 
-### 5️⃣ **프로젝트 빌드 및 실행**  
+### 6️⃣ **프로젝트 빌드 및 실행**  
+아래 명령어를 통해 프로젝트를 빌드하고 실행합니다:
 ```bash  
 ./gradlew build  
 java -jar build/libs/<생성된_jar파일명>.jar  
-```  
+```
 
 ---
 
