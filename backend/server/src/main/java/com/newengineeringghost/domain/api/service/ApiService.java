@@ -18,10 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.PosixFilePermissions;
 import java.time.Duration;
 import java.util.*;
 import java.util.NoSuchElementException;
@@ -137,17 +133,26 @@ public class ApiService {
         this.responseDataRepository = responseDataRepository;
     }
 
+    @Value("${python.script.path.request}")
     private String requestScriptPath;
 
+    @Value("${python.script.path.openAi}")
     private String openaiScriptPath;
 
+    @Value("${python.script.path.ocr}")
     private String ocrScriptPath;
 
-    private Path requestTempfile;
-
-    private Path openaiTempfile;
-
-    private Path ocrTempfile;
+//    private String requestScriptPath;
+//
+//    private String openaiScriptPath;
+//
+//    private String ocrScriptPath;
+//
+//    private Path requestTempfile;
+//
+//    private Path openaiTempfile;
+//
+//    private Path ocrTempfile;
 
     @Value("${openai.api-key}")
     private String openAiApiKey;
@@ -204,73 +209,73 @@ public class ApiService {
         }
     }
 
-    // 서버 구동 시에 /tmp에 임시 파일들 생성
-    @PostConstruct
-    public void setPythonTempfilePath() throws IOException {
-        // request.py 임시 파일 생성
-        InputStream requestTempStream = getClass().getClassLoader().getResourceAsStream("core/request.py");
-        log.info("requestTempStream: {}", requestTempStream);
-        if (requestTempStream == null) {
-            throw new IOException("File not found in classpath");
-        }
-
-        requestTempfile = createTempFileFromStream(requestTempStream);
-
-        requestScriptPath = requestTempfile.toAbsolutePath().toString();
-        log.info("requestScriptPath: {}", requestScriptPath);
-
-        // TestOpenAi.py 임시 파일 생성
-        InputStream openaiTempStream = getClass().getClassLoader().getResourceAsStream("openai/TestOpenAi.py");
-        log.info("openaiTempStream: {}", openaiTempStream);
-        if (openaiTempStream == null) {
-            throw new IOException("File not found in classpath");
-        }
-
-        openaiTempfile = createTempFileFromStream(openaiTempStream);
-
-        openaiScriptPath = openaiTempfile.toAbsolutePath().toString();
-        log.info("openaiScriptPath: {}", openaiScriptPath);
-
-        // TestOCR.py 임시 파일 생성
-        InputStream ocrTempStream = getClass().getClassLoader().getResourceAsStream("ocr/TestOCR.py");
-        log.info("ocrTempStream: {}", ocrTempStream);
-        if (ocrTempStream == null) {
-            throw new IOException("File not found in classpath");
-        }
-
-        ocrTempfile = createTempFileFromStream(ocrTempStream);
-
-        ocrScriptPath = ocrTempfile.toAbsolutePath().toString();
-        log.info("ocrScriptPath: {}", ocrScriptPath);
-    }
-
-    // 임시 파일 생성 메서드
-    private Path createTempFileFromStream(InputStream inputStream) throws IOException {
-        // 임시 파일 생성
-        Path tempFile = Files.createTempFile("script", ".py");
-
-        // 파일에 내용을 UTF-8로 저장
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-             FileWriter writer = new FileWriter(tempFile.toFile(), StandardCharsets.UTF_8)) {
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-                writer.write(line + System.lineSeparator());
-            }
-        }
-
-        // 파일 권한 설정
-        Files.setPosixFilePermissions(tempFile, PosixFilePermissions.fromString("rwxr-xr-x"));
-        return tempFile;
-    }
-
-    // 임시 생성한 파일 삭제
-    @PreDestroy
-    public void deleteTempFiles() {
-        requestTempfile.toFile().deleteOnExit();
-        openaiTempfile.toFile().deleteOnExit();
-        ocrTempfile.toFile().deleteOnExit();
-    }
+//    // 서버 구동 시에 /tmp에 임시 파일들 생성
+//    @PostConstruct
+//    public void setPythonTempfilePath() throws IOException {
+//        // request.py 임시 파일 생성
+//        InputStream requestTempStream = getClass().getClassLoader().getResourceAsStream("core/request.py");
+//        log.info("requestTempStream: {}", requestTempStream);
+//        if (requestTempStream == null) {
+//            throw new IOException("File not found in classpath");
+//        }
+//
+//        requestTempfile = createTempFileFromStream(requestTempStream);
+//
+//        requestScriptPath = requestTempfile.toAbsolutePath().toString();
+//        log.info("requestScriptPath: {}", requestScriptPath);
+//
+//        // TestOpenAi.py 임시 파일 생성
+//        InputStream openaiTempStream = getClass().getClassLoader().getResourceAsStream("openai/TestOpenAi.py");
+//        log.info("openaiTempStream: {}", openaiTempStream);
+//        if (openaiTempStream == null) {
+//            throw new IOException("File not found in classpath");
+//        }
+//
+//        openaiTempfile = createTempFileFromStream(openaiTempStream);
+//
+//        openaiScriptPath = openaiTempfile.toAbsolutePath().toString();
+//        log.info("openaiScriptPath: {}", openaiScriptPath);
+//
+//        // TestOCR.py 임시 파일 생성
+//        InputStream ocrTempStream = getClass().getClassLoader().getResourceAsStream("ocr/TestOCR.py");
+//        log.info("ocrTempStream: {}", ocrTempStream);
+//        if (ocrTempStream == null) {
+//            throw new IOException("File not found in classpath");
+//        }
+//
+//        ocrTempfile = createTempFileFromStream(ocrTempStream);
+//
+//        ocrScriptPath = ocrTempfile.toAbsolutePath().toString();
+//        log.info("ocrScriptPath: {}", ocrScriptPath);
+//    }
+//
+//    // 임시 파일 생성 메서드
+//    private Path createTempFileFromStream(InputStream inputStream) throws IOException {
+//        // 임시 파일 생성
+//        Path tempFile = Files.createTempFile("script", ".py");
+//
+//        // 파일에 내용을 UTF-8로 저장
+//        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+//             FileWriter writer = new FileWriter(tempFile.toFile(), StandardCharsets.UTF_8)) {
+//
+//            String line;
+//            while ((line = reader.readLine()) != null) {
+//                writer.write(line + System.lineSeparator());
+//            }
+//        }
+//
+//        // 파일 권한 설정
+//        Files.setPosixFilePermissions(tempFile, PosixFilePermissions.fromString("rwxr-xr-x"));
+//        return tempFile;
+//    }
+//
+//    // 임시 생성한 파일 삭제
+//    @PreDestroy
+//    public void deleteTempFiles() {
+//        requestTempfile.toFile().deleteOnExit();
+//        openaiTempfile.toFile().deleteOnExit();
+//        ocrTempfile.toFile().deleteOnExit();
+//    }
 
     // python 파일 실행 : 매개변수 2개
     public String pythonFileRun_2(String filePath, String content) throws IOException {
