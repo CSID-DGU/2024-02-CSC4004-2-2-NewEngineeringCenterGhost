@@ -9,10 +9,10 @@ spring:
 python:
   script:
     path:
-      request: src/main/resources/core/request.py
-      server: src/main/resources/core/server.py
-      openAi: src/main/resources/openai/TestOpenAi.py
-      ocr: src/main/resources/ocr/TestOCR.py
+      request: build/resources/main/core/request.py
+      server: build/resources/main/core/server.py
+      openAi: build/resources/main/openai/TestOpenAi.py
+      ocr: build/resources/main/ocr/TestOCR.py
 
 chrome-driver:
   path: /usr/bin/chromedriver
