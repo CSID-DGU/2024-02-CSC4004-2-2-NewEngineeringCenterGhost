@@ -168,9 +168,8 @@ train
 
 ---
 
-## 🌐 **배포 URL**  
-- **크롬 스토어**:  
-
+## **배포 URL**  
+[Chrome 웹 스토어에서 설치하기](https://chromewebstore.google.com/detail/%EB%82%9A%EC%8B%9C%EC%84%B1-%EC%A0%95%EB%B3%B4-%ED%83%90%EC%A7%80-%EB%8F%84%EA%B5%ACclick-bait-se/blcclfjholbpgmmbnghodhlkagepjbbh?authuser=2&hl=ko)
 
 ---
 
