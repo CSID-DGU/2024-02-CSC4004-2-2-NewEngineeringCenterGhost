@@ -142,6 +142,7 @@ const allowLinks = [
   "sportalkorea.com/news/", // 스포탈코리아
   "www.hani.co.kr/arti", // 한겨레
   "n.news.naver.com/article", // 네이버뉴스
+  "n.news.naver.com/mnews/article", // 네이버뉴스
   "instagram.com", // 인스타그램
   "blog.naver.com", // 네이버블로그
   "tistory.com", // 티스토리
