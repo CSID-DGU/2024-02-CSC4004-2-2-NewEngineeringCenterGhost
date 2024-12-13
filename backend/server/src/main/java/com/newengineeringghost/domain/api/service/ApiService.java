@@ -122,6 +122,7 @@ public class ApiService {
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
 
         driver.get("https://www.instagram.com/");
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
         // 로그인 폼에서 사용자 이름 또는 이메일을 입력하는 필드 요소 찾기
         WebElement e = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[1]/div/label/input"));
         // @test_account_for_oss라는 사용자 이름 입력
