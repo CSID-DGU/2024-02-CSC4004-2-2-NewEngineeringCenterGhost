@@ -121,19 +121,19 @@ public class ApiService {
         driver = new ChromeDriver(chromeOptions);
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(10));
 
-//        driver.get("https://www.instagram.com/");
-//        // 로그인 폼에서 사용자 이름 또는 이메일을 입력하는 필드 요소 찾기
-//        WebElement e = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[1]/div/label/input"));
-//        // @test_account_for_oss라는 사용자 이름 입력
-//        e.sendKeys("@test_account_for_oss");
-//        // 비밀번호 입력 필드 요소 찾기
-//        e = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[2]/div/label/input"));
-//        // oss_account라는 비밀번호 입력
-//        e.sendKeys("oss_account");
-//        // 로그인 버튼 요소 찾기
-//        e = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[3]/button"));
-//        // 로그인 버튼 누름
-//        e.click();
+        driver.get("https://www.instagram.com/");
+        // 로그인 폼에서 사용자 이름 또는 이메일을 입력하는 필드 요소 찾기
+        WebElement e = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[1]/div/label/input"));
+        // @test_account_for_oss라는 사용자 이름 입력
+        e.sendKeys("@test_account_for_oss");
+        // 비밀번호 입력 필드 요소 찾기
+        e = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[2]/div/label/input"));
+        // oss_account라는 비밀번호 입력
+        e.sendKeys("oss_account");
+        // 로그인 버튼 요소 찾기
+        e = driver.findElement(By.xpath("//*[@id=\"loginForm\"]/div/div[3]/button"));
+        // 로그인 버튼 누름
+        e.click();
 
         // 페이지 로드 전략 설정
         chromeOptions.setPageLoadStrategy(PageLoadStrategy.NONE);
