@@ -234,6 +234,7 @@ function showBanner(prob, explanation) {
   // 내용 컨테이너 생성 및 스타일 설정
   const contentDiv = document.createElement("div");
   contentDiv.style.fontSize = '16px';
+  contentDiv.style.lineHeight = '1.5';
   contentDiv.style.fontFamily = 'Arial, sans-serif';
   // 폰트 색상 설정 (우선순위 높이기)
   contentDiv.style.setProperty('color', 'white', 'important');
